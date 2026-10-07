@@ -17,20 +17,20 @@
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col justify-between antialiased selection:bg-indigo-600 selection:text-white">
 
-    <!-- 1. Top Announcement Bar (Gọn gàng, súc tích) -->
+    <!-- 1. Top Announcement Bar (Gọn gàng, súc tích, dynamic settings) -->
     <div class="bg-indigo-950 text-slate-300 text-xs py-1.5 border-b border-indigo-900/60 hidden sm:block">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center text-[11px]">
-            <div class="flex items-center space-x-3">
-                <span class="text-amber-400 font-bold">⚡ Nạp mực & Sửa máy in 30 phút</span>
+            <div class="flex items-center space-x-3 truncate mr-4">
+                <span class="text-amber-400 font-bold flex-shrink-0">⚡ {{ setting('notice_bar_text', 'Nạp mực & Sửa máy in tận nơi 30 phút | Freeship từ 500k') }}</span>
                 <span class="text-slate-600">|</span>
-                <span>📍 123 Đường Văn Phòng Phẩm, P. Bến Nghé, Q.1, TP.HCM</span>
+                <span class="truncate">📍 {{ setting('address', 'Số 123 Đường Cầu Giấy, Hà Nội') }}</span>
                 <span class="text-slate-600">|</span>
-                <span>⏰ 7h30 - 20h00 (T2 - CN)</span>
+                <span>⏰ {{ setting('opening_hours', '8h00 - 18h30 (T2 - T7)') }}</span>
             </div>
-            <div class="flex items-center space-x-3">
-                <span>Hotline: <a href="tel:0901234567" class="text-white font-bold hover:text-amber-300">0901.234.567</a></span>
+            <div class="flex items-center space-x-3 flex-shrink-0">
+                <span>Hotline: <a href="tel:{{ setting('hotline', '1900 6868') }}" class="text-white font-bold hover:text-amber-300">{{ setting('hotline', '1900 6868') }}</a></span>
                 <span class="text-slate-600">|</span>
-                <a href="https://zalo.me/0901234567" target="_blank" class="text-sky-400 font-semibold hover:underline">Zalo Tư Vấn</a>
+                <a href="https://zalo.me/{{ preg_replace('/\D/', '', setting('zalo', '0988123456')) }}" target="_blank" class="text-sky-400 font-semibold hover:underline">Zalo: {{ setting('zalo', '0988.123.456') }}</a>
             </div>
         </div>
     </div>
@@ -171,16 +171,16 @@
                 <div class="space-y-3">
                     <div class="flex items-center space-x-2.5">
                         <div class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-black">VP</div>
-                        <span class="text-base font-black text-white">VPP & DỊCH VỤ MÁY IN</span>
+                        <span class="text-base font-black text-white">{{ setting('site_name', 'VPP & MÁY IN ÁNH DƯƠNG') }}</span>
                     </div>
                     <p class="text-slate-400 text-xs leading-relaxed">
-                        Cung cấp 1.000+ mặt hàng văn phòng phẩm giá sỉ và dịch vụ nạp mực, sửa chữa máy in lấy ngay trong 30 phút.
+                        {{ setting('site_slogan', 'Cung cấp 1.000+ mặt hàng văn phòng phẩm giá sỉ và dịch vụ nạp mực, sửa chữa máy in lấy ngay trong 30 phút.') }}
                     </p>
                     <div class="text-slate-300 space-y-1 text-xs">
-                        <p>📍 123 Đường Văn Phòng Phẩm, P. Bến Nghé, Q.1, TP.HCM</p>
-                        <p>📞 Hotline: <b class="text-amber-400">0901.234.567</b></p>
-                        <p>💬 Zalo: <b class="text-sky-400">0901.234.567</b></p>
-                        <p>⏰ 7h30 - 20h00 (Tất cả các ngày trong tuần)</p>
+                        <p>📍 {{ setting('address', 'Số 123 Đường Cầu Giấy, Hà Nội') }}</p>
+                        <p>📞 Hotline: <b class="text-amber-400">{{ setting('hotline', '1900 6868') }}</b></p>
+                        <p>💬 Zalo: <b class="text-sky-400">{{ setting('zalo', '0988.123.456') }}</b></p>
+                        <p>⏰ {{ setting('opening_hours', '8h00 - 18h30 (T2 - T7)') }}</p>
                     </div>
                 </div>
 
@@ -208,15 +208,25 @@
                     </ul>
                 </div>
 
-                <!-- Col 4: Chính Sách & Cam Kết -->
+                <!-- Col 4: Chính Sách & Bài Viết (CMS Động) -->
                 <div>
-                    <h4 class="text-white font-bold uppercase text-xs tracking-wider mb-3">Chính Sách & Bảo Mật</h4>
+                    <h4 class="text-white font-bold uppercase text-xs tracking-wider mb-3">Chính Sách & Bài Viết</h4>
                     <ul class="space-y-2 text-xs">
-                        <li><a href="{{ route('storefront.privacy') }}" class="hover:text-emerald-300 font-bold text-emerald-400 transition">🛡️ Bảo Mật Dữ Liệu Máy In & Bản In (100%)</a></li>
-                        <li><a href="{{ route('storefront.terms') }}" class="hover:text-white transition">Chính Sách Mua Hàng & Giao Hỏa Tốc 2H</a></li>
-                        <li><a href="{{ route('storefront.terms') }}" class="hover:text-white transition">Chính Sách Đồng Kiểm & Đổi Trả 7 Ngày</a></li>
-                        <li><a href="{{ route('storefront.terms') }}" class="hover:text-white transition">Thanh Toán VietQR & Hóa Đơn VAT Điện Tử</a></li>
-                        <li><a href="{{ route('storefront.about') }}" class="hover:text-white transition">Giới Thiệu Về Cửa Hàng & Showroom</a></li>
+                        @php
+                            $footerPages = \App\Models\Page::where('is_active', true)->orderBy('sort_order')->take(5)->get();
+                        @endphp
+                        @forelse($footerPages as $p)
+                            <li>
+                                <a href="{{ route('storefront.page', $p->slug) }}" class="hover:text-indigo-400 transition flex items-center gap-1.5">
+                                    <span>•</span>
+                                    <span>{{ $p->title }}</span>
+                                </a>
+                            </li>
+                        @empty
+                            <li><a href="{{ route('storefront.privacy') }}" class="hover:text-emerald-300 font-bold text-emerald-400 transition">🛡️ Bảo Mật Dữ Liệu Máy In (100%)</a></li>
+                            <li><a href="{{ route('storefront.terms') }}" class="hover:text-white transition">Chính Sách Mua Hàng & Giao Hỏa Tốc 2H</a></li>
+                            <li><a href="{{ route('storefront.about') }}" class="hover:text-white transition">Giới Thiệu Về Cửa Hàng & Showroom</a></li>
+                        @endforelse
                     </ul>
                 </div>
 

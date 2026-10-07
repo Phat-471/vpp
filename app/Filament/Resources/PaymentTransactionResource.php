@@ -17,7 +17,7 @@ class PaymentTransactionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
 
-    protected static ?string $navigationGroup = 'Thanh Toán & Webhook';
+    protected static ?string $navigationGroup = 'Tài Chính & Thuế';
 
     protected static ?string $navigationLabel = 'Lịch sử Webhook SePay / Casso';
 

@@ -16,7 +16,7 @@ class CustomerResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $navigationGroup = 'Đối Tác & Khách Hàng';
+    protected static ?string $navigationGroup = 'CSKH & Tương Tác';
 
     protected static ?string $navigationLabel = 'Khách hàng';
 

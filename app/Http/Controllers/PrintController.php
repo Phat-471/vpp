@@ -23,8 +23,14 @@ class PrintController extends Controller
     {
         $order = Order::with(['orderItems', 'customer', 'creator'])->findOrFail($id);
 
+        return view('print.order', compact('order', 'vietQrUrl'));
+    }
+
+    public function vatInvoice($id)
+    {
+        $order = Order::with(['orderItems', 'customer', 'creator'])->findOrFail($id);
         $vietQrUrl = AppHelper::generateVietQrUrl($order->grand_total - $order->paid_amount ?: $order->grand_total, $order->order_code);
 
-        return view('print.order', compact('order', 'vietQrUrl'));
+        return view('print.vat-invoice', compact('order', 'vietQrUrl'));
     }
 }

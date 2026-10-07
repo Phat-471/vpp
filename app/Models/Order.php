@@ -29,6 +29,12 @@ class Order extends Model
         'paid_amount',
         'payment_status',
         'payment_method',
+        'is_vat_invoice',
+        'company_name',
+        'company_tax_id',
+        'company_address',
+        'invoice_email',
+        'shipping_fee',
         'notes',
         'created_by',
     ];
@@ -36,6 +42,8 @@ class Order extends Model
     protected function casts(): array
     {
         return [
+            'is_vat_invoice' => 'boolean',
+            'shipping_fee' => 'decimal:2',
             'subtotal' => 'decimal:2',
             'discount_amount' => 'decimal:2',
             'tax_rate' => 'decimal:2',

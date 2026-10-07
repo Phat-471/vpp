@@ -251,9 +251,33 @@ class StorefrontController extends Controller
                 ]);
             }
 
+            $taxRate = 0;
+            $taxAmount = 0;
+            if ($request->boolean('is_vat_invoice')) {
+                $taxRate = (float) setting('default_vat_rate', 8);
+                $taxAmount = round($total * ($taxRate / 100));
+            }
+
+            $shippingFee = 0;
+            $freeshipThreshold = (float) setting('freeship_threshold', 500000);
+            $defaultShippingFee = (float) setting('shipping_fee_default', 30000);
+            if ($total < $freeshipThreshold && $total > 0) {
+                $shippingFee = $defaultShippingFee;
+            }
+
+            $grandTotal = $total + $taxAmount + $shippingFee;
+
             $order->update([
+                'is_vat_invoice' => $request->boolean('is_vat_invoice'),
+                'company_name' => $request->company_name,
+                'company_tax_id' => $request->company_tax_id,
+                'company_address' => $request->company_address,
+                'invoice_email' => $request->invoice_email,
+                'tax_rate' => $taxRate,
+                'tax_amount' => $taxAmount,
+                'shipping_fee' => $shippingFee,
                 'subtotal' => $total,
-                'grand_total' => $total,
+                'grand_total' => $grandTotal,
             ]);
 
             DB::commit();
@@ -516,18 +540,36 @@ class StorefrontController extends Controller
             ->with('success', 'Đã tiếp nhận yêu cầu sửa máy thành công! Mã phiếu của bạn là: ' . $ticket->ticket_code);
     }
 
+    public function dynamicPage(string $slug)
+    {
+        $page = \App\Models\Page::where('slug', $slug)->where('is_active', true)->firstOrFail();
+        return view('storefront.page', compact('page'));
+    }
+
     public function about()
     {
+        $page = \App\Models\Page::where('slug', 'gioi-thieu')->where('is_active', true)->first();
+        if ($page) {
+            return view('storefront.page', compact('page'));
+        }
         return view('storefront.about');
     }
 
     public function privacy()
     {
+        $page = \App\Models\Page::where('slug', 'chinh-sach-bao-mat')->where('is_active', true)->first();
+        if ($page) {
+            return view('storefront.page', compact('page'));
+        }
         return view('storefront.privacy');
     }
 
     public function terms()
     {
+        $page = \App\Models\Page::where('slug', 'chinh-sach-mua-hang')->where('is_active', true)->first();
+        if ($page) {
+            return view('storefront.page', compact('page'));
+        }
         return view('storefront.terms');
     }
 }

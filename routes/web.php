@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LiveChatController;
 use App\Http\Controllers\LookupController;
 use App\Http\Controllers\PrintController;
 use App\Http\Controllers\StorefrontController;
@@ -25,17 +26,24 @@ Route::match(['get', 'post'], '/dang-xuat', [StorefrontController::class, 'logou
 Route::get('/tai-khoan', [StorefrontController::class, 'profile'])->name('customer.profile');
 Route::post('/tai-khoan', [StorefrontController::class, 'updateProfile'])->name('customer.update-profile');
 
-// 4. Giới thiệu & Chính sách dịch vụ
+// 4. Giới thiệu & Chính sách dịch vụ & Trang CMS động
+Route::get('/trang/{slug}', [StorefrontController::class, 'dynamicPage'])->name('storefront.page');
 Route::get('/gioi-thieu', [StorefrontController::class, 'about'])->name('storefront.about');
 Route::get('/chinh-sach-bao-mat', [StorefrontController::class, 'privacy'])->name('storefront.privacy');
 Route::get('/chinh-sach-mua-hang', [StorefrontController::class, 'terms'])->name('storefront.terms');
 Route::post('/dat-lich-sua-chua', [StorefrontController::class, 'bookRepair'])->name('storefront.book');
 
-// 5. Tra cứu tiến độ sửa máy in (Chống IDOR: Mã phiếu + 4 số cuối SĐT)
+// 5. Live Chat Khách hàng 2 chiều
+Route::post('/api/chat/init', [LiveChatController::class, 'init'])->name('chat.init');
+Route::post('/api/chat/send', [LiveChatController::class, 'send'])->name('chat.send');
+Route::get('/api/chat/messages', [LiveChatController::class, 'getMessages'])->name('chat.messages');
+
+// 6. Tra cứu tiến độ sửa máy in (Chống IDOR: Mã phiếu + 4 số cuối SĐT)
 Route::get('/tra-cuu', [LookupController::class, 'index'])->name('lookup.index');
 Route::post('/tra-cuu', [LookupController::class, 'search'])->name('lookup.search');
 Route::get('/tra-cuu/{code}', [LookupController::class, 'view'])->name('lookup.view');
 
-// 6. In ấn chuẩn A4 / A5 máy in văn phòng
+// 7. In ấn chuẩn A4 / A5 máy in văn phòng
 Route::get('/print/repair-ticket/{id}', [PrintController::class, 'repairTicket'])->name('print.repair-ticket');
 Route::get('/print/order/{id}', [PrintController::class, 'order'])->name('print.order');
+Route::get('/print/vat-invoice/{id}', [PrintController::class, 'vatInvoice'])->name('print.vat-invoice');

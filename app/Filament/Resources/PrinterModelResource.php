@@ -16,7 +16,7 @@ class PrinterModelResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-printer';
 
-    protected static ?string $navigationGroup = 'Dịch Vụ Sửa Chữa Máy In';
+    protected static ?string $navigationGroup = 'Dịch Vụ Kỹ Thuật';
 
     protected static ?string $navigationLabel = 'Dòng máy in phổ biến';
 

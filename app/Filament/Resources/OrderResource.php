@@ -85,6 +85,35 @@ class OrderResource extends Resource
                                             ->default('completed')
                                             ->required(),
                                     ]),
+
+                                Forms\Components\Section::make('Xuất Hóa Đơn Giá Trị Gia Tăng (VAT)')
+                                    ->collapsible()
+                                    ->schema([
+                                        Forms\Components\Toggle::make('is_vat_invoice')
+                                            ->label('Yêu cầu xuất hóa đơn VAT điện tử')
+                                            ->live(),
+
+                                        Forms\Components\Grid::make(2)
+                                            ->visible(fn (Forms\Get $get) => (bool) $get('is_vat_invoice'))
+                                            ->schema([
+                                                Forms\Components\TextInput::make('company_name')
+                                                    ->label('Tên đơn vị / Doanh nghiệp')
+                                                    ->placeholder('CÔNG TY TNHH ABC...'),
+
+                                                Forms\Components\TextInput::make('company_tax_id')
+                                                    ->label('Mã số thuế (MST)')
+                                                    ->placeholder('0101234567'),
+
+                                                Forms\Components\TextInput::make('company_address')
+                                                    ->label('Địa chỉ công ty trên ĐKKD')
+                                                    ->placeholder('Số 10 phố...'),
+
+                                                Forms\Components\TextInput::make('invoice_email')
+                                                    ->label('Email nhận hóa đơn điện tử')
+                                                    ->email()
+                                                    ->placeholder('ketoan@doanhnghiep.vn'),
+                                            ]),
+                                    ]),
                             ]),
 
                         Forms\Components\Section::make('Chi tiết mặt hàng')
@@ -276,10 +305,17 @@ class OrderResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('print')
-                    ->label('In bill')
+                    ->label('In bill lẻ')
                     ->icon('heroicon-o-printer')
                     ->color('info')
                     ->url(fn (Order $record) => url("/print/order/{$record->id}"))
+                    ->openUrlInNewTab(),
+
+                Tables\Actions\Action::make('print_vat')
+                    ->label('In hóa đơn VAT')
+                    ->icon('heroicon-o-document-currency-dollar')
+                    ->color('primary')
+                    ->url(fn (Order $record) => url("/print/vat-invoice/{$record->id}"))
                     ->openUrlInNewTab(),
 
                 Tables\Actions\Action::make('vietqr')

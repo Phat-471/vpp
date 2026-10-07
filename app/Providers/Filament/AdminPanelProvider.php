@@ -27,7 +27,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->brandName('VPP & Dịch Vụ Máy In')
+            ->brandName('VPP & MÁY IN ÁNH DƯƠNG')
             ->colors([
                 'primary' => Color::Indigo,
                 'success' => Color::Emerald,
@@ -38,6 +38,15 @@ class AdminPanelProvider extends PanelProvider
             ->font('Inter')
             ->spa()
             ->sidebarCollapsibleOnDesktop()
+            ->navigationGroups([
+                'Bán Hàng & Thu Ngân',
+                'Kho & Sản Phẩm',
+                'Dịch Vụ Kỹ Thuật',
+                'CSKH & Tương Tác',
+                'Tài Chính & Thuế',
+                'Nội Dung & CMS',
+                'Hệ Thống',
+            ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
