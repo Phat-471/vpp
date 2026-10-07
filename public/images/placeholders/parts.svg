@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <rect width="200" height="200" rx="24" fill="#EA580C" fill-opacity="0.12"/>
+  <rect x="2" y="2" width="196" height="196" rx="22" fill="none" stroke="#EA580C" stroke-width="2" stroke-opacity="0.3"/>
+  <text x="50%" y="48%" font-size="52" text-anchor="middle" dominant-baseline="middle">⚙️</text>
+  <text x="50%" y="78%" font-size="13" font-family="sans-serif" font-weight="bold" fill="#EA580C" text-anchor="middle">Linh Kiện Máy In</text>
+</svg>

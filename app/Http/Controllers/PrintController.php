@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Helpers\AppHelper;
+use App\Models\Order;
+use App\Models\RepairTicket;
+use Illuminate\Http\Request;
+
+class PrintController extends Controller
+{
+    public function repairTicket($id)
+    {
+        $ticket = RepairTicket::with(['customer', 'printerModel', 'repairItems', 'technician'])->findOrFail($id);
+
+        $lookupUrl = AppHelper::generateLookupUrl($ticket->ticket_code, $ticket->phone_last4);
+        $vietQrUrl = AppHelper::generateVietQrUrl($ticket->remaining_amount ?: $ticket->grand_total, $ticket->ticket_code);
+
+        return view('print.repair-ticket', compact('ticket', 'lookupUrl', 'vietQrUrl'));
+    }
+
+    public function order($id)
+    {
+        $order = Order::with(['orderItems', 'customer', 'creator'])->findOrFail($id);
+
+        $vietQrUrl = AppHelper::generateVietQrUrl($order->grand_total - $order->paid_amount ?: $order->grand_total, $order->order_code);
+
+        return view('print.order', compact('order', 'vietQrUrl'));
+    }
+}
