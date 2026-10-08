@@ -13,9 +13,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->redirectGuestsTo(fn (Request $request) => $request->is('pos', 'pos/*')
+            ? route('pos.login') : route('filament.admin.auth.login'));
         $middleware->validateCsrfTokens(except: [
             'api/*',
             'webhook/*',
+            'zalo-auth/*',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

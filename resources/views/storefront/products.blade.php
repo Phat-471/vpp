@@ -17,9 +17,15 @@
         @endif
     </nav>
 
-    <!-- Header Banner Tiêu Đề -->
-    <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-indigo-900 shadow-sm">
-        <div class="space-y-1.5 max-w-2xl">
+    <!-- Header Banner Tiêu Đề (Có hình ảnh nền đẹp mắt) -->
+    <div class="relative overflow-hidden text-white rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-slate-700/60 shadow-xl group">
+        <!-- Background Image with Dark Gradient Tint Overlay -->
+        <div class="absolute inset-0 z-0">
+            <img src="{{ asset('images/banners/banner5.jpg') }}" alt="Danh Mục Sản Phẩm" class="w-full h-full object-cover object-center transform group-hover:scale-105 transition duration-700 opacity-25" />
+            <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-[#0f172a]/95 to-[#1e293b]/90"></div>
+        </div>
+
+        <div class="relative z-10 space-y-1.5 max-w-2xl">
             <span class="px-2.5 py-0.5 bg-amber-400 text-slate-950 rounded-full text-[10px] font-black uppercase tracking-wider">
                 KHO HÀNG 1.000+ SKU CHÍNH HÃNG
             </span>
@@ -31,7 +37,7 @@
             </p>
         </div>
 
-        <div class="flex items-center space-x-2 text-xs bg-white/10 px-4 py-2.5 rounded-2xl border border-white/10 flex-shrink-0">
+        <div class="relative z-10 flex items-center space-x-2 text-xs bg-white/10 px-4 py-2.5 rounded-2xl border border-white/10 flex-shrink-0 backdrop-blur-xs">
             <span class="text-amber-300 font-black text-base">{{ $products->total() }}</span>
             <span class="text-slate-300">sản phẩm khả dụng</span>
         </div>
@@ -157,22 +163,14 @@
             <!-- Products Grid (2 cols mobile, 3 cols tablet, 4 cols desktop) -->
             <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
                 @forelse($products as $p)
-                <div class="bg-white rounded-2xl border border-slate-200/90 hover:border-indigo-400 p-3 sm:p-4 flex flex-col justify-between shadow-2xs hover:shadow-md transition duration-200 group">
+                <div
+                    onclick="window.location.href='{{ route('storefront.product-detail', $p->slug) }}'"
+                    class="bg-white rounded-2xl border border-slate-200/90 hover:border-emerald-500 hover:shadow-xl p-3 sm:p-4 flex flex-col justify-between shadow-xs transition duration-200 group cursor-pointer"
+                >
                     <div>
                         <!-- Product Image Box -->
                         <div class="relative w-full aspect-square bg-slate-50 rounded-xl overflow-hidden mb-3 flex items-center justify-center border border-slate-100">
-                            @if(!empty($p->featured_image_thumb))
-                            <img src="{{ $p->featured_image_thumb }}" alt="{{ $p->name }}" class="w-full h-full object-contain p-2 group-hover:scale-105 transition transform duration-200" loading="lazy" />
-                            @else
-                            <div class="text-3xl text-slate-300">
-                                @if(str_contains($p->category?->slug ?? '', 'giay')) 📄
-                                @elseif(str_contains($p->category?->slug ?? '', 'but')) ✏️
-                                @elseif(str_contains($p->category?->slug ?? '', 'muc')) 🖨️
-                                @elseif(str_contains($p->category?->slug ?? '', 'bia')) 📁
-                                @else 📦
-                                @endif
-                            </div>
-                            @endif
+                            <img src="{{ $p->image_url }}" alt="{{ $p->name }}" class="w-full h-full object-contain p-2 group-hover:scale-105 transition transform duration-200" loading="lazy" />
 
                             @if($p->units->count() > 0)
                             <span class="absolute top-1.5 left-1.5 px-2 py-0.5 bg-amber-400 text-slate-950 font-black text-[9px] rounded-md shadow-2xs">
@@ -188,10 +186,8 @@
                         </div>
 
                         <!-- Product Title -->
-                        <h3 class="font-bold text-xs sm:text-sm text-slate-900 line-clamp-2 leading-snug group-hover:text-indigo-600 transition mb-2">
-                            <a href="{{ route('storefront.product-detail', $p->slug) }}">
-                                {{ $p->name }}
-                            </a>
+                        <h3 class="font-bold text-xs sm:text-sm text-slate-900 line-clamp-2 leading-snug group-hover:text-emerald-700 transition mb-2">
+                            {{ $p->name }}
                         </h3>
                     </div>
 
@@ -199,7 +195,7 @@
                         <!-- Price and Stock -->
                         <div class="flex items-baseline justify-between">
                             <div>
-                                <span class="font-black text-sm sm:text-base text-indigo-700 font-mono">
+                                <span class="font-black text-sm sm:text-base text-rose-600 font-mono">
                                     {{ number_format($p->retail_price, 0, ',', '.') }}₫
                                 </span>
                                 <span class="text-[10px] text-slate-500 font-medium">/{{ $p->base_unit }}</span>
@@ -222,17 +218,16 @@
                         <div class="grid grid-cols-2 gap-1.5 pt-1">
                             <button
                                 type="button"
-                                onclick="addToCart({{ $p->id }}, null, '{{ addslashes($p->name) }}', '{{ $p->base_unit }}', {{ (float) $p->retail_price }}, '{{ $p->image_url }}')"
-                                class="w-full py-1.5 px-2 bg-indigo-50 hover:bg-indigo-600 hover:text-white text-indigo-700 rounded-xl text-[11px] font-bold transition flex items-center justify-center space-x-1 border border-indigo-200"
+                                onclick="event.stopPropagation(); addToCart({{ $p->id }}, null, '{{ addslashes($p->name) }}', '{{ $p->base_unit }}', {{ (float) $p->retail_price }}, '{{ $p->image_url }}')"
+                                class="w-full py-2 px-2 bg-emerald-50 hover:bg-emerald-600 hover:text-white text-emerald-700 rounded-xl text-[11px] font-bold transition flex items-center justify-center space-x-1 border border-emerald-200"
                             >
                                 <span>+ Thêm</span>
                             </button>
-                            <a
-                                href="{{ route('storefront.product-detail', $p->slug) }}"
-                                class="w-full py-1.5 px-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-[11px] font-bold transition text-center flex items-center justify-center"
+                            <span
+                                class="w-full py-2 px-2 bg-slate-100 group-hover:bg-emerald-600 group-hover:text-white text-slate-800 rounded-xl text-[11px] font-bold transition text-center flex items-center justify-center"
                             >
-                                Chi Tiết
-                            </a>
+                                Chi Tiết →
+                            </span>
                         </div>
                     </div>
 

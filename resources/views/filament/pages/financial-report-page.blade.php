@@ -34,7 +34,7 @@
             <!-- 1. Doanh thu tổng -->
             <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs font-semibold text-slate-500 uppercase">Tổng Doanh Thu</span>
+                    <span class="text-xs font-semibold text-slate-500 uppercase">Tổng doanh thu</span>
                     <span class="p-2 bg-indigo-50 dark:bg-indigo-950 text-indigo-600 rounded-xl">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </span>
@@ -51,7 +51,7 @@
             <!-- 2. Tiền thuế VAT phải nộp -->
             <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs font-semibold text-slate-500 uppercase">Thuế VAT Đầu Ra (8%-10%)</span>
+                    <span class="text-xs font-semibold text-slate-500 uppercase">Thuế VAT đầu ra</span>
                     <span class="p-2 bg-rose-50 dark:bg-rose-950 text-rose-600 rounded-xl">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"></path></svg>
                     </span>
@@ -68,7 +68,7 @@
             <!-- 3. Giá vốn hàng bán -->
             <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs font-semibold text-slate-500 uppercase">Giá Vốn Hàng Bán (COGS)</span>
+                    <span class="text-xs font-semibold text-slate-500 uppercase">Giá vốn hàng bán</span>
                     <span class="p-2 bg-amber-50 dark:bg-amber-950 text-amber-600 rounded-xl">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
                     </span>
@@ -85,7 +85,7 @@
             <!-- 4. Lợi nhuận gộp -->
             <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs font-semibold text-slate-500 uppercase">Lợi Nhuận Gộp</span>
+                    <span class="text-xs font-semibold text-slate-500 uppercase">Lợi nhuận gộp</span>
                     <span class="p-2 bg-emerald-50 dark:bg-emerald-950 text-emerald-600 rounded-xl">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                     </span>
@@ -107,8 +107,8 @@
             <div class="lg:col-span-8 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
                 <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
                     <div>
-                        <h4 class="font-bold text-slate-900 dark:text-white text-base">Bảng Kê Hóa Đơn Bán Hàng Kê Khai Thuế GTGT</h4>
-                        <p class="text-xs text-slate-500">Mẫu bảng kê tổng hợp doanh thu và thuế GTGT đầu ra bán ra định kỳ</p>
+                        <h4 class="font-bold text-slate-900 dark:text-white text-base">Bảng kê hóa đơn và thuế GTGT</h4>
+                        <p class="text-xs text-slate-500">Tổng hợp doanh thu và thuế GTGT đầu ra theo kỳ.</p>
                     </div>
                     <span class="text-xs font-semibold px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded-lg">
                         {{ count($data['vat_orders']) }} hóa đơn
@@ -119,14 +119,14 @@
                     <table class="w-full text-left text-xs border-collapse">
                         <thead>
                             <tr class="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300">
-                                <th class="p-3 font-semibold">Số HĐ / Ngày</th>
-                                <th class="p-3 font-semibold">Khách hàng / Công ty</th>
+                                <th class="p-3 font-semibold">Số hóa đơn / ngày</th>
+                                <th class="p-3 font-semibold">Khách hàng / doanh nghiệp</th>
                                 <th class="p-3 font-semibold">Mã số thuế</th>
                                 <th class="p-3 font-semibold text-right">Doanh thu chưa thuế</th>
                                 <th class="p-3 font-semibold text-center">Thuế suất</th>
                                 <th class="p-3 font-semibold text-right">Tiền thuế VAT</th>
                                 <th class="p-3 font-semibold text-right">Tổng thanh toán</th>
-                                <th class="p-3 font-semibold text-center">Hành động</th>
+                                <th class="p-3 font-semibold text-center">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
@@ -164,7 +164,7 @@
                                         <a href="{{ url('/print/vat-invoice/' . $ord->id) }}" target="_blank"
                                             class="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                                            In VAT
+                                            In hóa đơn VAT
                                         </a>
                                     </td>
                                 </tr>
@@ -184,7 +184,7 @@
             <div class="lg:col-span-4 space-y-6">
                 <!-- Card phân bổ dòng tiền thanh toán -->
                 <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-5">
-                    <h4 class="font-bold text-slate-900 dark:text-white text-sm mb-4">Cơ Cấu Dòng Tiền Thanh Toán</h4>
+                    <h4 class="font-bold text-slate-900 dark:text-white text-sm mb-4">Cơ cấu doanh thu theo phương thức thanh toán</h4>
                     <div class="space-y-3">
                         @foreach($data['payment_breakdown'] as $pm)
                             @php
@@ -192,7 +192,7 @@
                                 $pmName = match($pm->payment_method) {
                                     'vietqr' => 'Chuyển khoản VietQR 24/7',
                                     'transfer' => 'Chuyển khoản ngân hàng',
-                                    'cod' => 'Giao hàng thu COD',
+                                    'cod' => 'Thanh toán khi nhận hàng (COD)',
                                     default => 'Tiền mặt tại quầy',
                                 };
                             @endphp

@@ -27,18 +27,7 @@
         <!-- Product Image Gallery (lg:col-span-5) -->
         <div class="lg:col-span-5 space-y-4">
             <div class="relative w-full aspect-square bg-slate-50 rounded-3xl border border-slate-200 overflow-hidden flex items-center justify-center p-6 group">
-                @if(!empty($product->featured_image_large) || !empty($product->image_url))
-                <img src="{{ $product->featured_image_large ?: $product->image_url }}" alt="{{ $product->name }}" class="max-w-full max-h-full object-contain group-hover:scale-105 transition transform duration-300" id="main-product-img" />
-                @else
-                <div class="text-6xl text-slate-300">
-                    @if(str_contains($product->category?->slug ?? '', 'giay')) 📄
-                    @elseif(str_contains($product->category?->slug ?? '', 'but')) ✏️
-                    @elseif(str_contains($product->category?->slug ?? '', 'muc')) 🖨️
-                    @elseif(str_contains($product->category?->slug ?? '', 'bia')) 📁
-                    @else 📦
-                    @endif
-                </div>
-                @endif
+                <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="max-w-full max-h-full object-contain group-hover:scale-105 transition transform duration-300" id="main-product-img" />
 
                 <span class="absolute top-4 left-4 px-3 py-1 bg-indigo-600 text-white font-bold text-xs rounded-full shadow-xs">
                     CHÍNH HÃNG 100%
@@ -242,20 +231,19 @@
 
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
             @foreach($relatedProducts as $rp)
-            <div class="bg-white rounded-2xl border border-slate-200 p-3 flex flex-col justify-between hover:shadow-md transition">
-                <a href="{{ route('storefront.product-detail', $rp->slug) }}" class="block">
-                    <div class="aspect-square bg-slate-50 rounded-xl mb-2 flex items-center justify-center p-2">
-                        @if(!empty($rp->featured_image_thumb))
-                        <img src="{{ $rp->featured_image_thumb }}" alt="{{ $rp->name }}" class="max-h-full object-contain" />
-                        @else
-                        <span class="text-2xl">📦</span>
-                        @endif
+            <div
+                onclick="window.location.href='{{ route('storefront.product-detail', $rp->slug) }}'"
+                class="bg-white rounded-2xl border border-slate-200/90 hover:border-emerald-500 hover:shadow-lg p-3 flex flex-col justify-between transition cursor-pointer group"
+            >
+                <div>
+                    <div class="aspect-square bg-slate-50 rounded-xl mb-2 flex items-center justify-center p-2 border border-slate-100 overflow-hidden">
+                        <img src="{{ $rp->image_url }}" alt="{{ $rp->name }}" class="max-h-full object-contain group-hover:scale-105 transition transform duration-200" loading="lazy" />
                     </div>
-                    <h4 class="font-bold text-xs text-slate-900 line-clamp-2 mb-1 hover:text-indigo-600 transition">{{ $rp->name }}</h4>
-                </a>
+                    <h4 class="font-bold text-xs text-slate-900 line-clamp-2 mb-1 group-hover:text-emerald-700 transition">{{ $rp->name }}</h4>
+                </div>
                 <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
-                    <span class="font-mono font-bold text-indigo-700 text-xs">{{ number_format($rp->retail_price, 0, ',', '.') }}₫</span>
-                    <a href="{{ route('storefront.product-detail', $rp->slug) }}" class="text-[10px] text-slate-500 hover:text-indigo-600 font-bold">Xem →</a>
+                    <span class="font-mono font-bold text-rose-600 text-xs">{{ number_format($rp->retail_price, 0, ',', '.') }}₫</span>
+                    <span class="text-[11px] text-slate-500 group-hover:text-emerald-600 font-bold transition">Xem →</span>
                 </div>
             </div>
             @endforeach

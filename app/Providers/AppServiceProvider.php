@@ -2,7 +2,16 @@
 
 namespace App\Providers;
 
+use App\Models\Order;
+use App\Models\User;
+use App\Services\StaffLogin;
+use App\Support\StorefrontSettings;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,5 +32,17 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Schema::defaultStringLength(191);
+
+        Gate::define('use-pos', fn (User $user) => $user->isCashier());
+        Gate::define('view-pos-order', fn (User $user, Order $order) => $user->isCashier()
+            && $order->channel === 'pos' && ($user->isAdmin() || $order->created_by === $user->id));
+        RateLimiter::for('pos-login', fn (Request $request) => [
+            Limit::perMinute(10)->by($request->ip()),
+            Limit::perMinute(5)->by(app(StaffLogin::class)->throttleKey((string) $request->input('identifier')).'|'.$request->ip()),
+        ]);
+
+        View::composer(['layouts.storefront', 'storefront.*', 'lookup.*', 'print.order'], function ($view) {
+            $view->with('storefrontSettings', app(StorefrontSettings::class)->all());
+        });
     }
 }

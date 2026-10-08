@@ -9,7 +9,7 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -29,23 +29,25 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->brandName('VPP & MÁY IN ÁNH DƯƠNG')
             ->colors([
-                'primary' => Color::Indigo,
-                'success' => Color::Emerald,
-                'warning' => Color::Amber,
-                'danger' => Color::Rose,
-                'info' => Color::Sky,
+                'primary' => '#e66a3c',
+                'success' => '#159b83',
+                'warning' => '#e5a52e',
+                'danger' => '#d94f64',
+                'info' => '#4386c5',
+                'gray' => '#65748b',
             ])
             ->font('Inter')
+            ->darkMode(false)
             ->spa()
             ->sidebarCollapsibleOnDesktop()
             ->navigationGroups([
-                'Bán Hàng & Thu Ngân',
-                'Kho & Sản Phẩm',
-                'Dịch Vụ Kỹ Thuật',
-                'CSKH & Tương Tác',
-                'Tài Chính & Thuế',
-                'Nội Dung & CMS',
-                'Hệ Thống',
+                'Bán hàng & thu ngân',
+                'Kho & sản phẩm',
+                'Dịch vụ kỹ thuật',
+                'Chăm sóc khách hàng',
+                'Tài chính & thuế',
+                'Nội dung & trang web',
+                'Hệ thống',
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -56,6 +58,15 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
             ])
+            ->renderHook(
+                PanelsRenderHook::STYLES_AFTER,
+                fn (): string => '<link rel="stylesheet" href="' . asset('css/admin-panel.css') . '">',
+            )
+            ->renderHook(
+                PanelsRenderHook::PAGE_START,
+                fn (): string => view('filament.components.admin-dashboard-intro')->render(),
+                scopes: Pages\Dashboard::class,
+            )
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

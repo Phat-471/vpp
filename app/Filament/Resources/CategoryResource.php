@@ -17,7 +17,7 @@ class CategoryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
-    protected static ?string $navigationGroup = 'Kho & Sản Phẩm';
+    protected static ?string $navigationGroup = 'Kho & sản phẩm';
 
     protected static ?string $navigationLabel = 'Danh mục ngành hàng';
 
@@ -39,20 +39,20 @@ class CategoryResource extends Resource
                     ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug($state))),
 
                 Forms\Components\TextInput::make('slug')
-                    ->label('Đường dẫn Slug')
+                    ->label('Đường dẫn danh mục')
                     ->required()
                     ->maxLength(120)
                     ->unique(Category::class, 'slug', ignoreRecord: true),
 
                 Forms\Components\TextInput::make('icon')
-                    ->label('Icon Heroicon')
+                    ->label('Tên biểu tượng Heroicon')
                     ->placeholder('heroicon-o-pencil'),
 
                 Forms\Components\FileUpload::make('placeholder_image')
-                    ->label('Ảnh mẫu mặc định (Placeholder)')
+                    ->label('Ảnh mặc định cho danh mục')
                     ->image()
                     ->directory('categories')
-                    ->helperText('Tự động gán cho các sản phẩm trong danh mục này khi chưa chụp ảnh thật.'),
+                    ->helperText('Dùng cho sản phẩm trong danh mục này nếu sản phẩm chưa có ảnh riêng.'),
 
                 Forms\Components\TextInput::make('sort_order')
                     ->label('Thứ tự hiển thị')

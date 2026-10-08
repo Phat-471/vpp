@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MẪU GIAO DIỆN 2: MÀN HÌNH BÁN HÀNG & THU NGÂN POS CHUYÊN NGHIỆP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0b1329; color: #f8fafc; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="h-screen flex flex-col bg-[#080e22] text-slate-100 antialiased overflow-hidden">
+
+    <!-- POS TOP BAR (Hotkeys, Shift Info, Search, Quick Exit) -->
+    <header class="h-14 bg-[#0c1633] border-b border-slate-800 px-6 flex items-center justify-between shrink-0 shadow-lg z-20">
+        <div class="flex items-center space-x-4">
+            <a href="dashboard.html" class="flex items-center space-x-2 text-slate-400 hover:text-white transition group">
+                <div class="w-8 h-8 rounded-lg bg-slate-800 group-hover:bg-emerald-600 group-hover:text-white flex items-center justify-center font-bold text-xs transition">
+                    ←
+                </div>
+                <span class="text-xs font-bold hidden sm:inline">Về Bảng Điều Khiển</span>
+            </a>
+            <span class="text-slate-700">|</span>
+            <div class="flex items-center space-x-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                <span class="font-extrabold text-sm text-white">POS THU NGÂN #01</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">CA SÁNG • 08:00 - 18:30</span>
+            </div>
+        </div>
+
+        <!-- Hotkeys Pill Bar -->
+        <div class="hidden xl:flex items-center space-x-2 text-[11px] text-slate-400">
+            <span class="px-2 py-1 rounded bg-slate-800 text-slate-300 font-mono font-bold"><b class="text-amber-400">F2</b> Quét mã</span>
+            <span class="px-2 py-1 rounded bg-slate-800 text-slate-300 font-mono font-bold"><b class="text-amber-400">F4</b> Khách hàng</span>
+            <span class="px-2 py-1 rounded bg-slate-800 text-slate-300 font-mono font-bold"><b class="text-amber-400">F8</b> Tiếp nhận máy</span>
+            <span class="px-2 py-1 rounded bg-slate-800 text-slate-300 font-mono font-bold"><b class="text-emerald-400">F9</b> Thanh toán</span>
+        </div>
+
+        <div class="flex items-center space-x-3">
+            <div class="text-right">
+                <div class="text-xs font-bold text-white">Thu Ngân: Nguyễn Thúy Vi</div>
+                <div class="text-[10px] text-emerald-400 font-semibold">Doanh số ca: 8.420.000₫</div>
+            </div>
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center font-bold text-white shadow-md">
+                NV
+            </div>
+        </div>
+    </header>
+
+    <!-- POS MAIN WORKSPACE (2 COLUMNS: 7 COLS PRODUCT CATALOG + 5 COLS ORDER CART) -->
+    <div class="flex-1 flex overflow-hidden">
+
+        <!-- LEFT COLUMN: PRODUCT CATALOG & BARCODE SCANNER (Flexible 7-8 cols) -->
+        <div class="flex-1 flex flex-col border-r border-slate-800 overflow-hidden bg-[#0a1128]">
+
+            <!-- Search Bar & Barcode Scanner -->
+            <div class="p-4 bg-[#0c1633]/80 border-b border-slate-800 flex items-center space-x-3">
+                <div class="relative flex-1">
+                    <input type="text" placeholder="Quét mã vạch (Barcode Scanner) hoặc gõ tên sản phẩm, mã SKU... (F2)" class="w-full bg-[#080e22] text-sm text-white placeholder-slate-500 rounded-xl pl-10 pr-12 py-3 border border-emerald-500/50 focus:outline-none focus:ring-2 focus:ring-emerald-400 shadow-inner" autofocus />
+                    <svg class="w-5 h-5 text-emerald-400 absolute left-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+                    <span class="absolute right-3 top-3 px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-xs font-black">SCAN</span>
+                </div>
+
+                <!-- Dịch Vụ Nạp Mực & Tiếp Nhận Button -->
+                <button class="px-4 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-black transition flex items-center space-x-1.5 shrink-0 shadow-lg shadow-indigo-900/30">
+                    <span>🖨️ Tiếp Nhận Sửa Máy (F8)</span>
+                </button>
+            </div>
+
+            <!-- Quick Category Filter Tabs -->
+            <div class="px-4 py-2.5 bg-[#091024] border-b border-slate-800 flex items-center space-x-2 overflow-x-auto no-scrollbar text-xs font-bold">
+                <button class="px-4 py-1.5 rounded-xl bg-emerald-600 text-white shadow font-extrabold whitespace-nowrap">Tất Cả (1.665)</button>
+                <button class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap">📄 Giấy In & Photo</button>
+                <button class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap">🖨️ Hộp Mực Máy In</button>
+                <button class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap">🖊️ Bút Viết Thiên Long & Eras</button>
+                <button class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap">⚙️ Trống Drum & Gạt Mực</button>
+                <button class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap">📦 Bìa Còng & File Hồ Sơ</button>
+            </div>
+
+            <!-- Product Items Grid (Responsive 3-4 cols with Dual-Price) -->
+            <div class="flex-1 overflow-y-auto p-4 grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3 no-scrollbar">
+
+                <!-- Product 1: Giấy Double A -->
+                <div class="bg-[#0f1d40] border border-slate-800/80 hover:border-emerald-400 rounded-2xl p-3 flex flex-col justify-between transition cursor-pointer group shadow-lg">
+                    <div>
+                        <div class="aspect-square bg-white rounded-xl mb-2 flex items-center justify-center p-2 overflow-hidden">
+                            <img src="/images/products/giay-double-a-a4.jpg" alt="Giấy Double A" class="max-h-full max-w-full object-contain group-hover:scale-105 transition" />
+                        </div>
+                        <div class="text-[10px] text-slate-400 flex justify-between font-mono">
+                            <span>DOUBLEA-A4</span>
+                            <span class="text-emerald-400 font-bold">Kho: 240</span>
+                        </div>
+                        <div class="font-bold text-xs text-white line-clamp-2 mt-0.5 leading-snug">Giấy Double A A4 70gsm (Ram 500 tờ)</div>
+                    </div>
+                    <div class="pt-2 border-t border-slate-800 mt-2 space-y-1">
+                        <div class="flex items-baseline justify-between">
+                            <span class="text-sm font-black text-rose-400 font-mono">85.000₫</span>
+                            <span class="text-[10px] text-slate-400">/Ram</span>
+                        </div>
+                        <div class="text-[9px] text-amber-300 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20 flex justify-between">
+                            <span>Sỉ Thùng (x5):</span>
+                            <span class="font-mono font-bold">410.000₫</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 2: Hộp Mực 12A -->
+                <div class="bg-[#0f1d40] border border-slate-800/80 hover:border-emerald-400 rounded-2xl p-3 flex flex-col justify-between transition cursor-pointer group shadow-lg">
+                    <div>
+                        <div class="aspect-square bg-white rounded-xl mb-2 flex items-center justify-center p-2 overflow-hidden">
+                            <img src="/images/products/muc-cartridge-12a.jpg" alt="Hộp Mực 12A" class="max-h-full max-w-full object-contain group-hover:scale-105 transition" />
+                        </div>
+                        <div class="text-[10px] text-slate-400 flex justify-between font-mono">
+                            <span>CART-12A</span>
+                            <span class="text-emerald-400 font-bold">Kho: 45</span>
+                        </div>
+                        <div class="font-bold text-xs text-white line-clamp-2 mt-0.5 leading-snug">Hộp Mực Cartridge 12A Canon 2900 / HP 1020</div>
+                    </div>
+                    <div class="pt-2 border-t border-slate-800 mt-2 space-y-1">
+                        <div class="flex items-baseline justify-between">
+                            <span class="text-sm font-black text-rose-400 font-mono">250.000₫</span>
+                            <span class="text-[10px] text-slate-400">/Hộp</span>
+                        </div>
+                        <div class="text-[9px] text-amber-300 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20 flex justify-between">
+                            <span>Sỉ Lốc 5 hộp:</span>
+                            <span class="font-mono font-bold">1.150.000₫</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 3: Bút Thiên Long TL-027 -->
+                <div class="bg-[#0f1d40] border border-slate-800/80 hover:border-emerald-400 rounded-2xl p-3 flex flex-col justify-between transition cursor-pointer group shadow-lg">
+                    <div>
+                        <div class="aspect-square bg-white rounded-xl mb-2 flex items-center justify-center p-2 overflow-hidden">
+                            <img src="/images/products/but-thien-long.jpg" alt="Bút Thiên Long" class="max-h-full max-w-full object-contain group-hover:scale-105 transition" />
+                        </div>
+                        <div class="text-[10px] text-slate-400 flex justify-between font-mono">
+                            <span>TL-027</span>
+                            <span class="text-emerald-400 font-bold">Kho: 1.200</span>
+                        </div>
+                        <div class="font-bold text-xs text-white line-clamp-2 mt-0.5 leading-snug">Bút Bi Thiên Long TL-027 Xanh (0.7mm)</div>
+                    </div>
+                    <div class="pt-2 border-t border-slate-800 mt-2 space-y-1">
+                        <div class="flex items-baseline justify-between">
+                            <span class="text-sm font-black text-rose-400 font-mono">5.000₫</span>
+                            <span class="text-[10px] text-slate-400">/Cây</span>
+                        </div>
+                        <div class="text-[9px] text-amber-300 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20 flex justify-between">
+                            <span>Hộp 20 cây:</span>
+                            <span class="font-mono font-bold">90.000₫</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 4: Mực Brother TN-2385 -->
+                <div class="bg-[#0f1d40] border border-slate-800/80 hover:border-emerald-400 rounded-2xl p-3 flex flex-col justify-between transition cursor-pointer group shadow-lg">
+                    <div>
+                        <div class="aspect-square bg-white rounded-xl mb-2 flex items-center justify-center p-2 overflow-hidden">
+                            <img src="/images/products/eras/eras-e923-516.jpg" alt="Ô Eras E923" class="max-h-full max-w-full object-contain group-hover:scale-105 transition" />
+                        </div>
+                        <div class="text-[10px] text-slate-400 flex justify-between font-mono">
+                            <span>ERAS-E923</span>
+                            <span class="text-emerald-400 font-bold">Kho: 122</span>
+                        </div>
+                        <div class="font-bold text-xs text-white line-clamp-2 mt-0.5 leading-snug">Ô Gập Tự Động Eras E923 Cao Cấp</div>
+                    </div>
+                    <div class="pt-2 border-t border-slate-800 mt-2 space-y-1">
+                        <div class="flex items-baseline justify-between">
+                            <span class="text-sm font-black text-rose-400 font-mono">15.000₫</span>
+                            <span class="text-[10px] text-slate-400">/Cái</span>
+                        </div>
+                        <div class="text-[9px] text-amber-300 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20 flex justify-between">
+                            <span>Sỉ Lốc 10 cái:</span>
+                            <span class="font-mono font-bold">135.000₫</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 5: Dịch Vụ Nạp Mực Canon 2900 -->
+                <div class="bg-[#1e1b4b] border border-indigo-700/60 hover:border-indigo-400 rounded-2xl p-3 flex flex-col justify-between transition cursor-pointer group shadow-lg">
+                    <div>
+                        <div class="aspect-square bg-indigo-950/60 rounded-xl mb-2 flex items-center justify-center p-2 overflow-hidden text-3xl">
+                            🖨️
+                        </div>
+                        <div class="text-[10px] text-indigo-300 flex justify-between font-mono">
+                            <span>DV-NAPMUC</span>
+                            <span class="text-emerald-400 font-bold">Sẵn sàng</span>
+                        </div>
+                        <div class="font-bold text-xs text-white line-clamp-2 mt-0.5 leading-snug">Dịch Vụ Nạp Mực Máy In Laser Canon/HP Tận Nơi</div>
+                    </div>
+                    <div class="pt-2 border-t border-indigo-900 mt-2 space-y-1">
+                        <div class="flex items-baseline justify-between">
+                            <span class="text-sm font-black text-emerald-400 font-mono">100.000₫</span>
+                            <span class="text-[10px] text-slate-400">/Lần</span>
+                        </div>
+                        <div class="text-[9px] text-indigo-300 bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-500/20">
+                            Bảo hành đến hết hộp mực
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 6: Thay Trống Drum Canon 2900 -->
+                <div class="bg-[#1e1b4b] border border-indigo-700/60 hover:border-indigo-400 rounded-2xl p-3 flex flex-col justify-between transition cursor-pointer group shadow-lg">
+                    <div>
+                        <div class="aspect-square bg-indigo-950/60 rounded-xl mb-2 flex items-center justify-center p-2 overflow-hidden text-3xl">
+                            ⚙️
+                        </div>
+                        <div class="text-[10px] text-indigo-300 flex justify-between font-mono">
+                            <span>DV-DRUM12A</span>
+                            <span class="text-emerald-400 font-bold">Kho: 60</span>
+                        </div>
+                        <div class="font-bold text-xs text-white line-clamp-2 mt-0.5 leading-snug">Thay Trống Drum Phấn 12A / FX9 Siêu Mịn</div>
+                    </div>
+                    <div class="pt-2 border-t border-indigo-900 mt-2 space-y-1">
+                        <div class="flex items-baseline justify-between">
+                            <span class="text-sm font-black text-emerald-400 font-mono">150.000₫</span>
+                            <span class="text-[10px] text-slate-400">/Cái</span>
+                        </div>
+                        <div class="text-[9px] text-indigo-300 bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-500/20">
+                            Bao in nét, bảo hành 3 tháng
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: CURRENT CART & CHECKOUT TERMINAL (Width: 450px) -->
+        <div class="w-[440px] bg-[#0c1633] flex flex-col justify-between shrink-0 shadow-2xl">
+
+            <!-- Customer Info Strip -->
+            <div class="p-3 bg-[#081026] border-b border-slate-800 flex items-center justify-between text-xs">
+                <div class="flex items-center space-x-2">
+                    <span class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">👤</span>
+                    <div>
+                        <div class="font-bold text-white">Cty CP Đầu Tư Khang An</div>
+                        <div class="text-[10px] text-slate-400">0908.123.456 • Khách Doanh Nghiệp (B2B)</div>
+                    </div>
+                </div>
+                <button class="px-2 py-1 rounded bg-slate-800 text-[10px] text-slate-300 font-bold hover:bg-slate-700">Đổi (F4)</button>
+            </div>
+
+            <!-- Current Cart Items List -->
+            <div class="flex-1 overflow-y-auto p-3 space-y-2 no-scrollbar">
+
+                <!-- Item 1 -->
+                <div class="p-2.5 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center justify-between space-x-2">
+                    <div class="flex-1 min-w-0">
+                        <div class="font-bold text-xs text-white truncate">Giấy Double A A4 70gsm</div>
+                        <div class="text-[10px] text-amber-300 font-semibold">Quy cách: Thùng (5 Ram)</div>
+                        <div class="text-[11px] font-mono font-bold text-slate-300 mt-0.5">410.000₫ × 2</div>
+                    </div>
+                    <div class="flex items-center space-x-1.5">
+                        <button class="w-6 h-6 rounded bg-slate-800 text-slate-300 font-bold hover:bg-slate-700">-</button>
+                        <span class="w-6 text-center font-mono font-bold text-xs text-white">2</span>
+                        <button class="w-6 h-6 rounded bg-slate-800 text-slate-300 font-bold hover:bg-slate-700">+</button>
+                    </div>
+                    <div class="text-right font-mono font-bold text-xs text-emerald-400">
+                        820.000₫
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="p-2.5 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center justify-between space-x-2">
+                    <div class="flex-1 min-w-0">
+                        <div class="font-bold text-xs text-white truncate">Hộp Mực Cartridge 12A Canon 2900</div>
+                        <div class="text-[10px] text-slate-400">Bán lẻ: Hộp</div>
+                        <div class="text-[11px] font-mono font-bold text-slate-300 mt-0.5">250.000₫ × 1</div>
+                    </div>
+                    <div class="flex items-center space-x-1.5">
+                        <button class="w-6 h-6 rounded bg-slate-800 text-slate-300 font-bold hover:bg-slate-700">-</button>
+                        <span class="w-6 text-center font-mono font-bold text-xs text-white">1</span>
+                        <button class="w-6 h-6 rounded bg-slate-800 text-slate-300 font-bold hover:bg-slate-700">+</button>
+                    </div>
+                    <div class="text-right font-mono font-bold text-xs text-emerald-400">
+                        250.000₫
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="p-2.5 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center justify-between space-x-2">
+                    <div class="flex-1 min-w-0">
+                        <div class="font-bold text-xs text-white truncate">Nạp Mực Máy In Laser Tận Nơi</div>
+                        <div class="text-[10px] text-indigo-400 font-semibold">Phiếu sửa: SC-2026-0092</div>
+                        <div class="text-[11px] font-mono font-bold text-slate-300 mt-0.5">100.000₫ × 1</div>
+                    </div>
+                    <div class="flex items-center space-x-1.5">
+                        <button class="w-6 h-6 rounded bg-slate-800 text-slate-300 font-bold hover:bg-slate-700">-</button>
+                        <span class="w-6 text-center font-mono font-bold text-xs text-white">1</span>
+                        <button class="w-6 h-6 rounded bg-slate-800 text-slate-300 font-bold hover:bg-slate-700">+</button>
+                    </div>
+                    <div class="text-right font-mono font-bold text-xs text-emerald-400">
+                        100.000₫
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Invoice Summary & Payment Engine -->
+            <div class="p-4 bg-[#081026] border-t border-slate-800 space-y-3">
+
+                <!-- Totals Breakdown -->
+                <div class="space-y-1.5 text-xs">
+                    <div class="flex justify-between text-slate-400">
+                        <span>Tiền hàng (3 món):</span>
+                        <span class="font-mono text-white">1.170.000₫</span>
+                    </div>
+                    <div class="flex justify-between text-slate-400">
+                        <span>Chiết khấu Doanh nghiệp (5%):</span>
+                        <span class="font-mono text-emerald-400">- 58.500₫</span>
+                    </div>
+                    <div class="flex justify-between text-slate-400">
+                        <span>Thuế VAT (8%):</span>
+                        <span class="font-mono text-white">+ 88.920₫</span>
+                    </div>
+                    <div class="pt-2 border-t border-slate-800 flex justify-between items-baseline">
+                        <span class="font-black text-sm text-white">TỔNG THANH TOÁN:</span>
+                        <span class="font-black text-2xl font-mono text-emerald-400">1.200.420₫</span>
+                    </div>
+                </div>
+
+                <!-- Payment Methods Grid (VietQR / Tiền Mặt / Công nợ) -->
+                <div class="grid grid-cols-3 gap-2 pt-1">
+                    <button class="py-2.5 px-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl text-xs font-black shadow-lg shadow-emerald-900/30 flex flex-col items-center justify-center space-y-1 ring-2 ring-emerald-400">
+                        <span>📱 VietQR Động</span>
+                        <span class="text-[9px] font-normal opacity-90">Tự khớp tiền</span>
+                    </button>
+                    <button class="py-2.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold flex flex-col items-center justify-center space-y-1">
+                        <span>💵 Tiền Mặt</span>
+                        <span class="text-[9px] font-normal opacity-70">Nhập số tiền</span>
+                    </button>
+                    <button class="py-2.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold flex flex-col items-center justify-center space-y-1">
+                        <span>📑 Công Nợ 30N</span>
+                        <span class="text-[9px] font-normal opacity-70">Hợp đồng B2B</span>
+                    </button>
+                </div>
+
+                <!-- Big Checkout & Print Receipt Button (F9) -->
+                <button class="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-600 hover:to-teal-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-emerald-900/40 transition flex items-center justify-center space-x-2 transform active:scale-95">
+                    <span>XÁC NHẬN THANH TOÁN & IN BILL (F9)</span>
+                    <span class="text-base">→</span>
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

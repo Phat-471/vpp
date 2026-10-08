@@ -18,9 +18,9 @@ class PageResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $navigationGroup = 'Nội Dung & CMS';
+    protected static ?string $navigationGroup = 'Nội dung & trang web';
 
-    protected static ?string $navigationLabel = 'Trang nội dung & Chính sách';
+    protected static ?string $navigationLabel = 'Trang nội dung và chính sách';
 
     protected static ?string $modelLabel = 'Trang bài viết';
 
@@ -43,13 +43,13 @@ class PageResource extends Resource
                                     ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
 
                                 Forms\Components\TextInput::make('slug')
-                                    ->label('Đường dẫn tĩnh (Slug URL)')
+                                    ->label('Đường dẫn trang')
                                     ->required()
                                     ->unique(ignoreRecord: true)
                                     ->prefix(url('/trang') . '/'),
 
                                 Forms\Components\Textarea::make('summary')
-                                    ->label('Tóm tắt ngắn (Hiển thị đầu trang & thẻ meta)')
+                                    ->label('Mô tả ngắn (hiển thị ở đầu trang và trong thẻ meta)')
                                     ->rows(2),
 
                                 Forms\Components\RichEditor::make('content')
@@ -112,16 +112,16 @@ class PageResource extends Resource
                                     ->default(0),
                             ]),
 
-                        Forms\Components\Section::make('Tối ưu hóa SEO')
+                        Forms\Components\Section::make('Thiết lập SEO')
                             ->schema([
                                 Forms\Components\TextInput::make('meta_title')
-                                    ->label('Thẻ tiêu đề SEO (Meta Title)')
+                                    ->label('Tiêu đề SEO')
                                     ->placeholder('Tối đa 60 ký tự'),
 
                                 Forms\Components\Textarea::make('meta_description')
-                                    ->label('Mô tả SEO (Meta Description)')
+                                    ->label('Mô tả SEO')
                                     ->rows(3)
-                                    ->placeholder('Mô tả ngắn gọn khoảng 150-160 ký tự'),
+                                    ->placeholder('Nên viết khoảng 150–160 ký tự'),
                             ]),
                     ])
                     ->columnSpan(['lg' => 1]),

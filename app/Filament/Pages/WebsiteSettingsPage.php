@@ -21,11 +21,11 @@ class WebsiteSettingsPage extends Page implements HasForms
 
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static ?string $navigationGroup = 'Hệ Thống';
+    protected static ?string $navigationGroup = 'Hệ thống';
 
-    protected static ?string $navigationLabel = 'Cài đặt website & cửa hàng';
+    protected static ?string $navigationLabel = 'Cài đặt website và cửa hàng';
 
-    protected static ?string $title = 'Cài Đặt Website & Thông Tin Cửa Hàng';
+    protected static ?string $title = 'Cài đặt website và cửa hàng';
 
     protected static ?int $navigationSort = 1;
 
@@ -45,19 +45,19 @@ class WebsiteSettingsPage extends Page implements HasForms
             ->schema([
                 Tabs::make('SettingsTabs')
                     ->tabs([
-                        Tabs\Tab::make('Thông tin liên hệ & Cửa hàng')
+                        Tabs\Tab::make('Thông tin cửa hàng')
                             ->icon('heroicon-o-building-storefront')
                             ->schema([
                                 Grid::make(2)
                                     ->schema([
                                         TextInput::make('site_name')
-                                            ->label('Tên thương hiệu / Cửa hàng')
+                                            ->label('Tên thương hiệu hoặc cửa hàng')
                                             ->required()
-                                            ->placeholder('VPP & Thiết Bị Máy In Ánh Dương'),
+                                            ->placeholder('VPP và thiết bị máy in Ánh Dương'),
 
                                         TextInput::make('site_slogan')
-                                            ->label('Khẩu hiệu (Slogan)')
-                                            ->placeholder('Tổng Kho Văn Phòng Phẩm & Dịch Vụ Máy In Chuyên Nghiệp'),
+                                            ->label('Khẩu hiệu')
+                                            ->placeholder('Tổng kho văn phòng phẩm và dịch vụ máy in'),
                                     ]),
 
                                 Grid::make(3)
@@ -81,7 +81,7 @@ class WebsiteSettingsPage extends Page implements HasForms
                                 Grid::make(2)
                                     ->schema([
                                         TextInput::make('address')
-                                            ->label('Địa chỉ Showroom & Kho tổng')
+                                            ->label('Địa chỉ cửa hàng và kho')
                                             ->required()
                                             ->placeholder('Số 123 Đường Cầu Giấy, Cầu Giấy, Hà Nội'),
 
@@ -91,7 +91,7 @@ class WebsiteSettingsPage extends Page implements HasForms
                                     ]),
 
                                 Textarea::make('notice_bar_text')
-                                    ->label('Nội dung thanh thông báo đầu trang (Notice Bar)')
+                                    ->label('Thông báo hiển thị ở đầu trang')
                                     ->rows(2)
                                     ->placeholder('Thông báo khuyến mãi hoặc hỗ trợ kỹ thuật hiển thị trên cùng website'),
                             ]),
@@ -102,13 +102,13 @@ class WebsiteSettingsPage extends Page implements HasForms
                                 Grid::make(2)
                                     ->schema([
                                         TextInput::make('vietqr_bank_code')
-                                            ->label('Mã Ngân Hàng (Bank Code)')
+                                            ->label('Mã ngân hàng')
                                             ->helperText('VD: MB, VCB, TCB, ACB, ICB, BIDV...')
                                             ->required(),
 
                                         TextInput::make('vietqr_bank_name')
                                             ->label('Tên đầy đủ của ngân hàng')
-                                            ->placeholder('Ngân hàng TMCP Quân Đội (MB Bank)'),
+                                            ->placeholder('Ngân hàng TMCP Quân đội (MB)'),
                                     ]),
 
                                 Grid::make(2)
@@ -119,13 +119,13 @@ class WebsiteSettingsPage extends Page implements HasForms
                                             ->placeholder('190333888999'),
 
                                         TextInput::make('vietqr_account_name')
-                                            ->label('Tên chủ tài khoản (In hoa không dấu)')
+                                            ->label('Tên chủ tài khoản (viết hoa, không dấu)')
                                             ->required()
                                             ->placeholder('CONG TY TNHH VPP ANH DUONG'),
                                     ]),
                             ]),
 
-                        Tabs\Tab::make('Thuế VAT & Vận chuyển')
+                        Tabs\Tab::make('Thuế VAT và vận chuyển')
                             ->icon('heroicon-o-calculator')
                             ->schema([
                                 Grid::make(3)
@@ -142,22 +142,22 @@ class WebsiteSettingsPage extends Page implements HasForms
                                             ->numeric()
                                             ->suffix('₫')
                                             ->required()
-                                            ->helperText('Áp dụng cho các đơn hàng chưa đạt ngưỡng freeship'),
+                                            ->helperText('Áp dụng cho đơn hàng chưa đạt ngưỡng miễn phí vận chuyển.'),
 
                                         TextInput::make('freeship_threshold')
                                             ->label('Ngưỡng miễn phí vận chuyển (VNĐ)')
                                             ->numeric()
                                             ->suffix('₫')
                                             ->required()
-                                            ->helperText('Đơn hàng từ giá trị này trở lên sẽ được miễn phí giao'),
+                                            ->helperText('Đơn hàng đạt giá trị này sẽ được miễn phí vận chuyển.'),
                                     ]),
                             ]),
 
-                        Tabs\Tab::make('Pháp nhân xuất hóa đơn GTGT')
+                        Tabs\Tab::make('Thông tin xuất hóa đơn GTGT')
                             ->icon('heroicon-o-document-currency-dollar')
                             ->schema([
                                 TextInput::make('company_name')
-                                    ->label('Tên công ty / Doanh nghiệp xuất hóa đơn')
+                                    ->label('Tên đơn vị xuất hóa đơn')
                                     ->required()
                                     ->placeholder('CÔNG TY TNHH THƯƠNG MẠI VÀ DỊCH VỤ VPP ÁNH DƯƠNG'),
 
@@ -183,7 +183,7 @@ class WebsiteSettingsPage extends Page implements HasForms
     {
         return [
             Action::make('save')
-                ->label('Lưu tất cả cài đặt')
+                ->label('Lưu cài đặt')
                 ->icon('heroicon-o-check-circle')
                 ->submit('save'),
         ];
@@ -198,7 +198,7 @@ class WebsiteSettingsPage extends Page implements HasForms
         }
 
         Notification::make()
-            ->title('Đã cập nhật cài đặt website thành công!')
+            ->title('Đã cập nhật cài đặt website')
             ->body('Các thay đổi đã được áp dụng tức thì trên toàn bộ hệ thống và Storefront.')
             ->success()
             ->send();

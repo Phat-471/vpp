@@ -12,11 +12,11 @@ class FinancialReportPage extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-chart-bar-square';
 
-    protected static ?string $navigationGroup = 'Tài Chính & Thuế';
+    protected static ?string $navigationGroup = 'Tài chính & thuế';
 
-    protected static ?string $navigationLabel = 'Báo cáo doanh thu & Thuế VAT';
+    protected static ?string $navigationLabel = 'Báo cáo doanh thu và thuế VAT';
 
-    protected static ?string $title = 'Báo Cáo Tài Chính & Kê Khai Thuế GTGT';
+    protected static ?string $title = 'Báo cáo tài chính và thuế GTGT';
 
     protected static ?int $navigationSort = 1;
 

@@ -14,11 +14,11 @@ class LiveChatPage extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
-    protected static ?string $navigationGroup = 'CSKH & Tương Tác';
+    protected static ?string $navigationGroup = 'Chăm sóc khách hàng';
 
-    protected static ?string $navigationLabel = 'Hỗ trợ trực tuyến (Live Chat)';
+    protected static ?string $navigationLabel = 'Hỗ trợ trực tuyến';
 
-    protected static ?string $title = 'Trung Tâm Live Chat & CSKH Trực Tuyến';
+    protected static ?string $title = 'Hỗ trợ khách hàng trực tuyến';
 
     protected static ?int $navigationSort = 1;
 
@@ -67,7 +67,7 @@ class LiveChatPage extends Page
 
         $session = ChatSession::find($this->selectedSessionId);
         if (!$session) {
-            Notification::make()->title('Không tìm thấy phiên chat!')->danger()->send();
+            Notification::make()->title('Không tìm thấy phiên trò chuyện')->danger()->send();
             return;
         }
 
@@ -91,7 +91,7 @@ class LiveChatPage extends Page
         $this->replyMessage = '';
 
         Notification::make()
-            ->title('Đã gửi phản hồi cho khách hàng')
+            ->title('Đã gửi trả lời cho khách hàng')
             ->success()
             ->send();
     }
@@ -111,7 +111,7 @@ class LiveChatPage extends Page
             $session->update(['status' => $newStatus]);
 
             Notification::make()
-                ->title($newStatus === 'active' ? 'Đã mở lại phiên chat' : 'Đã đóng phiên chat')
+                ->title($newStatus === 'active' ? 'Đã mở lại phiên trò chuyện' : 'Đã đóng phiên trò chuyện')
                 ->info()
                 ->send();
         }

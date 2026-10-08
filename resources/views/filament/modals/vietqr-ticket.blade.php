@@ -14,11 +14,11 @@
             Số tiền cần thanh toán: <span class="text-lg font-bold">{{ number_format($amount, 0, ',', '.') }} ₫</span>
         </div>
         <div class="text-xs text-emerald-700 dark:text-emerald-400 mt-1">
-            Nội dung chuyển khoản chuẩn: <code class="font-mono font-bold bg-white dark:bg-gray-800 px-2 py-0.5 rounded">{{ $ticket->ticket_code }}</code>
+            Nội dung chuyển khoản: <code class="font-mono font-bold bg-white dark:bg-gray-800 px-2 py-0.5 rounded">{{ $ticket->ticket_code }}</code>
         </div>
     </div>
 
     <p class="text-xs text-gray-500 mt-3 italic">
-        * Webhook SePay/Casso sẽ tự động nhận diện và cập nhật trạng thái phiếu sau 3-5 giây khi tiền vào tài khoản.
+        Webhook từ SePay/Casso sẽ tự nhận diện giao dịch và cập nhật trạng thái phiếu sau khi tiền vào tài khoản.
     </p>
 </div>

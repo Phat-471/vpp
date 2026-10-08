@@ -8,11 +8,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+    <link rel="stylesheet" href="{{ asset('css/storefront.css') }}?v=20261008-2">
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col justify-between antialiased selection:bg-indigo-600 selection:text-white">
 
     <!-- Header Navigation -->
-    <header class="bg-white sticky top-0 z-40 border-b border-slate-200 shadow-sm">
+    <header class="shop-site-header bg-white sticky top-0 z-40 border-b border-slate-200 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16 sm:h-20">
                 <a href="{{ url('/') }}" class="flex items-center space-x-3 group">
@@ -21,7 +22,7 @@
                     </div>
                     <div>
                         <span class="text-base sm:text-xl font-black tracking-tight text-slate-900 block leading-tight">
-                            VPP & DỊCH VỤ MÁY IN
+                            {{ $storefrontSettings['site_name'] }}
                         </span>
                         <span class="text-[11px] text-indigo-600 font-semibold tracking-wider uppercase block">
                             Chính Sách Bảo Mật Dữ Liệu
@@ -155,7 +156,7 @@
                     <ul class="list-disc pl-5 space-y-1.5 text-slate-600">
                         <li>Kiểm tra, cập nhật hoặc điều chỉnh thông tin cá nhân của mình.</li>
                         <li>Yêu cầu xóa toàn bộ lịch sử đơn hàng và số điện thoại khỏi hệ thống sau khi đã hoàn tất hợp đồng và hết thời hạn bảo hành.</li>
-                        <li>Mọi yêu cầu xin liên hệ trực tiếp hotline quản lý: <b>0901.234.567</b> (Zalo) hoặc email hỗ trợ: <b>hotro@vpp.local</b>.</li>
+                        <li>Mọi yêu cầu xin liên hệ hotline: <b>{{ $storefrontSettings['hotline'] }}</b>, Zalo: <b>{{ $storefrontSettings['zalo'] }}</b> hoặc email hỗ trợ: <b>{{ $storefrontSettings['email'] }}</b>.</li>
                     </ul>
                 </div>
             </section>
@@ -168,7 +169,7 @@
     <footer class="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
             <p>© 2026 Cửa Hàng Văn Phòng Phẩm & Dịch Vụ Máy In. Mọi quyền được bảo lưu.</p>
-            <p class="text-slate-500">Địa chỉ: 123 Đường Văn Phòng Phẩm, P. Bến Nghé, Q.1, TP.HCM • Hotline: 0901.234.567</p>
+            <p class="text-slate-500">Địa chỉ: {{ $storefrontSettings['address'] }} • Hotline: {{ $storefrontSettings['hotline'] }}</p>
         </div>
     </footer>
 

@@ -13,8 +13,15 @@
         <span class="text-slate-900 font-bold">Chính sách & Đăng ký đại lý</span>
     </nav>
 
-    <!-- Hero Banner Đại Lý -->
-    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-900 text-white p-6 sm:p-12 shadow-xl border border-indigo-800">
+    <!-- Hero Banner Đại Lý (Có hình ảnh nền thực tế sang trọng) -->
+    <div class="relative overflow-hidden rounded-3xl text-white p-6 sm:p-12 shadow-2xl border border-slate-700/60 group">
+        <!-- Background Image with Dark Gradient Tint Overlay -->
+        <div class="absolute inset-0 z-0">
+            <img src="{{ asset('images/banners/banner6.jpg') }}" alt="Đối Tác Doanh Nghiệp & Đại Lý" class="w-full h-full object-cover object-center transform group-hover:scale-105 transition duration-700 opacity-25" />
+            <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-[#0f172a]/95 to-indigo-950/90"></div>
+            <div class="absolute -right-12 -bottom-12 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+        </div>
+
         <div class="relative z-10 max-w-3xl space-y-4">
             <span class="inline-block px-3 py-1 bg-amber-400 text-slate-950 font-black text-xs rounded-full uppercase tracking-wider shadow-xs">
                 ⭐ CHÍNH SÁCH ĐỐI TÁC DOANH NGHIỆP & ĐẠI LÝ 2026
@@ -37,8 +44,6 @@
                 </span>
             </div>
         </div>
-
-        <div class="absolute -right-12 -bottom-12 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
     </div>
 
     <!-- 4 Quyền Lợi Cốt Lõi Cho Đại Lý -->
@@ -205,12 +210,12 @@
                     Quý khách có thể gửi trực tiếp danh mục file Excel qua Zalo của Giám đốc kinh doanh để nhận báo giá chiết khấu kèm mẫu hợp đồng:
                 </p>
                 <div class="pt-2 space-y-2">
-                    <a href="https://zalo.me/0901234567" target="_blank" class="w-full py-3 px-4 bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs rounded-xl flex items-center justify-center space-x-2 shadow-xs transition">
+                    <a href="{{ $storefrontSettings['zalo_url'] }}" target="_blank" class="w-full py-3 px-4 bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs rounded-xl flex items-center justify-center space-x-2 shadow-xs transition">
                         <span>💬</span>
                         <span>Nhắn Zalo Gửi Danh Mục Báo Giá</span>
                     </a>
-                    <a href="tel:0901234567" class="w-full py-3 px-4 bg-white text-slate-900 hover:bg-slate-100 font-bold text-xs rounded-xl flex items-center justify-center space-x-2 transition">
-                        <span>📞 Hotline: 0901.234.567</span>
+                    <a href="{{ $storefrontSettings['hotline_url'] }}" class="w-full py-3 px-4 bg-white text-slate-900 hover:bg-slate-100 font-bold text-xs rounded-xl flex items-center justify-center space-x-2 transition">
+                        <span>📞 Hotline: {{ $storefrontSettings['hotline'] }}</span>
                     </a>
                 </div>
             </div>

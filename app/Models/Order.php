@@ -27,6 +27,8 @@ class Order extends Model
         'tax_amount',
         'grand_total',
         'paid_amount',
+        'cash_received',
+        'receipt_confirmed_at',
         'payment_status',
         'payment_method',
         'is_vat_invoice',
@@ -50,6 +52,8 @@ class Order extends Model
             'tax_amount' => 'decimal:2',
             'grand_total' => 'decimal:2',
             'paid_amount' => 'decimal:2',
+            'cash_received' => 'integer',
+            'receipt_confirmed_at' => 'datetime',
         ];
     }
 
@@ -60,9 +64,9 @@ class Order extends Model
                 $order->uuid = (string) Str::uuid();
             }
             if (empty($order->order_code)) {
-                $prefix = 'HD' . date('y');
+                $prefix = 'HD'.date('y');
                 $latest = static::where('order_code', 'LIKE', "{$prefix}%")->count();
-                $order->order_code = $prefix . str_pad($latest + 1, 4, '0', STR_PAD_LEFT);
+                $order->order_code = $prefix.str_pad($latest + 1, 4, '0', STR_PAD_LEFT);
             }
         });
     }

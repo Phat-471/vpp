@@ -18,13 +18,13 @@ class OrderResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
 
-    protected static ?string $navigationGroup = 'Bán Hàng & Thu Ngân';
+    protected static ?string $navigationGroup = 'Quản lý bán hàng';
 
-    protected static ?string $navigationLabel = 'Đơn bán lẻ (POS)';
+    protected static ?string $navigationLabel = 'Đơn hàng & Xuất kho';
 
-    protected static ?string $modelLabel = 'Đơn bán lẻ';
+    protected static ?string $modelLabel = 'Đơn hàng';
 
-    protected static ?string $pluralModelLabel = 'Danh sách đơn bán lẻ';
+    protected static ?string $pluralModelLabel = 'Danh sách đơn hàng';
 
     protected static ?int $navigationSort = 1;
 
@@ -34,7 +34,7 @@ class OrderResource extends Resource
             ->schema([
                 Forms\Components\Group::make()
                     ->schema([
-                        Forms\Components\Section::make('Khách hàng & Kênh bán')
+                        Forms\Components\Section::make('Khách hàng và kênh bán')
                             ->schema([
                                 Forms\Components\Grid::make(3)
                                     ->schema([
@@ -86,7 +86,7 @@ class OrderResource extends Resource
                                             ->required(),
                                     ]),
 
-                                Forms\Components\Section::make('Xuất Hóa Đơn Giá Trị Gia Tăng (VAT)')
+                                Forms\Components\Section::make('Hóa đơn giá trị gia tăng (VAT)')
                                     ->collapsible()
                                     ->schema([
                                         Forms\Components\Toggle::make('is_vat_invoice')
@@ -105,7 +105,7 @@ class OrderResource extends Resource
                                                     ->placeholder('0101234567'),
 
                                                 Forms\Components\TextInput::make('company_address')
-                                                    ->label('Địa chỉ công ty trên ĐKKD')
+                                                    ->label('Địa chỉ đăng ký kinh doanh')
                                                     ->placeholder('Số 10 phố...'),
 
                                                 Forms\Components\TextInput::make('invoice_email')
@@ -148,14 +148,14 @@ class OrderResource extends Resource
                                             ->columnSpan(2),
 
                                         Forms\Components\TextInput::make('quantity')
-                                            ->label('SL')
+                                            ->label('Số lượng')
                                             ->numeric()
                                             ->default(1)
                                             ->required()
                                             ->live(),
 
                                         Forms\Components\TextInput::make('unit_name')
-                                            ->label('ĐVT')
+                                            ->label('Đơn vị tính')
                                             ->default('Cái')
                                             ->required(),
 
@@ -175,7 +175,7 @@ class OrderResource extends Resource
 
                 Forms\Components\Group::make()
                     ->schema([
-                        Forms\Components\Section::make('Tổng tiền & Thanh toán')
+                        Forms\Components\Section::make('Tổng tiền và thanh toán')
                             ->schema([
                                 Forms\Components\TextInput::make('subtotal')
                                     ->label('Tiền hàng')
@@ -185,7 +185,7 @@ class OrderResource extends Resource
                                     ->dehydrated(),
 
                                 Forms\Components\TextInput::make('discount_amount')
-                                    ->label('Giảm giá / Chiết khấu')
+                                    ->label('Mức giảm giá')
                                     ->numeric()
                                     ->prefix('₫')
                                     ->default(0)
@@ -206,7 +206,7 @@ class OrderResource extends Resource
                                     ->dehydrated(),
 
                                 Forms\Components\TextInput::make('paid_amount')
-                                    ->label('Tiền khách đưa')
+                                    ->label('Tiền khách thanh toán')
                                     ->numeric()
                                     ->prefix('₫')
                                     ->default(0)
@@ -305,14 +305,14 @@ class OrderResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('print')
-                    ->label('In bill lẻ')
+                    ->label('In bill')
                     ->icon('heroicon-o-printer')
                     ->color('info')
                     ->url(fn (Order $record) => url("/print/order/{$record->id}"))
                     ->openUrlInNewTab(),
 
                 Tables\Actions\Action::make('print_vat')
-                    ->label('In hóa đơn VAT')
+                    ->label('In VAT')
                     ->icon('heroicon-o-document-currency-dollar')
                     ->color('primary')
                     ->url(fn (Order $record) => url("/print/vat-invoice/{$record->id}"))

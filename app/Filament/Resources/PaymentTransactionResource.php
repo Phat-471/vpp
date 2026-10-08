@@ -17,9 +17,9 @@ class PaymentTransactionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
 
-    protected static ?string $navigationGroup = 'Tài Chính & Thuế';
+    protected static ?string $navigationGroup = 'Tài chính & thuế';
 
-    protected static ?string $navigationLabel = 'Lịch sử Webhook SePay / Casso';
+    protected static ?string $navigationLabel = 'Lịch sử thanh toán SePay / Casso';
 
     protected static ?string $modelLabel = 'Giao dịch ngân hàng';
 
@@ -49,9 +49,9 @@ class PaymentTransactionResource extends Resource
                 Forms\Components\Textarea::make('description')
                     ->label('Nội dung chuyển khoản'),
                 Forms\Components\DateTimePicker::make('transaction_time')
-                    ->label('Thời gian biến động'),
+                    ->label('Thời gian giao dịch'),
                 Forms\Components\Select::make('status')
-                    ->label('Trạng thái khớp lệnh')
+                    ->label('Kết quả đối soát')
                     ->options([
                         'processed' => 'Đã khớp & ghi nhận thanh toán',
                         'unmatched' => 'Không tìm thấy đơn/phiếu khớp',
@@ -129,7 +129,7 @@ class PaymentTransactionResource extends Resource
             ])
             ->headerActions([
                 Tables\Actions\Action::make('simulate_webhook')
-                    ->label('⚡ Bắn thử Webhook (Simulator Test)')
+                    ->label('⚡ Gửi webhook thử (mô phỏng)')
                     ->icon('heroicon-o-bolt')
                     ->color('warning')
                     ->form([
@@ -176,13 +176,13 @@ class PaymentTransactionResource extends Resource
 
                         if ($matched) {
                             Notification::make()
-                                ->title('Khớp lệnh Webhook thành công!')
+                                ->title('Đã đối soát webhook')
                                 ->body("Đơn/Phiếu {$data['reference_code']} đã được tự động cập nhật thanh toán +{$data['amount']} đ.")
                                 ->success()
                                 ->send();
                         } else {
                             Notification::make()
-                                ->title('Ghi nhận giao dịch nhưng không tìm thấy đơn khớp')
+                                ->title('Đã ghi nhận giao dịch nhưng chưa tìm thấy đơn hàng hoặc phiếu sửa chữa tương ứng')
                                 ->body("Không tìm thấy đơn hàng hoặc phiếu sửa nào có mã {$data['reference_code']}.")
                                 ->warning()
                                 ->send();

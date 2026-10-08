@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class RepairTicketResource extends Resource
 {
@@ -22,7 +23,7 @@ class RepairTicketResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
 
-    protected static ?string $navigationGroup = 'Dịch Vụ Kỹ Thuật';
+    protected static ?string $navigationGroup = 'Dịch vụ kỹ thuật';
 
     protected static ?string $navigationLabel = 'Phiếu sửa chữa máy in';
 
@@ -108,7 +109,7 @@ class RepairTicketResource extends Resource
                                             ->required(),
 
                                         Forms\Components\TextInput::make('serial_number')
-                                            ->label('Số Serial / Tem máy')
+                                            ->label('Số sê-ri / tem máy')
                                             ->placeholder('Nếu có'),
                                     ]),
 
@@ -126,22 +127,22 @@ class RepairTicketResource extends Resource
                                     ]),
 
                                 Forms\Components\Textarea::make('issue_description')
-                                    ->label('Hiện trạng lỗi khách báo')
+                                    ->label('Mô tả tình trạng máy')
                                     ->placeholder('VD: Kẹt giấy liên tục, bản in bị sọc đen, máy kêu rè rè, không nhận lệnh in...')
                                     ->required()
                                     ->rows(3),
 
                                 Forms\Components\Radio::make('intake_flow')
-                                    ->label('Nhánh quy trình tiếp nhận')
+                                    ->label('Cách tiếp nhận sửa chữa')
                                     ->options([
-                                        'quote_immediate' => 'Nhánh 1: Thợ có mặt báo giá ngay (chuyển thẳng sang Đang sửa)',
-                                        'quote_later' => 'Nhánh 2: Tiếp nhận trước - Tháo máy chẩn đoán báo giá sau qua điện thoại',
+                                        'quote_immediate' => '1. Báo giá ngay khi tiếp nhận (chuyển sang trạng thái Đang sửa)',
+                                        'quote_later' => '2. Tiếp nhận máy, kiểm tra và báo giá sau qua điện thoại',
                                     ])
                                     ->default('quote_immediate')
                                     ->inline(),
                             ]),
 
-                        Forms\Components\Section::make('2. Chẩn đoán kỹ thuật & Linh kiện thay thế (Trừ kho VPP)')
+                        Forms\Components\Section::make('2. Chẩn đoán kỹ thuật và linh kiện thay thế (trừ kho)')
                             ->schema([
                                 Forms\Components\Grid::make(2)
                                     ->schema([
@@ -168,11 +169,11 @@ class RepairTicketResource extends Resource
 
                                 Forms\Components\Textarea::make('technician_diagnosis')
                                     ->label('Ghi chú chẩn đoán của kỹ thuật viên')
-                                    ->placeholder('Nguyên nhân hư hỏng, tình trạng sấy, drum, gạt, nhông kéo...')
+                                    ->placeholder('Ví dụ: lỗi cụm sấy, trống mực, gạt mực hoặc bánh răng kéo giấy...')
                                     ->rows(2),
 
                                 Forms\Components\Repeater::make('repairItems')
-                                    ->label('Linh kiện & Hộp mực thay thế (Tự động trừ kho VPP)')
+                                    ->label('Linh kiện và hộp mực thay thế (tự động trừ kho)')
                                     ->relationship('repairItems')
                                     ->schema([
                                         Forms\Components\Select::make('product_id')
@@ -199,14 +200,14 @@ class RepairTicketResource extends Resource
                                             ->columnSpan(2),
 
                                         Forms\Components\TextInput::make('quantity')
-                                            ->label('SL')
+                                            ->label('Số lượng')
                                             ->numeric()
                                             ->default(1)
                                             ->live()
                                             ->required(),
 
                                         Forms\Components\TextInput::make('unit')
-                                            ->label('ĐVT')
+                                            ->label('Đơn vị tính')
                                             ->default('Cái')
                                             ->required(),
 
@@ -226,10 +227,10 @@ class RepairTicketResource extends Resource
 
                 Forms\Components\Group::make()
                     ->schema([
-                        Forms\Components\Section::make('3. Chi phí & Thanh toán')
+                        Forms\Components\Section::make('3. Chi phí và thanh toán')
                             ->schema([
                                 Forms\Components\TextInput::make('labor_fee')
-                                    ->label('Tiền công thợ')
+                                    ->label('Tiền công sửa chữa')
                                     ->numeric()
                                     ->prefix('₫')
                                     ->default(0)
@@ -243,7 +244,7 @@ class RepairTicketResource extends Resource
                                     ->dehydrated(),
 
                                 Forms\Components\TextInput::make('discount_amount')
-                                    ->label('Chiết khấu / Giảm giá')
+                                    ->label('Mức giảm giá')
                                     ->numeric()
                                     ->prefix('₫')
                                     ->default(0)

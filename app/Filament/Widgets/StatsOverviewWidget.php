@@ -29,23 +29,23 @@ class StatsOverviewWidget extends BaseWidget
             ->sum('grand_total');
 
         return [
-            Stat::make('Doanh Thu Hôm Nay', AppHelper::formatMoney($todayRevenue))
+            Stat::make('Doanh thu hôm nay', AppHelper::formatMoney($todayRevenue))
                 ->description("{$todayCount} đơn hàng đã hoàn tất")
                 ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->chart([30, 45, 60, 40, 75, 90, max(10, (int)($todayRevenue / 100000))])
                 ->color('success'),
 
-            Stat::make('Máy In Đang Sửa Chữa', "{$activeRepairs} máy")
-                ->description('Đang tiếp nhận, kiểm tra & xử lý')
+            Stat::make('Máy in đang sửa chữa', "{$activeRepairs} máy")
+                ->description('Đang tiếp nhận hoặc xử lý')
                 ->descriptionIcon('heroicon-m-wrench-screwdriver')
                 ->color($activeRepairs > 0 ? 'warning' : 'gray'),
 
-            Stat::make('Cảnh Báo Hết Hàng', "{$lowStockCount} mặt hàng")
+            Stat::make('Sản phẩm sắp hết hàng', "{$lowStockCount} sản phẩm")
                 ->description('Tồn kho dưới ngưỡng an toàn')
                 ->descriptionIcon('heroicon-m-exclamation-triangle')
                 ->color($lowStockCount > 0 ? 'danger' : 'success'),
 
-            Stat::make('Doanh Thu Tháng ' . now()->month, AppHelper::formatMoney($monthRevenue))
+            Stat::make('Doanh thu tháng ' . now()->month, AppHelper::formatMoney($monthRevenue))
                 ->description('Tổng thu bán lẻ & dịch vụ')
                 ->descriptionIcon('heroicon-m-calendar-days')
                 ->color('primary'),

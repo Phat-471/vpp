@@ -8,11 +8,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+    <link rel="stylesheet" href="{{ asset('css/storefront.css') }}?v=20261008-2">
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col justify-between antialiased selection:bg-indigo-600 selection:text-white">
 
     <!-- Header Navigation -->
-    <header class="bg-white sticky top-0 z-40 border-b border-slate-200 shadow-sm">
+    <header class="shop-site-header bg-white sticky top-0 z-40 border-b border-slate-200 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16 sm:h-20">
                 <a href="{{ url('/') }}" class="flex items-center space-x-3 group">
@@ -21,7 +22,7 @@
                     </div>
                     <div>
                         <span class="text-base sm:text-xl font-black tracking-tight text-slate-900 block leading-tight">
-                            VPP & DỊCH VỤ MÁY IN
+                            {{ $storefrontSettings['site_name'] }}
                         </span>
                         <span class="text-[11px] text-indigo-600 font-semibold tracking-wider uppercase block">
                             Giới Thiệu Về Cửa Hàng
@@ -220,23 +221,23 @@
                 <div class="space-y-2.5 text-slate-600">
                     <p class="flex items-start space-x-2">
                         <span class="text-indigo-600 font-bold">🏢 Địa chỉ:</span>
-                        <span>123 Đường Văn Phòng Phẩm, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh</span>
+                        <span>{{ $storefrontSettings['address'] }}</span>
                     </p>
                     <p class="flex items-start space-x-2">
                         <span class="text-indigo-600 font-bold">⏰ Giờ hoạt động:</span>
-                        <span>7h30 - 20h00 (Tất cả các ngày trong tuần, kể cả Thứ 7 và Chủ Nhật)</span>
+                        <span>{{ $storefrontSettings['opening_hours'] }}</span>
                     </p>
                     <p class="flex items-start space-x-2">
                         <span class="text-indigo-600 font-bold">📞 Hotline bán hàng:</span>
-                        <a href="tel:0901234567" class="text-rose-600 font-bold hover:underline">0901.234.567</a>
+                        <a href="{{ $storefrontSettings['hotline_url'] }}" class="text-rose-600 font-bold hover:underline">{{ $storefrontSettings['hotline'] }}</a>
                     </p>
                     <p class="flex items-start space-x-2">
                         <span class="text-indigo-600 font-bold">💬 Zalo hỗ trợ kỹ thuật:</span>
-                        <a href="https://zalo.me/0901234567" target="_blank" class="text-sky-600 font-bold hover:underline">0901.234.567</a>
+                        <a href="{{ $storefrontSettings['zalo_url'] }}" target="_blank" class="text-sky-600 font-bold hover:underline">{{ $storefrontSettings['zalo'] }}</a>
                     </p>
                     <p class="flex items-start space-x-2">
                         <span class="text-indigo-600 font-bold">✉️ Email liên hệ:</span>
-                        <span>hotro@vpp.local</span>
+                        <span>{{ $storefrontSettings['email'] }}</span>
                     </p>
                 </div>
             </div>
@@ -250,7 +251,7 @@
                     Liên hệ ngay với bộ phận kinh doanh để nhận bảng báo giá chiết khấu đặc biệt dành riêng cho công ty, trường học và đại lý.
                 </p>
                 <div class="pt-2 flex flex-col sm:flex-row gap-2 justify-center">
-                    <a href="https://zalo.me/0901234567" target="_blank" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs shadow transition">
+                    <a href="{{ $storefrontSettings['zalo_url'] }}" target="_blank" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs shadow transition">
                         Nhắn Zalo Nhận Báo Giá
                     </a>
                     <a href="{{ url('/') }}" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs shadow transition">
@@ -266,7 +267,7 @@
     <footer class="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
             <p>© 2026 Cửa Hàng Văn Phòng Phẩm & Dịch Vụ Máy In. Mọi quyền được bảo lưu.</p>
-            <p class="text-slate-500">Địa chỉ: 123 Đường Văn Phòng Phẩm, P. Bến Nghé, Q.1, TP.HCM • Hotline: 0901.234.567</p>
+            <p class="text-slate-500">Địa chỉ: {{ $storefrontSettings['address'] }} • Hotline: {{ $storefrontSettings['hotline'] }}</p>
             <div class="flex justify-center space-x-4 pt-2 text-[11px]">
                 <a href="{{ url('/') }}" class="hover:text-white transition">Trang Chủ</a>
                 <span>•</span>

@@ -8,7 +8,7 @@ use Illuminate\Support\Carbon;
 
 class RevenueChartWidget extends ChartWidget
 {
-    protected static ?string $heading = 'Biểu Đồ Doanh Thu 7 Ngày Gần Nhất';
+    protected static ?string $heading = 'Doanh thu trong 7 ngày gần nhất';
 
     protected static ?int $sort = 2;
 
@@ -37,8 +37,8 @@ class RevenueChartWidget extends ChartWidget
                 [
                     'label' => 'Doanh thu (VNĐ)',
                     'data' => $data,
-                    'borderColor' => '#4f46e5',
-                    'backgroundColor' => 'rgba(79, 70, 229, 0.15)',
+                    'borderColor' => '#e66a3c',
+                    'backgroundColor' => 'rgba(230, 106, 60, 0.14)',
                     'fill' => true,
                     'tension' => 0.4,
                 ],

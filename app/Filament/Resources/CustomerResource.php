@@ -16,7 +16,7 @@ class CustomerResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $navigationGroup = 'CSKH & Tương Tác';
+    protected static ?string $navigationGroup = 'Chăm sóc khách hàng';
 
     protected static ?string $navigationLabel = 'Khách hàng';
 
@@ -29,7 +29,7 @@ class CustomerResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->label('Họ tên khách hàng / Đơn vị')
+                    ->label('Tên khách hàng hoặc đơn vị')
                     ->required()
                     ->maxLength(100),
 
@@ -68,19 +68,27 @@ class CustomerResource extends Resource
 
                 Tables\Columns\TextColumn::make('phone')
                     ->label('Số điện thoại')
-                    ->searchable(),
+                    ->searchable()
+                    ->description(fn (Customer $c) => $c->zalo_name ? "Zalo: {$c->zalo_name}" : null),
+
+                Tables\Columns\TextColumn::make('activation_status')
+                    ->label('Trạng thái tài khoản')
+                    ->badge()
+                    ->state(fn (Customer $c) => $c->isActivated() ? 'Đã kích hoạt' : 'Chưa kích hoạt')
+                    ->color(fn (Customer $c) => $c->isActivated() ? 'success' : 'warning')
+                    ->icon(fn (Customer $c) => $c->isActivated() ? 'heroicon-m-check-badge' : 'heroicon-m-clock'),
 
                 Tables\Columns\TextColumn::make('address')
                     ->label('Địa chỉ')
-                    ->limit(40),
+                    ->limit(30),
 
                 Tables\Columns\TextColumn::make('repair_tickets_count')
-                    ->label('Lượt sửa máy')
+                    ->label('Lượt sửa chữa')
                     ->counts('repairTickets')
                     ->badge(),
 
                 Tables\Columns\TextColumn::make('orders_count')
-                    ->label('Đơn hàng mua')
+                    ->label('Đơn hàng')
                     ->counts('orders')
                     ->badge(),
 

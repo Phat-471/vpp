@@ -16,7 +16,7 @@ class PrinterModelResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-printer';
 
-    protected static ?string $navigationGroup = 'Dịch Vụ Kỹ Thuật';
+    protected static ?string $navigationGroup = 'Dịch vụ kỹ thuật';
 
     protected static ?string $navigationLabel = 'Dòng máy in phổ biến';
 
@@ -36,7 +36,7 @@ class PrinterModelResource extends Resource
                     ->required(),
 
                 Forms\Components\TextInput::make('model_name')
-                    ->label('Tên Model')
+                    ->label('Tên dòng máy')
                     ->placeholder('LBP 2900, 107a, HL-L2321D...')
                     ->required(),
 
@@ -46,13 +46,13 @@ class PrinterModelResource extends Resource
                     ->required(),
 
                 Forms\Components\TextInput::make('compatible_cartridges')
-                    ->label('Mã hộp mực / Cụm drum tương thích')
-                    ->placeholder('Cartridge 12A/303, TN-2385...')
+                    ->label('Mã hộp mực hoặc cụm trống tương thích')
+                    ->placeholder('Ví dụ: Cartridge 12A/303, TN-2385...')
                     ->columnSpanFull(),
 
                 Forms\Components\Textarea::make('notes')
                     ->label('Ghi chú kỹ thuật')
-                    ->placeholder('Lưu ý khi thay thế linh kiện, cách reset nhông, mã chip...')
+                    ->placeholder('Lưu ý khi thay linh kiện, đặt lại bánh răng hoặc mã chip...')
                     ->rows(3)
                     ->columnSpanFull(),
             ]);
@@ -69,7 +69,7 @@ class PrinterModelResource extends Resource
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('model_name')
-                    ->label('Tên Model')
+                    ->label('Tên dòng máy')
                     ->weight('bold')
                     ->searchable()
                     ->sortable(),

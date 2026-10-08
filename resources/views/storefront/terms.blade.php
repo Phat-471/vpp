@@ -8,11 +8,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+    <link rel="stylesheet" href="{{ asset('css/storefront.css') }}?v=20261008-2">
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col justify-between antialiased selection:bg-indigo-600 selection:text-white">
 
     <!-- Header Navigation -->
-    <header class="bg-white sticky top-0 z-40 border-b border-slate-200 shadow-sm">
+    <header class="shop-site-header bg-white sticky top-0 z-40 border-b border-slate-200 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16 sm:h-20">
                 <a href="{{ url('/') }}" class="flex items-center space-x-3 group">
@@ -21,7 +22,7 @@
                     </div>
                     <div>
                         <span class="text-base sm:text-xl font-black tracking-tight text-slate-900 block leading-tight">
-                            VPP & DỊCH VỤ MÁY IN
+                            {{ $storefrontSettings['site_name'] }}
                         </span>
                         <span class="text-[11px] text-indigo-600 font-semibold tracking-wider uppercase block">
                             Chính Sách Mua Hàng & Dịch Vụ
@@ -80,8 +81,8 @@
                     <p>Khách hàng có thể dễ dàng đặt mua hàng thông qua 4 kênh chính thức:</p>
                     <ul class="list-disc pl-5 space-y-1.5 text-slate-600">
                         <li><b>Đặt hàng online qua Website:</b> Thêm sản phẩm vào giỏ hàng và điền địa chỉ nhận hàng mà <b>không cần tạo tài khoản rườm rà</b>. Hệ thống tự động ghi nhận và nhân viên sẽ liên hệ xác nhận trong 5-10 phút.</li>
-                        <li><b>Đặt hàng qua Hotline / Zalo:</b> Gọi điện hoặc gửi danh sách sản phẩm cần mua qua Zalo <b>0901.234.567</b> để nhận báo giá sỉ chiết khấu ngay.</li>
-                        <li><b>Mua hàng trực tiếp tại cửa hàng:</b> Ghé địa chỉ <i>123 Đường Văn Phòng Phẩm, P. Bến Nghé, Q.1, TP.HCM</i> để xem mẫu thực tế và nhận hóa đơn ngay.</li>
+                        <li><b>Đặt hàng qua Hotline / Zalo:</b> Gọi điện hoặc gửi danh sách sản phẩm cần mua qua Zalo <b>{{ $storefrontSettings['hotline'] }}</b> để nhận báo giá sỉ chiết khấu ngay.</li>
+                        <li><b>Mua hàng trực tiếp tại cửa hàng:</b> Ghé địa chỉ <i>{{ $storefrontSettings['address'] }}</i> để xem mẫu thực tế và nhận hóa đơn ngay.</li>
                         <li><b>Đặt lịch sửa máy in & nạp mực tận nơi:</b> Điền form đặt hẹn trên website hoặc gọi hotline, kỹ thuật viên sẽ có mặt trong vòng 30-45 phút.</li>
                     </ul>
                 </div>
@@ -160,7 +161,7 @@
     <footer class="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
             <p>© 2026 Cửa Hàng Văn Phòng Phẩm & Dịch Vụ Máy In. Mọi quyền được bảo lưu.</p>
-            <p class="text-slate-500">Địa chỉ: 123 Đường Văn Phòng Phẩm, P. Bến Nghé, Q.1, TP.HCM • Hotline: 0901.234.567</p>
+            <p class="text-slate-500">Địa chỉ: {{ $storefrontSettings['address'] }} • Hotline: {{ $storefrontSettings['hotline'] }}</p>
             <div class="flex justify-center space-x-4 pt-2 text-[11px]">
                 <a href="{{ url('/') }}" class="hover:text-white transition">Trang Chủ</a>
                 <span>•</span>

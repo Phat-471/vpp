@@ -2,6 +2,13 @@
 
 return [
 
+    'tax_lookup' => [
+        'provider' => env('TAX_LOOKUP_PROVIDER', 'vietqr'),
+        'client_id' => env('XINVOICE_CLIENT_ID'),
+        'api_key' => env('XINVOICE_API_KEY'),
+        'ca_bundle' => env('TAX_LOOKUP_CA_BUNDLE'),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Third Party Services

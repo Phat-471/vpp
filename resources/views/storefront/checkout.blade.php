@@ -1,7 +1,7 @@
 @extends('layouts.storefront')
 
-@section('title', 'Thanh Toán Đơn Hàng Văn Phòng Phẩm | VPP')
-@section('meta_description', 'Trang thanh toán trực tuyến an toàn. Hỗ trợ tiền mặt khi nhận hàng (COD) và chuyển khoản VietQR tự động 24/7.')
+@section('title', 'Giỏ Hàng & Thanh Toán | VPP & Dịch Vụ Máy In')
+@section('meta_description', 'Trang giỏ hàng và thanh toán trực tuyến. Xem lại sản phẩm, điều chỉnh số lượng và đặt hàng tiện lợi.')
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8">
@@ -12,20 +12,20 @@
         <span>/</span>
         <a href="{{ route('storefront.products') }}" class="hover:text-indigo-600">Sản phẩm</a>
         <span>/</span>
-        <span class="text-slate-900 font-bold">Thanh toán đơn hàng</span>
+        <span class="text-slate-900 font-bold">Giỏ hàng & Thanh toán</span>
     </nav>
 
     <!-- Header Box -->
     <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-3xl p-6 sm:p-8 flex items-center justify-between border border-indigo-900 shadow-sm">
         <div>
             <span class="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-300 rounded-full text-[10px] font-black uppercase tracking-wider border border-emerald-400/30">
-                BẢO MẬT GIAO DỊCH SSL 256-BIT
+                GIAO HÀNG TẬN NƠI • ĐỒNG KIỂM TRƯỚC KHI TRẢ TIỀN
             </span>
             <h1 class="text-xl sm:text-3xl font-black text-white mt-1">
-                Hoàn Tất Đặt Hàng & Thanh Toán
+                Giỏ Hàng & Hoàn Tất Đặt Hàng
             </h1>
             <p class="text-xs text-slate-300 mt-1">
-                Kiểm tra lại sản phẩm trong giỏ và điền thông tin giao nhận hàng tận nơi.
+                Xem lại danh sách sản phẩm, điều chỉnh số lượng và điền thông tin giao nhận hàng tận nơi.
             </p>
         </div>
         <div class="text-3xl hidden sm:block">
@@ -49,7 +49,7 @@
     <div id="checkout-active-section" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
         <!-- Left: Customer Information & Payment Options (lg:col-span-7) -->
-        <div class="lg:col-span-7 space-y-6">
+        <div class="order-2 lg:order-1 lg:col-span-7 space-y-6">
             
             <form id="main-checkout-form" onsubmit="submitCheckoutPage(event)" class="space-y-6">
                 
@@ -135,37 +135,7 @@
                     </div>
                 </div>
 
-                <!-- 3. Optional VAT Invoice Request -->
-                <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h2 class="text-sm sm:text-base font-black text-slate-900 flex items-center space-x-2">
-                            <span class="w-6 h-6 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-black">3</span>
-                            <span>Yêu Cầu Xuất Hóa Đơn VAT Điện Tử</span>
-                        </h2>
-                        <input type="checkbox" id="toggle-vat-checkbox" onchange="toggleVatSection(this)" class="w-4 h-4 accent-indigo-600 cursor-pointer rounded" />
-                    </div>
-
-                    <div id="vat-form-section" class="hidden space-y-3 pt-2 border-t border-slate-100 text-xs">
-                        <div>
-                            <label class="block font-bold text-slate-700 mb-1">Tên công ty / đơn vị xuất hóa đơn</label>
-                            <input type="text" id="vat-company" placeholder="VD: Công ty TNHH Thương Mại & Dịch Vụ ABC" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-slate-50" />
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div>
-                                <label class="block font-bold text-slate-700 mb-1">Mã số thuế (MST)</label>
-                                <input type="text" id="vat-tax-code" placeholder="VD: 0312345678" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-slate-50 font-mono" />
-                            </div>
-                            <div>
-                                <label class="block font-bold text-slate-700 mb-1">Email nhận hóa đơn điện tử</label>
-                                <input type="email" id="vat-email" placeholder="VD: ketoan@abc.com" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-slate-50" />
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block font-bold text-slate-700 mb-1">Địa chỉ đăng ký kinh doanh theo thuế</label>
-                            <input type="text" id="vat-address" placeholder="VD: Tòa nhà Bitexco, Q.1, TP.HCM" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-slate-50" />
-                        </div>
-                    </div>
-                </div>
+                @include('storefront.components.invoice-fields', ['invoiceId' => 'checkout-invoice'])
 
                 <div id="checkout-error-alert" class="hidden p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-2xl text-xs font-bold"></div>
 
@@ -179,7 +149,7 @@
         </div>
 
         <!-- Right: Cart Items Review & Summary (lg:col-span-5) -->
-        <div class="lg:col-span-5 space-y-6">
+        <div class="order-1 lg:order-2 lg:col-span-5 space-y-6">
             
             <div class="bg-white p-6 sm:p-7 rounded-3xl border border-slate-200 shadow-xs space-y-4">
                 <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -296,7 +266,7 @@
         let subtotal = 0;
         let count = 0;
 
-        cart.forEach(item => {
+        cart.forEach((item, index) => {
             const itemTotal = item.quantity * item.price;
             subtotal += itemTotal;
             count += item.quantity;
@@ -304,49 +274,56 @@
             html += `
                 <div class="pt-3 flex items-center justify-between text-xs">
                     <div class="flex items-center space-x-3 max-w-[65%]">
-                        <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0 border border-slate-200">
+                        <div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0 border border-slate-200">
                             ${item.image_url ? `<img src="${item.image_url}" class="max-h-full object-contain p-1" />` : `<span>📦</span>`}
                         </div>
                         <div>
                             <h4 class="font-bold text-slate-900 line-clamp-1">${item.name}</h4>
-                            <span class="text-[10px] text-slate-400 font-semibold">${item.unit_name} • ${formatMoney(item.price)}</span>
+                            <span class="text-[10px] text-slate-400 font-semibold">${item.unit_name || 'Cái'} • ${formatMoney(item.price)}</span>
                         </div>
                     </div>
                     <div class="flex flex-col items-end space-y-1">
                         <span class="font-mono font-bold text-slate-900">${formatMoney(itemTotal)}</span>
                         <div class="flex items-center space-x-1 bg-slate-100 rounded-lg p-0.5">
-                            <button type="button" onclick="updateItemQuantity('${item.key}', -1)" class="w-5 h-5 flex items-center justify-center bg-white rounded font-bold hover:bg-slate-200">-</button>
-                            <span class="w-5 text-center font-bold font-mono">${item.quantity}</span>
-                            <button type="button" onclick="updateItemQuantity('${item.key}', 1)" class="w-5 h-5 flex items-center justify-center bg-white rounded font-bold hover:bg-slate-200">+</button>
+                            <button type="button" onclick="updateItemQuantity(${index}, -1)" class="w-5 h-5 flex items-center justify-center bg-white rounded font-bold hover:bg-slate-200">-</button>
+                            <span class="w-6 text-center font-bold font-mono">${item.quantity}</span>
+                            <button type="button" onclick="updateItemQuantity(${index}, 1)" class="w-5 h-5 flex items-center justify-center bg-white rounded font-bold hover:bg-slate-200">+</button>
                         </div>
-                        <button type="button" onclick="removeCheckoutItem('${item.key}')" class="text-[10px] text-rose-500 hover:underline">Xóa</button>
+                        <button type="button" onclick="removeCheckoutItem(${index})" class="text-[10px] text-rose-500 hover:underline">Xóa</button>
                     </div>
                 </div>
             `;
         });
 
         container.innerHTML = html;
+        const freeshipLimit = 500000;
+        const shippingFee = (subtotal >= freeshipLimit || subtotal === 0) ? 0 : 30000;
+        const grandTotal = subtotal + shippingFee;
+
         document.getElementById('checkout-total-items-badge').textContent = count + ' món';
         document.getElementById('chk-subtotal-val').textContent = formatMoney(subtotal);
-        document.getElementById('chk-grand-total-val').textContent = formatMoney(subtotal);
+        const shippingEl = document.getElementById('chk-shipping-val');
+        if (shippingEl) {
+            shippingEl.textContent = shippingFee === 0 ? 'Miễn phí giao hàng' : formatMoney(shippingFee);
+        }
+        document.getElementById('chk-grand-total-val').textContent = formatMoney(grandTotal);
     }
 
-    function updateItemQuantity(key, delta) {
+    function updateItemQuantity(index, delta) {
         let cart = getCart();
-        const item = cart.find(i => i.key === key);
-        if (item) {
-            item.quantity += delta;
-            if (item.quantity <= 0) {
-                cart = cart.filter(i => i.key !== key);
+        if (cart[index]) {
+            cart[index].quantity += delta;
+            if (cart[index].quantity <= 0) {
+                cart.splice(index, 1);
             }
             saveCart(cart);
             renderCheckoutItems();
         }
     }
 
-    function removeCheckoutItem(key) {
+    function removeCheckoutItem(index) {
         let cart = getCart();
-        cart = cart.filter(i => i.key !== key);
+        cart.splice(index, 1);
         saveCart(cart);
         renderCheckoutItems();
     }
@@ -365,17 +342,10 @@
         });
     }
 
-    function toggleVatSection(checkbox) {
-        const section = document.getElementById('vat-form-section');
-        if (checkbox.checked) {
-            section.classList.remove('hidden');
-        } else {
-            section.classList.add('hidden');
-        }
-    }
-
     async function submitCheckoutPage(e) {
         e.preventDefault();
+        const checkoutForm = document.getElementById('main-checkout-form');
+        if (!window.CheckoutValidation.validate(checkoutForm)) return;
         const cart = getCart();
         if (cart.length === 0) {
             alert('Giỏ hàng của bạn đang trống!');
@@ -387,16 +357,6 @@
         const address = document.getElementById('chk-address').value.trim();
         const notes = document.getElementById('chk-notes').value.trim();
         const paymentMethod = document.querySelector('input[name="payment_method"]:checked')?.value || 'cod';
-
-        let vatNotes = '';
-        const vatCheck = document.getElementById('toggle-vat-checkbox');
-        if (vatCheck && vatCheck.checked) {
-            const company = document.getElementById('vat-company').value.trim();
-            const tax = document.getElementById('vat-tax-code').value.trim();
-            const email = document.getElementById('vat-email').value.trim();
-            const vatAddr = document.getElementById('vat-address').value.trim();
-            vatNotes = `\n[XUẤT HÓA ĐƠN VAT]: Cty: ${company} | MST: ${tax} | Email: ${email} | Đ/c: ${vatAddr}`;
-        }
 
         const btn = document.getElementById('btn-submit-checkout');
         const errBox = document.getElementById('checkout-error-alert');
@@ -419,7 +379,8 @@
                     customer_phone: phone,
                     customer_address: address,
                     payment_method: paymentMethod,
-                    notes: notes + vatNotes,
+                    notes: notes,
+                    ...window.InvoiceForm.read('checkout-invoice'),
                     items: cart.map(i => ({
                         product_id: i.product_id,
                         unit_id: i.unit_id,
@@ -431,12 +392,12 @@
             const data = await response.json();
 
             if (!response.ok || !data.success) {
-                throw new Error(data.message || 'Không thể tạo đơn hàng, vui lòng kiểm tra lại thông tin.');
+                const validationMessage = window.CheckoutValidation.serverErrors(checkoutForm, data.errors, errBox);
+                throw new Error(validationMessage || data.message || 'Không thể tạo đơn hàng, vui lòng kiểm tra lại thông tin.');
             }
 
             // Success! Clear cart
-            localStorage.removeItem(CART_KEY);
-            updateCartBadges();
+            saveCart([]);
 
             // Populate Success Modal
             document.getElementById('succ-order-code').textContent = data.order_code;
@@ -462,8 +423,10 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', renderCheckoutItems);
+    } else {
         renderCheckoutItems();
-    });
+    }
 </script>
 @endpush

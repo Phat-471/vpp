@@ -13,7 +13,15 @@
             </div>
             <div>
                 <span class="text-[10px] text-amber-400 font-bold uppercase tracking-wider block">KHÁCH HÀNG THÂN THIẾT</span>
-                <h1 class="text-xl sm:text-2xl font-black text-white">{{ $customer->name }}</h1>
+                <h1 class="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
+                    <span>{{ $customer->name }}</span>
+                    @if($customer->phone_verified_at)
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40" title="Đã xác thực số điện thoại qua Zalo">
+                            <svg class="w-3 h-3 mr-1 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                            Đã xác thực Zalo
+                        </span>
+                    @endif
+                </h1>
                 <p class="text-xs text-slate-300 font-mono">SĐT: {{ $customer->phone }} @if($customer->email)• Email: {{ $customer->email }}@endif</p>
             </div>
         </div>
@@ -169,7 +177,7 @@
                     @empty
                     <div class="py-8 text-center text-slate-400 text-xs">
                         <span>Chưa có phiếu sửa chữa nào.</span>
-                        <a href="{{ route('storefront.index') }}#dat-lich" class="text-indigo-600 font-bold hover:underline block mt-1">Đặt thợ sửa máy in tại đây →</a>
+                        <a href="{{ $storefrontSettings['zalo_url'] }}" target="_blank" class="text-indigo-600 font-bold hover:underline block mt-1">Liên hệ thợ máy in qua Zalo →</a>
                     </div>
                     @endforelse
                 </div>

@@ -21,9 +21,9 @@ class ProductResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-cube';
 
-    protected static ?string $navigationGroup = 'Kho & Sản Phẩm';
+    protected static ?string $navigationGroup = 'Kho & sản phẩm';
 
-    protected static ?string $navigationLabel = 'Sản phẩm & Tồn kho';
+    protected static ?string $navigationLabel = 'Sản phẩm và tồn kho';
 
     protected static ?string $modelLabel = 'Sản phẩm';
 
@@ -51,7 +51,7 @@ class ProductResource extends Resource
                                             ->columnSpan(2),
 
                                         Forms\Components\TextInput::make('slug')
-                                            ->label('Đường dẫn URL (Slug)')
+                                            ->label('Đường dẫn sản phẩm')
                                             ->required()
                                             ->maxLength(255)
                                             ->unique(Product::class, 'slug', ignoreRecord: true),
@@ -63,7 +63,7 @@ class ProductResource extends Resource
                                             ->default(fn () => 'SP-' . strtoupper(Str::random(6))),
 
                                         Forms\Components\TextInput::make('barcode')
-                                            ->label('Mã vạch (Barcode)')
+                                            ->label('Mã vạch')
                                             ->maxLength(60),
 
                                         Forms\Components\Select::make('category_id')
@@ -103,13 +103,13 @@ class ProductResource extends Resource
                                             ->required(),
 
                                         Forms\Components\TextInput::make('low_stock_threshold')
-                                            ->label('Ngưỡng báo động tồn kho')
+                                            ->label('Ngưỡng cảnh báo tồn kho')
                                             ->numeric()
                                             ->default(5)
                                             ->helperText('Báo động khi tồn kho xuống dưới mức này'),
 
                                         Forms\Components\Toggle::make('is_service_part')
-                                            ->label('Dùng cho dịch vụ sửa máy in / nạp mực')
+                                            ->label('Sử dụng trong dịch vụ sửa chữa hoặc nạp mực')
                                             ->inline(false)
                                             ->helperText('Sản phẩm này là linh kiện hoặc mực nạp dùng khi sửa chữa'),
 
@@ -125,19 +125,19 @@ class ProductResource extends Resource
                                     ->columnSpanFull(),
                             ]),
 
-                        Forms\Components\Tabs\Tab::make('Đơn vị tính quy đổi kép')
+                        Forms\Components\Tabs\Tab::make('Đơn vị tính quy đổi')
                             ->icon('heroicon-o-arrows-right-left')
                             ->badge(fn ($record) => $record?->units()->count() ?: null)
                             ->schema([
-                                Forms\Components\Section::make('Quy đổi đơn vị tính (Bán sỉ & Lẻ)')
-                                    ->description('Hỗ trợ bán theo thùng, lốc, hộp với hệ số quy đổi tự động trừ kho (VD: 1 Thùng = 5 Ram).')
+                                Forms\Components\Section::make('Quy đổi đơn vị (bán sỉ và bán lẻ)')
+                                    ->description('Có thể bán theo thùng, lốc hoặc hộp. Hệ thống sẽ quy đổi số lượng và trừ kho theo đơn vị cơ bản. Ví dụ: 1 thùng = 5 ram.')
                                     ->schema([
                                         Forms\Components\Repeater::make('units')
                                             ->relationship('units')
                                             ->schema([
                                                 Forms\Components\TextInput::make('unit_name')
                                                     ->label('Tên đơn vị quy đổi')
-                                                    ->placeholder('VD: Thùng (5 Ram), Lốc (10 cây)')
+                                                    ->placeholder('Ví dụ: Thùng (5 ram), lốc (10 cây)')
                                                     ->required(),
 
                                                 Forms\Components\TextInput::make('conversion_rate')
@@ -168,7 +168,7 @@ class ProductResource extends Resource
                             ->badge(fn ($record) => $record?->compatiblePrinters()->count() ?: null)
                             ->schema([
                                 Forms\Components\Section::make('Liên kết dòng máy in tương thích')
-                                    ->description('Gắn sản phẩm/hộp mực này với các dòng máy in tương ứng để nhân viên tra cứu nhanh.')
+                                    ->description('Liên kết sản phẩm hoặc hộp mực với các dòng máy in tương thích để nhân viên tra cứu nhanh.')
                                     ->schema([
                                         Forms\Components\Select::make('compatiblePrinters')
                                             ->label('Các dòng máy in tương thích')
@@ -195,7 +195,7 @@ class ProductResource extends Resource
 
                                 Forms\Components\Toggle::make('has_custom_image')
                                     ->label('Đã có hình ảnh thực tế')
-                                    ->helperText('Hệ thống tự động bật khi bạn tải ảnh lên. Dùng để lọc nhanh sản phẩm chưa có ảnh.'),
+                                    ->helperText('Tự động bật sau khi tải ảnh lên. Dùng bộ lọc để tìm sản phẩm chưa có ảnh.'),
                             ]),
                     ])
                     ->columnSpanFull(),
@@ -257,15 +257,15 @@ class ProductResource extends Resource
             ])
             ->filters([
                 Tables\Filters\Filter::make('missing_image')
-                    ->label('📷 Chưa có ảnh chụp (Cần chụp bằng điện thoại)')
+                    ->label('📷 Chưa có ảnh sản phẩm')
                     ->query(fn (Builder $query) => $query->where('has_custom_image', false)),
 
                 Tables\Filters\Filter::make('low_stock')
-                    ->label('⚠️ Sắp hết hàng (Tồn kho thấp)')
+                    ->label('⚠️ Sắp hết hàng')
                     ->query(fn (Builder $query) => $query->whereColumn('stock_quantity', '<=', 'low_stock_threshold')),
 
                 Tables\Filters\Filter::make('is_service_part')
-                    ->label('🔧 Linh kiện & Mực máy in')
+                    ->label('🔧 Linh kiện và mực máy in')
                     ->query(fn (Builder $query) => $query->where('is_service_part', true)),
 
                 Tables\Filters\SelectFilter::make('category_id')
@@ -274,12 +274,12 @@ class ProductResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('quick_upload_image')
-                    ->label('Chụp/Đổi ảnh')
+                    ->label('Chụp hoặc đổi ảnh')
                     ->icon('heroicon-o-camera')
                     ->color('info')
                     ->form([
                         Forms\Components\FileUpload::make('image_path')
-                            ->label('Chụp bằng camera hoặc chọn ảnh từ máy')
+                            ->label('Chụp ảnh bằng camera hoặc chọn tệp từ thiết bị')
                             ->image()
                             ->disk('public')
                             ->directory('products')
@@ -291,7 +291,7 @@ class ProductResource extends Resource
                             'has_custom_image' => true,
                         ]);
                         \Filament\Notifications\Notification::make()
-                            ->title('Cập nhật ảnh thành công!')
+                            ->title('Đã cập nhật ảnh sản phẩm')
                             ->body("Ảnh sản phẩm '{$record->name}' đã được tối ưu hóa sang WebP.")
                             ->success()
                             ->send();
@@ -346,7 +346,7 @@ class ProductResource extends Resource
 
                         if ($result['success'] > 0) {
                             Notification::make()
-                                ->title('Nhập dữ liệu thành công!')
+                                ->title('Đã nhập dữ liệu sản phẩm')
                                 ->body("Đã đồng bộ {$result['success']}/{$result['total']} sản phẩm vào hệ thống kho.")
                                 ->success()
                                 ->send();

@@ -16,9 +16,9 @@ class DealerInquiryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-storefront';
 
-    protected static ?string $navigationGroup = 'CSKH & Tương Tác';
+    protected static ?string $navigationGroup = 'Chăm sóc khách hàng';
 
-    protected static ?string $navigationLabel = 'Đại lý & Mua sỉ B2B';
+    protected static ?string $navigationLabel = 'Đại lý và khách sỉ';
 
     protected static ?string $modelLabel = 'Yêu cầu mở đại lý';
 
@@ -30,7 +30,7 @@ class DealerInquiryResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Thông tin đối tác / Đại lý')
+                Forms\Components\Section::make('Thông tin đối tác và đại lý')
                     ->schema([
                         Forms\Components\Grid::make(3)
                             ->schema([
@@ -48,10 +48,10 @@ class DealerInquiryResource extends Resource
                         Forms\Components\Grid::make(3)
                             ->schema([
                                 Forms\Components\TextInput::make('company_name')
-                                    ->label('Tên doanh nghiệp / Cửa hàng')
+                                    ->label('Tên doanh nghiệp hoặc cửa hàng')
                                     ->nullable(),
                                 Forms\Components\TextInput::make('province')
-                                    ->label('Khu vực / Tỉnh thành')
+                                    ->label('Tỉnh hoặc thành phố')
                                     ->required(),
                                 Forms\Components\TextInput::make('business_type')
                                     ->label('Mô hình kinh doanh')
@@ -62,7 +62,7 @@ class DealerInquiryResource extends Resource
                         Forms\Components\Grid::make(2)
                             ->schema([
                                 Forms\Components\TextInput::make('monthly_budget')
-                                    ->label('Hạn mức / Doanh số dự kiến hàng tháng'),
+                                    ->label('Ngân sách dự kiến mỗi tháng'),
                                 Forms\Components\TextInput::make('product_categories')
                                     ->label('Nhóm hàng hóa quan tâm'),
                             ]),
@@ -71,7 +71,7 @@ class DealerInquiryResource extends Resource
                             ->rows(3),
                     ]),
 
-                Forms\Components\Section::make('Tiến độ xử lý & CSKH')
+                Forms\Components\Section::make('Theo dõi và chăm sóc đối tác')
                     ->schema([
                         Forms\Components\Grid::make(2)
                             ->schema([
@@ -115,7 +115,7 @@ class DealerInquiryResource extends Resource
                     ->url(fn ($record) => "tel:{$record->phone}"),
 
                 Tables\Columns\TextColumn::make('company_name')
-                    ->label('Đơn vị / Cửa hàng')
+                                    ->label('Doanh nghiệp hoặc cửa hàng')
                     ->searchable()
                     ->default('Cá nhân'),
 

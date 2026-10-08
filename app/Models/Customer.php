@@ -20,6 +20,10 @@ class Customer extends Authenticatable
         'address',
         'debt_balance',
         'notes',
+        'zalo_id',
+        'zalo_name',
+        'zalo_avatar',
+        'phone_verified_at',
     ];
 
     protected $hidden = [
@@ -32,6 +36,7 @@ class Customer extends Authenticatable
         return [
             'password' => 'hashed',
             'debt_balance' => 'decimal:2',
+            'phone_verified_at' => 'datetime',
         ];
     }
 
@@ -53,5 +58,25 @@ class Customer extends Authenticatable
     public function repairTickets(): HasMany
     {
         return $this->hasMany(RepairTicket::class);
+    }
+
+    public function zaloVerifications(): HasMany
+    {
+        return $this->hasMany(ZaloVerification::class);
+    }
+
+    public function isPhoneVerified(): bool
+    {
+        return !is_null($this->phone_verified_at);
+    }
+
+    public function isActivated(): bool
+    {
+        return !is_null($this->phone_verified_at);
+    }
+
+    public function isZaloLinked(): bool
+    {
+        return !empty($this->zalo_id);
     }
 }

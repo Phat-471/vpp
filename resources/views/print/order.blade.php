@@ -38,9 +38,11 @@
     <div class="max-w-[148mm] mx-auto bg-white p-6 my-14 shadow-md border border-gray-300 print-page">
         <!-- Shop Header -->
         <div class="text-center border-b border-gray-300 pb-3 mb-3">
-            <h1 class="text-base font-black uppercase text-indigo-950">VĂN PHÒNG PHẨM & DỊCH VỤ MÁY IN</h1>
-            <p class="text-xs text-gray-600">ĐC: Số 123 Đường Văn Phòng Phẩm, P. Trung Tâm, TP.HCM</p>
-            <p class="text-xs text-gray-600">Hotline / Zalo: <b>0901.234.567</b></p>
+            <h1 class="text-base font-black uppercase text-indigo-950">{{ $storefrontSettings['site_name'] }}</h1>
+            @if($storefrontSettings['address'])<p class="text-xs text-gray-600">Địa chỉ: {{ $storefrontSettings['address'] }}</p>@endif
+            @if($storefrontSettings['hotline'])<p class="text-xs text-gray-600">Hotline: <b>{{ $storefrontSettings['hotline'] }}</b></p>@endif
+            @if($storefrontSettings['zalo'])<p class="text-xs text-gray-600">Zalo: {{ $storefrontSettings['zalo'] }}</p>@endif
+            @if($storefrontSettings['email'])<p class="text-xs text-gray-600">Email: {{ $storefrontSettings['email'] }}</p>@endif
             <h2 class="text-lg font-black uppercase text-gray-800 mt-2">HÓA ĐƠN BÁN LẺ</h2>
             <div class="text-xs text-gray-500 flex justify-between px-2 mt-1">
                 <span>Số HĐ: <b class="font-mono text-gray-900">{{ $order->order_code }}</b></span>
@@ -52,6 +54,16 @@
             </div>
         </div>
 
+        @if($order->is_vat_invoice)
+            <div class="text-xs border-b border-gray-300 pb-3 mb-3">
+                <p><b>Thông tin yêu cầu xuất hóa đơn</b></p>
+                <p>Mã số thuế: {{ $order->company_tax_id }}</p>
+                <p>Tên doanh nghiệp: {{ $order->company_name }}</p>
+                <p>Địa chỉ: {{ $order->company_address }}</p>
+                <p>Email nhận hóa đơn: {{ $order->invoice_email }}</p>
+                <p class="text-gray-500">Phiếu bán hàng này không thay thế hóa đơn điện tử.</p>
+            </div>
+        @endif
         <!-- Order Items Table -->
         <table class="w-full text-xs text-left border-collapse border border-gray-300 mb-3">
             <thead class="bg-gray-100 font-bold text-gray-700">
@@ -81,7 +93,7 @@
         <!-- Totals & VAT Breakdown (Ready for Business upgrade) -->
         <div class="text-xs border-t border-gray-300 pt-2 space-y-1">
             <div class="flex justify-between">
-                <span class="text-gray-600">Tổng tiền hàng (Subtotal):</span>
+                <span class="text-gray-600">Tiền hàng:</span>
                 <span class="font-mono font-semibold">{{ number_format($order->subtotal, 0, ',', '.') }} ₫</span>
             </div>
             @if($order->discount_amount > 0)
@@ -102,10 +114,18 @@
                 <span>Hình thức: {{ $order->payment_method === 'vietqr' ? 'VietQR Động' : ($order->payment_method === 'transfer' ? 'Chuyển khoản' : 'Tiền mặt') }}</span>
                 <span class="font-bold text-emerald-700">{{ $order->payment_status === 'paid' ? 'ĐÃ THANH TOÁN ĐỦ' : 'CHƯA THANH TOÁN' }}</span>
             </div>
+            @if($order->payment_method === 'cash')
+                @if($order->cash_received !== null)
+                    <div class="flex justify-between"><span>Tiền khách đưa:</span><span class="font-mono font-semibold">{{ number_format($order->cash_received, 0, ',', '.') }} đ</span></div>
+                    <div class="flex justify-between"><span>Tiền thừa trả khách:</span><span class="font-mono font-semibold">{{ number_format(max(0, $order->cash_received - (int) round((float) $order->grand_total)), 0, ',', '.') }} đ</span></div>
+                @else
+                    <p class="text-gray-500">Đơn cũ chưa lưu thông tin tiền khách đưa và tiền thừa.</p>
+                @endif
+            @endif
         </div>
 
         <!-- VietQR Box if not paid yet -->
-        @if($order->payment_status !== 'paid')
+        @if($order->payment_status !== 'paid' && ($vietQrUrl ?? null))
         <div class="mt-3 p-2 bg-emerald-50 rounded border border-emerald-200 flex items-center space-x-3">
             <img src="{{ $vietQrUrl }}" alt="VietQR" class="w-16 h-16 border border-emerald-300 rounded bg-white p-0.5" />
             <div class="text-[11px]">
@@ -122,5 +142,8 @@
         </div>
     </div>
 
+    @if(request()->routeIs('pos.receipt') && request()->boolean('autoprint'))
+        <script src="{{ asset('js/pos-receipt.js') }}?v={{ filemtime(public_path('js/pos-receipt.js')) }}" defer></script>
+    @endif
 </body>
 </html>

@@ -13,7 +13,7 @@
                     <input
                         type="text"
                         wire:model.live.debounce.300ms="search"
-                        placeholder="Quét mã vạch (Barcode) hoặc gõ tên sản phẩm, mã SKU..."
+                        placeholder="Quét mã vạch hoặc tìm theo tên sản phẩm, mã SKU..."
                         class="w-full pl-11 pr-10 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                         autofocus
                     />
@@ -129,7 +129,7 @@
                 <!-- Cart Header -->
                 <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-700 pb-3">
                     <div class="flex items-center space-x-2">
-                        <span class="text-base font-black text-gray-900 dark:text-gray-100">Đơn Hàng Hiện Tại</span>
+                        <span class="text-base font-black text-gray-900 dark:text-gray-100">Đơn hàng hiện tại</span>
                         <span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 text-xs font-bold rounded-full">
                             {{ count($cart) }} món
                         </span>
@@ -149,13 +149,13 @@
                 <!-- Customer Info Input -->
                 <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-200 dark:border-gray-700 space-y-2">
                     <div class="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center justify-between">
-                        <span>Thông Tin Khách Hàng (Tùy chọn)</span>
+                        <span>Thông tin khách hàng (không bắt buộc)</span>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <input
                             type="text"
                             wire:model.live.debounce.500ms="customerPhone"
-                            placeholder="Số điện thoại khách..."
+                            placeholder="Số điện thoại khách hàng..."
                             class="w-full text-xs py-1.5 px-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-medium"
                         />
                         <input
@@ -222,7 +222,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                         </svg>
                         <p class="text-xs font-semibold">Giỏ hàng đang trống</p>
-                        <p class="text-[11px] text-gray-400 mt-0.5">Nhấp vào nút thêm của sản phẩm bên trái để bắt đầu</p>
+                        <p class="text-[11px] text-gray-400 mt-0.5">Chọn sản phẩm bên trái để thêm vào giỏ hàng.</p>
                     </div>
                     @endforelse
                 </div>
@@ -235,7 +235,7 @@
                     </div>
 
                     <div class="flex items-center justify-between text-gray-600 dark:text-gray-400 font-medium">
-                        <span>Chiết khấu / Giảm giá:</span>
+                        <span>Giảm giá:</span>
                         <div class="flex items-center space-x-1">
                             <input
                                 type="number"
@@ -249,7 +249,7 @@
                     </div>
 
                     <div class="flex justify-between items-baseline pt-2 border-t border-gray-100 dark:border-gray-700 text-sm">
-                        <span class="font-black text-gray-900 dark:text-gray-100 text-base">Tổng Thanh Toán:</span>
+                        <span class="font-black text-gray-900 dark:text-gray-100 text-base">Tổng thanh toán:</span>
                         <span class="text-xl font-black font-mono text-indigo-700 dark:text-indigo-400">
                             {{ number_format($grandTotal, 0, ',', '.') }}₫
                         </span>
@@ -258,7 +258,7 @@
 
                 <!-- Payment Method Toggle -->
                 <div class="border-t border-gray-100 dark:border-gray-700 pt-3 space-y-2">
-                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-300">Phương Thức Thanh Toán:</label>
+                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-300">Phương thức thanh toán:</label>
                     <div class="grid grid-cols-2 gap-2">
                         <button
                             type="button"
@@ -266,7 +266,7 @@
                             class="py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 border {{ $paymentMethod === 'cash' ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm' : 'bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700' }}"
                         >
                             <span>💵</span>
-                            <span>Tiền Mặt</span>
+                            <span>Tiền mặt</span>
                         </button>
                         <button
                             type="button"
@@ -274,7 +274,7 @@
                             class="py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 border {{ $paymentMethod === 'vietqr' ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm' : 'bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700' }}"
                         >
                             <span>📱</span>
-                            <span>VietQR / CK</span>
+                            <span>Chuyển khoản VietQR</span>
                         </button>
                     </div>
 
@@ -282,7 +282,7 @@
                     @if($paymentMethod === 'cash' && $grandTotal > 0)
                     <div class="bg-gray-50 dark:bg-gray-900 p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 space-y-2 text-xs">
                         <div class="flex items-center justify-between">
-                            <span class="text-gray-600 dark:text-gray-400 font-medium">Tiền khách đưa:</span>
+                            <span class="text-gray-600 dark:text-gray-400 font-medium">Khách thanh toán:</span>
                             <input
                                 type="number"
                                 wire:model.live.debounce.300ms="cashGiven"
@@ -333,7 +333,7 @@
 
                         @if($cashGiven > 0)
                         <div class="flex justify-between items-center pt-1 border-t border-gray-200 dark:border-gray-700 font-bold">
-                            <span class="text-gray-700 dark:text-gray-300">Tiền thối lại:</span>
+                            <span class="text-gray-700 dark:text-gray-300">Tiền thừa trả khách:</span>
                             <span class="font-mono text-sm {{ $changeAmount >= 0 ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-600' }}">
                                 {{ number_format($changeAmount, 0, ',', '.') }}₫
                             </span>
@@ -358,7 +358,7 @@
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
                     </svg>
-                    <span>THANH TOÁN & HOÀN TẤT (F9)</span>
+                    <span>Thanh toán và hoàn tất (F9)</span>
                 </button>
             </div>
         </div>
@@ -374,12 +374,12 @@
             </div>
 
             <h3 class="text-xl font-black text-gray-900 dark:text-gray-100">
-                Thanh Toán Đơn Hàng Thành Công!
+                Đã thanh toán đơn hàng
             </h3>
 
             <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl p-4 border border-gray-200 dark:border-gray-700 text-left space-y-2 text-xs">
                 <div class="flex justify-between">
-                    <span class="text-gray-500">Mã hóa đơn:</span>
+                    <span class="text-gray-500">Mã đơn hàng:</span>
                     <span class="font-mono font-bold text-gray-900 dark:text-gray-100 text-sm">{{ $completedOrderCode }}</span>
                 </div>
                 <div class="flex justify-between">
@@ -408,7 +408,7 @@
                     class="py-2.5 px-4 rounded-xl bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 text-xs font-bold transition flex items-center justify-center space-x-1.5"
                 >
                     <span>🖨️</span>
-                    <span>In Hóa Đơn A5</span>
+                    <span>In hóa đơn A5</span>
                 </a>
 
                 <button
@@ -417,7 +417,7 @@
                     class="py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition flex items-center justify-center space-x-1.5 shadow-md shadow-indigo-200 dark:shadow-none"
                 >
                     <span>➕</span>
-                    <span>Bán Đơn Tiếp (F2)</span>
+                    <span>Tạo đơn mới (F2)</span>
                 </button>
             </div>
         </div>

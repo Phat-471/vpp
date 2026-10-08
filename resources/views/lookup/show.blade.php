@@ -1,34 +1,14 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tiến Độ Sửa Máy In - {{ $ticket->ticket_code }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
-</head>
-<body class="bg-slate-100 text-slate-900 min-h-screen flex flex-col justify-between antialiased">
+@extends('layouts.storefront')
 
-    <!-- Header Navigation Bar -->
-    <header class="bg-indigo-950 text-white shadow-md sticky top-0 z-40 border-b border-indigo-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <a href="{{ route('lookup.index') }}" class="text-xs bg-indigo-900 hover:bg-indigo-800 text-indigo-200 px-3 py-1.5 rounded-xl border border-indigo-800 flex items-center space-x-1">
-                    <span>← Tra cứu phiếu khác</span>
-                </a>
-                <span class="text-slate-500 hidden sm:inline">|</span>
-                <span class="font-mono font-bold text-amber-300 text-sm hidden sm:inline">MÃ PHIẾU: {{ $ticket->ticket_code }}</span>
-            </div>
+@section('title', 'Tiến Độ Sửa Máy In - ' . $ticket->ticket_code . ' | VPP')
 
-            <div class="flex items-center space-x-3">
-                <span class="text-xs text-slate-300 hidden md:inline">Ngày nhận: {{ $ticket->created_at->format('d/m/Y H:i') }}</span>
-                <a href="{{ url('/') }}" class="text-xs bg-white text-indigo-950 font-bold px-3 py-1.5 rounded-xl hover:bg-amber-400 transition">
-                    Trang chủ VPP
-                </a>
-            </div>
-        </div>
-    </header>
+@section('content')
+<div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+    <div class="flex items-center space-x-2 text-xs text-slate-500 mb-2">
+        <a href="{{ route('lookup.index') }}" class="hover:text-blue-600 font-semibold">← Tra cứu phiếu khác</a>
+        <span>•</span>
+        <span class="font-mono font-bold text-slate-700">Mã phiếu: {{ $ticket->ticket_code }}</span>
+    </div>
 
     <!-- Main Content Grid (Multi-Device Responsive: 12 Cols on Desktop, 1 Col on Mobile) -->
     <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex-1">
@@ -257,36 +237,5 @@
 
         </div>
 
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800 text-center space-y-2">
-        <div class="max-w-7xl mx-auto px-4">
-            <p>© 2026 Cửa Hàng Văn Phòng Phẩm & Dịch Vụ Máy In. Bảo mật chống IDOR 100%.</p>
-            <div class="flex justify-center space-x-3 pt-2 text-[11px] text-slate-400">
-                <a href="{{ url('/') }}" class="hover:text-white transition">Trang Chủ</a>
-                <span>•</span>
-                <a href="{{ route('storefront.about') }}" class="hover:text-white transition">Giới Thiệu</a>
-                <span>•</span>
-                <a href="{{ route('storefront.terms') }}" class="hover:text-white transition">Chính Sách Mua Hàng</a>
-                <span>•</span>
-                <a href="{{ route('storefront.privacy') }}" class="hover:text-white transition font-bold text-emerald-400">Bảo Mật Dữ Liệu</a>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Floating Hotline & Zalo (Bottom-Left) -->
-    <div class="fixed bottom-6 left-6 z-40 flex flex-col space-y-2">
-        <a href="https://zalo.me/0901234567" target="_blank" class="w-12 h-12 bg-blue-600 hover:bg-blue-500 text-white rounded-full flex items-center justify-center shadow-lg font-bold text-xs transform hover:scale-110 transition border-2 border-white">
-            Zalo
-        </a>
-        <a href="tel:0901234567" class="w-12 h-12 bg-red-600 hover:bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition animate-pulse border-2 border-white">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1.02l-2.2 2.2z"></path></svg>
-        </a>
-    </div>
-
-    <!-- Live Chat Widget -->
-    @include('storefront.components.livechat')
-
-</body>
-</html>
+</div>
+@endsection

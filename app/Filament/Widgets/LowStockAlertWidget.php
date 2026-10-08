@@ -9,7 +9,7 @@ use Filament\Widgets\TableWidget as BaseWidget;
 
 class LowStockAlertWidget extends BaseWidget
 {
-    protected static ?string $heading = 'Danh Sách Vật Tư Sắp Hết Hàng (Cần Nhập Thêm)';
+    protected static ?string $heading = 'Hàng hóa cần nhập thêm';
 
     protected static ?int $sort = 4;
 
@@ -32,21 +32,21 @@ class LowStockAlertWidget extends BaseWidget
                     ->weight('bold'),
 
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Tên Mặt Hàng')
+                    ->label('Tên mặt hàng')
                     ->limit(35),
 
                 Tables\Columns\TextColumn::make('category.name')
-                    ->label('Danh Mục'),
+                    ->label('Danh mục'),
 
                 Tables\Columns\TextColumn::make('stock_quantity')
-                    ->label('Tồn Kho Hiện Tại')
+                    ->label('Tồn kho hiện tại')
                     ->badge()
                     ->color(fn (int $state): string => $state <= 0 ? 'danger' : 'warning')
                     ->formatStateUsing(fn ($state, Product $record) => "{$state} {$record->base_unit}")
                     ->weight('bold'),
 
                 Tables\Columns\TextColumn::make('low_stock_threshold')
-                    ->label('Ngưỡng Cảnh Báo')
+                    ->label('Ngưỡng cảnh báo')
                     ->formatStateUsing(fn ($state, Product $record) => "{$state} {$record->base_unit}"),
 
                 Tables\Columns\TextColumn::make('is_service_part')
@@ -57,7 +57,7 @@ class LowStockAlertWidget extends BaseWidget
             ])
             ->actions([
                 Tables\Actions\Action::make('edit')
-                    ->label('Cập nhật tồn')
+                    ->label('Cập nhật tồn kho')
                     ->icon('heroicon-m-arrow-path')
                     ->url(fn (Product $record): string => route('filament.admin.resources.products.edit', ['record' => $record])),
             ])

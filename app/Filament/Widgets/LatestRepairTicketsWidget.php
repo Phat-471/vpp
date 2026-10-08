@@ -10,7 +10,7 @@ use Filament\Widgets\TableWidget as BaseWidget;
 
 class LatestRepairTicketsWidget extends BaseWidget
 {
-    protected static ?string $heading = 'Tiến Độ Phiếu Sửa Chữa Máy In Mới Nhất';
+    protected static ?string $heading = 'Phiếu sửa chữa mới nhất';
 
     protected static ?int $sort = 3;
 
@@ -24,21 +24,21 @@ class LatestRepairTicketsWidget extends BaseWidget
             )
             ->columns([
                 Tables\Columns\TextColumn::make('ticket_code')
-                    ->label('Mã Phiếu')
+                    ->label('Mã phiếu')
                     ->fontFamily('mono')
                     ->weight('bold')
                     ->copyable(),
 
                 Tables\Columns\TextColumn::make('device_name')
-                    ->label('Tên Máy In')
+                    ->label('Tên máy in')
                     ->limit(25),
 
                 Tables\Columns\TextColumn::make('customer_name')
-                    ->label('Khách Hàng')
+                    ->label('Khách hàng')
                     ->description(fn (RepairTicket $record) => $record->customer_phone),
 
                 Tables\Columns\TextColumn::make('status')
-                    ->label('Trạng Thái')
+                    ->label('Trạng thái')
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => match ($state) {
                         'received' => 'Đã tiếp nhận',
@@ -62,13 +62,13 @@ class LatestRepairTicketsWidget extends BaseWidget
                     }),
 
                 Tables\Columns\TextColumn::make('total_amount')
-                    ->label('Chi Phí')
+                    ->label('Tổng chi phí')
                     ->formatStateUsing(fn ($state) => AppHelper::formatMoney((float) $state))
                     ->fontFamily('mono')
                     ->weight('bold'),
 
                 Tables\Columns\TextColumn::make('promised_at')
-                    ->label('Hẹn Trả')
+                    ->label('Hẹn trả')
                     ->dateTime('d/m/Y H:i')
                     ->placeholder('Chưa hẹn'),
             ])
@@ -79,7 +79,7 @@ class LatestRepairTicketsWidget extends BaseWidget
                     ->url(fn (RepairTicket $record): string => route('filament.admin.resources.repair-tickets.edit', ['record' => $record])),
 
                 Tables\Actions\Action::make('print')
-                    ->label('In Phiếu')
+                    ->label('In phiếu')
                     ->icon('heroicon-m-printer')
                     ->color('gray')
                     ->url(fn (RepairTicket $record): string => route('print.repair-ticket', ['id' => $record->id]))

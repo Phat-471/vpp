@@ -151,27 +151,10 @@ class StorefrontController extends Controller
         return view('storefront.checkout');
     }
 
-    public function checkout(Request $request)
+    public function checkout(\App\Http\Requests\CheckoutRequest $request)
     {
-        $request->validate([
-            'customer_name' => 'required|string|max:100',
-            'customer_phone' => 'required|string|max:20',
-            'customer_address' => 'required|string|max:255',
-            'payment_method' => 'required|in:cod,vietqr',
-            'notes' => 'nullable|string|max:500',
-            'items' => 'required|array|min:1',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.unit_id' => 'nullable|exists:product_units,id',
-            'items.*.quantity' => 'required|integer|min:1',
-        ], [
-            'customer_name.required' => 'Vui lòng nhập họ và tên của bạn.',
-            'customer_phone.required' => 'Vui lòng nhập số điện thoại nhận hàng.',
-            'customer_address.required' => 'Vui lòng nhập địa chỉ giao hàng cụ thể.',
-            'payment_method.required' => 'Vui lòng chọn phương thức thanh toán.',
-            'items.required' => 'Giỏ hàng đang trống, vui lòng chọn ít nhất 1 sản phẩm.',
-            'items.min' => 'Giỏ hàng đang trống, vui lòng chọn ít nhất 1 sản phẩm.',
-        ]);
-
+        $invoice = app(\App\Services\InvoiceDetails::class)->validate($request->all());
+        $request->merge($invoice);
         $cleanedPhone = AppHelper::cleanPhone($request->customer_phone);
 
         DB::beginTransaction();
@@ -368,48 +351,67 @@ class StorefrontController extends Controller
 
     public function postRegister(Request $request)
     {
+        // 1. Chống Bot Spam qua Honeypot field (trường ẩn, người thật không bao giờ điền)
+        if ($request->filled('website')) {
+            return back()->withInput()->with('error', 'Yêu cầu bị từ chối do nghi vấn spam.');
+        }
+
+        // 2. Làm sạch số điện thoại và đưa vào request để validate
+        $rawPhone = $request->input('phone', '');
+        $cleanedPhone = AppHelper::cleanPhone($rawPhone);
+        $request->merge(['cleaned_phone' => $cleanedPhone]);
+
+        // 3. Strict Validation 2 lớp (Server-side)
         $request->validate([
-            'name' => 'required|string|max:100',
-            'phone' => 'required|string|max:20',
+            'name' => 'required|string|min:2|max:100',
+            'phone' => 'required|string',
+            'cleaned_phone' => [
+                'required',
+                'regex:/^(0[35789])[0-9]{8}$/'
+            ],
             'email' => 'nullable|email|max:150',
             'address' => 'nullable|string|max:255',
             'password' => 'required|string|min:6|confirmed',
         ], [
-            'name.required' => 'Vui lòng nhập họ và tên.',
+            'name.required' => 'Vui lòng nhập họ và tên của bạn.',
+            'name.min' => 'Họ và tên phải có tối thiểu 2 ký tự.',
             'phone.required' => 'Vui lòng nhập số điện thoại.',
+            'cleaned_phone.regex' => 'Số điện thoại không hợp lệ! Vui lòng nhập đủ 10 số di động Việt Nam (đầu 03, 05, 07, 08, 09).',
+            'cleaned_phone.required' => 'Vui lòng nhập số điện thoại hợp lệ.',
+            'email.email' => 'Địa chỉ email không đúng định dạng.',
             'password.required' => 'Vui lòng nhập mật khẩu.',
-            'password.min' => 'Mật khẩu phải từ 6 ký tự trở lên.',
-            'password.confirmed' => 'Mật khẩu xác nhận không khớp.',
+            'password.min' => 'Mật khẩu phải có từ 6 ký tự trở lên.',
+            'password.confirmed' => 'Mật khẩu xác nhận không khớp! Vui lòng nhập lại chính xác.',
         ]);
 
-        $cleanedPhone = AppHelper::cleanPhone($request->phone);
-
         $customer = Customer::where('phone', $cleanedPhone)->first();
-        if ($customer && !empty($customer->password)) {
-            return back()->withInput()->with('error', 'Số điện thoại này đã được đăng ký tài khoản. Vui lòng đăng nhập!');
+        if ($customer && !empty($customer->password) && $customer->phone_verified_at) {
+            return back()->withInput()->with('error', 'Số điện thoại này đã được đăng ký và xác thực. Vui lòng đăng nhập!');
         }
 
         if ($customer) {
             $customer->update([
-                'name' => $request->name,
-                'email' => $request->email,
-                'address' => $request->address ?: $customer->address,
+                'name' => trim($request->name),
+                'email' => $request->email ? trim($request->email) : $customer->email,
+                'address' => $request->address ? trim($request->address) : $customer->address,
                 'password' => $request->password,
             ]);
         } else {
             $customer = Customer::create([
-                'name' => $request->name,
+                'name' => trim($request->name),
                 'phone' => $cleanedPhone,
                 'phone_last4' => substr($cleanedPhone, -4),
-                'email' => $request->email,
-                'address' => $request->address,
+                'email' => $request->email ? trim($request->email) : null,
+                'address' => $request->address ? trim($request->address) : null,
                 'password' => $request->password,
             ]);
         }
 
-        auth('customer')->login($customer);
+        // Tạo phiên quét mã QR Zalo để xác thực số điện thoại (Bắt buộc xác thực)
+        $zaloService = app(\App\Services\ZaloAuthService::class);
+        $verification = $zaloService->createSessionForCustomer($customer, $request->ip(), $request->userAgent());
 
-        return redirect()->route('customer.profile')->with('success', 'Đăng ký tài khoản thành công! Chào mừng ' . $customer->name);
+        return redirect()->route('zalo.verify.page', ['token' => $verification->token]);
     }
 
     public function loginForm()
@@ -438,8 +440,22 @@ class StorefrontController extends Controller
         ];
 
         if (auth('customer')->attempt($credentials, $request->boolean('remember'))) {
+            $customer = auth('customer')->user();
+
+            // Kiểm tra trạng thái kích hoạt tài khoản qua Zalo
+            if (!$customer->isActivated()) {
+                auth('customer')->logout();
+
+                // Tạo phiên quét mã QR Zalo để kích hoạt tài khoản
+                $zaloService = app(\App\Services\ZaloAuthService::class);
+                $verification = $zaloService->createSessionForCustomer($customer, $request->ip(), $request->userAgent());
+
+                return redirect()->route('zalo.verify.page', ['token' => $verification->token])
+                    ->with('warning', 'Tài khoản chưa được kích hoạt! Vui lòng quét mã QR Zalo bên dưới để kích hoạt tài khoản.');
+            }
+
             $request->session()->regenerate();
-            return redirect()->intended(route('customer.profile'))->with('success', 'Đăng nhập thành công!');
+            return redirect()->intended(route('customer.profile'))->with('success', 'Đăng nhập thành công! Chào mừng ' . $customer->name);
         }
 
         return back()->withInput()->with('error', 'Số điện thoại hoặc mật khẩu không chính xác.');
