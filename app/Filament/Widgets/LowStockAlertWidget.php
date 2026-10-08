@@ -13,7 +13,7 @@ class LowStockAlertWidget extends BaseWidget
 
     protected static ?int $sort = 4;
 
-    protected int | string | array $columnSpan = 'full';
+    protected int | string | array $columnSpan = 1;
 
     public function table(Table $table): Table
     {
@@ -61,6 +61,9 @@ class LowStockAlertWidget extends BaseWidget
                     ->icon('heroicon-m-arrow-path')
                     ->url(fn (Product $record): string => route('filament.admin.resources.products.edit', ['record' => $record])),
             ])
+            ->emptyStateHeading('Kho hàng an toàn')
+            ->emptyStateDescription('Tất cả mặt hàng đều đạt ngưỡng tồn kho tiêu chuẩn.')
+            ->emptyStateIcon('heroicon-o-check-badge')
             ->paginated(false);
     }
 }

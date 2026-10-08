@@ -117,7 +117,7 @@
             @if($order->payment_method === 'cash')
                 @if($order->cash_received !== null)
                     <div class="flex justify-between"><span>Tiền khách đưa:</span><span class="font-mono font-semibold">{{ number_format($order->cash_received, 0, ',', '.') }} đ</span></div>
-                    <div class="flex justify-between"><span>Tiền thừa trả khách:</span><span class="font-mono font-semibold">{{ number_format(max(0, $order->cash_received - (int) round((float) $order->grand_total)), 0, ',', '.') }} đ</span></div>
+                    <div class="flex justify-between"><span>Tiền thừa trả khách:</span><span class="font-mono font-semibold">{{ number_format($paymentSummary['change'], 0, ',', '.') }} đ</span></div>
                 @else
                     <p class="text-gray-500">Đơn cũ chưa lưu thông tin tiền khách đưa và tiền thừa.</p>
                 @endif

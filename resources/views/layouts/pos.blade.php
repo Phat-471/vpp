@@ -20,6 +20,7 @@
             <nav class="pos-nav" aria-label="Điều hướng quầy bán hàng">
                 <a class="{{ request()->routeIs('pos.index') ? 'is-active' : '' }}" href="{{ route('pos.index') }}"><x-heroicon-o-shopping-bag /> Bán hàng</a>
                 <a class="{{ request()->routeIs('pos.customers') ? 'is-active' : '' }}" href="{{ route('pos.customers') }}"><x-heroicon-o-users /> Khách hàng</a>
+                <a class="{{ request()->routeIs('pos.orders') ? 'is-active' : '' }}" href="{{ route('pos.orders') }}"><x-heroicon-o-document-text /> Đơn hàng</a>
                 <a href="{{ route('storefront.index') }}" target="_blank" rel="noopener"><x-heroicon-o-globe-alt /> Trang web</a>
                 @if(auth('web')->user()->isAdmin())
                     <a href="{{ url('/admin') }}" target="_blank" rel="noopener"><x-heroicon-o-squares-2x2 /> Quản trị</a>

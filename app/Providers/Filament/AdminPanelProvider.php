@@ -27,16 +27,17 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->brandName('VPP & MÁY IN ÁNH DƯƠNG')
+            ->brandLogo(fn () => view('filament.components.brand-logo'))
+            ->brandLogoHeight('2.75rem')
             ->colors([
-                'primary' => '#e66a3c',
-                'success' => '#159b83',
-                'warning' => '#e5a52e',
-                'danger' => '#d94f64',
-                'info' => '#4386c5',
-                'gray' => '#65748b',
+                'primary' => '#4f46e5', // Modern Indigo
+                'success' => '#10b981', // Emerald
+                'warning' => '#f59e0b', // Amber
+                'danger' => '#ef4444',  // Rose
+                'info' => '#0ea5e9',     // Sky Blue
+                'gray' => '#64748b',     // Slate
             ])
-            ->font('Inter')
+            ->font('Plus Jakarta Sans')
             ->darkMode(false)
             ->spa()
             ->sidebarCollapsibleOnDesktop()
@@ -55,12 +56,14 @@ class AdminPanelProvider extends PanelProvider
                 Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
-            ->widgets([
-                Widgets\AccountWidget::class,
-            ])
+            ->widgets([])
             ->renderHook(
                 PanelsRenderHook::STYLES_AFTER,
-                fn (): string => '<link rel="stylesheet" href="' . asset('css/admin-panel.css') . '">',
+                fn (): string => '<link rel="stylesheet" href="' . asset('css/admin-panel.css') . '?v=' . time() . '">',
+            )
+            ->renderHook(
+                PanelsRenderHook::USER_MENU_BEFORE,
+                fn (): string => view('filament.components.admin-topbar-quick-actions')->render(),
             )
             ->renderHook(
                 PanelsRenderHook::PAGE_START,

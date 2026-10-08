@@ -39,6 +39,9 @@ class Order extends Model
         'shipping_fee',
         'notes',
         'created_by',
+        'pos_shift_id',
+        'pos_outside_shift',
+        'pos_shift_paid_at_close',
     ];
 
     protected function casts(): array
@@ -54,6 +57,8 @@ class Order extends Model
             'paid_amount' => 'decimal:2',
             'cash_received' => 'integer',
             'receipt_confirmed_at' => 'datetime',
+            'pos_outside_shift' => 'boolean',
+            'pos_shift_paid_at_close' => 'decimal:2',
         ];
     }
 
@@ -74,6 +79,11 @@ class Order extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function posShift(): BelongsTo
+    {
+        return $this->belongsTo(PosShift::class);
     }
 
     public function creator(): BelongsTo

@@ -51,6 +51,7 @@ final class CreatePosOrder
                 return $existing;
             }
             $quote = app(PosCart::class)->quote($items, (int) $data['discount'], lock: true);
+            $shift = app(\App\Services\PosShiftService::class)->forCheckout($cashier);
             $isCash = $data['payment_method'] === PosPaymentMethod::Cash->value;
             if ($isCash && $data['cash_given'] < $quote['total']) {
                 throw ValidationException::withMessages(['cashGiven' => 'Tiền khách đưa chưa đủ thanh toán.']);
@@ -72,6 +73,7 @@ final class CreatePosOrder
                 'customer_name' => $data['customer_name'] ?: ($customer?->name ?? 'Khách lẻ tại quầy'),
                 'customer_phone' => $data['customer_phone'] ?: null,
                 'channel' => 'pos', 'status' => $paid ? 'completed' : 'pending',
+                'pos_shift_id' => $shift?->id, 'pos_outside_shift' => $shift === null,
                 'subtotal' => $quote['subtotal'], 'discount_amount' => $quote['discount'],
                 'tax_rate' => 0, 'tax_amount' => 0, 'grand_total' => $quote['total'],
                 'paid_amount' => $paid ? $quote['total'] : 0,

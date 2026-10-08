@@ -16,6 +16,7 @@ Route::post('/pos/login', [PosAuthController::class, 'store'])->middleware(['gue
 Route::middleware(['auth:web', 'can:use-pos'])->prefix('pos')->name('pos.')->group(function () {
     Route::get('/', PosTerminal::class)->name('index');
     Route::get('/khach-hang', \App\Livewire\PosCustomers::class)->name('customers');
+    Route::get('/don-hang', \App\Livewire\PosOrders::class)->name('orders');
     Route::post('/logout', [PosAuthController::class, 'destroy'])->name('logout');
     Route::get('/hoa-don/{order:uuid}', PosReceiptController::class)->name('receipt');
 });

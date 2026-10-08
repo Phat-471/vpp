@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Order;
 use App\Models\User;
+use App\Services\PosOrderHistory;
 use App\Services\StaffLogin;
 use App\Support\StorefrontSettings;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -43,6 +44,9 @@ class AppServiceProvider extends ServiceProvider
 
         View::composer(['layouts.storefront', 'storefront.*', 'lookup.*', 'print.order'], function ($view) {
             $view->with('storefrontSettings', app(StorefrontSettings::class)->all());
+            if ($view->name() === 'print.order') {
+                $view->with('paymentSummary', app(PosOrderHistory::class)->paymentSummary($view->getData()['order']));
+            }
         });
     }
 }

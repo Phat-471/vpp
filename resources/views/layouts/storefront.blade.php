@@ -18,6 +18,11 @@
 <body class="bg-[#f8fafc] text-slate-900 min-h-screen flex flex-col justify-between antialiased selection:bg-emerald-600 selection:text-white">
 
     <!-- 1. TOP ANNOUNCEMENT BAR (Gọn gàng: Giờ mở cửa bên trái, Tra cứu phiếu bên phải) -->
+    @if(trim((string) $storefrontSettings['notice_bar_text']) !== '')
+        <div class="bg-emerald-50 text-emerald-900 text-xs text-center px-4 py-2 border-b border-emerald-100">
+            {{ $storefrontSettings['notice_bar_text'] }}
+        </div>
+    @endif
     <div class="bg-slate-950 text-slate-300 text-xs py-2 border-b border-slate-800 hidden sm:block">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center text-[11px]">
             <div class="flex items-center space-x-2 text-slate-300">
@@ -181,6 +186,7 @@
                     <p>📞 Hotline: {{ $storefrontSettings['hotline'] }} | Zalo: {{ $storefrontSettings['zalo'] }}</p>
                     <p>Email: {{ $storefrontSettings['email'] }}</p>
                     <p>⏰ Mở cửa: {{ $storefrontSettings['opening_hours'] }}</p>
+                    <p>Miễn phí giao hàng cho đơn từ {{ $storefrontSettings['freeship_label'] }}</p>
                 </div>
             </div>
 
