@@ -1,0 +1,32 @@
+<section id="{{ $compact ? 'pos-current-shift' : 'pos-main' }}" class="{{ $compact ? 'pos-shift-inline' : 'pos-customers pos-shifts' }}">
+    @if(!$compact)<header class="pos-customers-head"><div><p class="pos-eyebrow">ĐỐI SOÁT TẠI QUẦY</p><h1>Ca thu ngân</h1><p class="pos-muted">{{ auth('web')->user()->isAdmin() ? 'Lịch sử ca của cửa hàng' : 'Mở, đóng và xem lịch sử ca của mình' }}</p></div><a class="pos-button" href="{{ route('pos.index') }}">Về quầy bán hàng</a></header>@endif
+    @if($message)<p class="pos-notice" role="status">{{ $message }}</p>@endif
+    @if($errors->any())<p class="pos-alert" role="alert">{{ $errors->first() }}</p>@endif
+    @if($current)
+        <p class="pos-notice">Ca của mình đang mở từ {{ $current->opened_at->format('d/m/Y H:i') }} · Tiền đầu ca {{ \App\Helpers\AppHelper::formatMoney($current->opening_cash) }}
+        @if($compact)<a href="{{ route('pos.shifts') }}" target="_blank" rel="noopener">Đối soát / đóng ca ↗</a>@else<button type="button" class="pos-button" wire:click="showShift('{{ $current->uuid }}')">Xem ca đang mở</button>@endif</p>
+    @else
+        <div class="pos-customer-editor"><h2>{{ $required ? 'Mở ca trước khi bán hàng' : 'Chưa mở ca — đơn mới sẽ được ghi ngoài ca' }}</h2>
+            <form class="pos-customer-actions" wire:submit="openShift"><label>Tiền mặt đầu ca (₫)<input wire:model="openingCash" required type="number" min="0" max="1000000000000" step="1" inputmode="numeric" placeholder="Nhập số tiền, kể cả 0"></label><button class="pos-button pos-primary" type="submit" wire:loading.attr="disabled" wire:target="openShift">Mở ca</button></form>
+            <p class="pos-muted">Không tự lấy tiền đầu ca từ ca trước. Các đơn ngoài ca không được gộp lại khi mở ca mới.</p>
+        </div>
+    @endif
+    @if(!$compact)
+        @if(auth('web')->user()->isAdmin())<details class="pos-customer-editor"><summary>Cài đặt chế độ bán hàng</summary><form wire:submit="saveMode"><label class="pos-shift-mode"><input type="checkbox" wire:model="requiredEnabled"> Bắt buộc mở ca mới được bán hàng</label><p class="pos-muted">Khi tắt, thu ngân chưa mở ca vẫn được bán; các đơn được đánh dấu “Ngoài ca”.</p><button type="submit" class="pos-button" wire:loading.attr="disabled" wire:confirm="Thay đổi yêu cầu mở ca cho toàn bộ quầy bán hàng?">Lưu chế độ</button></form><p>Hiện tại: {{ $required ? 'Bắt buộc mở ca' : 'Cho phép bán ngoài ca' }}</p></details>@endif
+        @if($selected)
+            <section class="pos-customer-editor"><h2>{{ $selected->status === \App\Enums\PosShiftStatus::Closed ? 'Ca đã đóng — số liệu tại lúc chốt' : 'Ca đang mở — số liệu hiện tại' }}</h2>
+                <p>{{ $selected->cashier?->name ?? auth('web')->user()->name }} · Mở {{ $selected->opened_at->format('d/m/Y H:i') }}@if($selected->closed_at) · Đóng {{ $selected->closed_at->format('d/m/Y H:i') }}@endif</p>
+                <dl class="pos-shift-stats"><div><dt>Số đơn</dt><dd>{{ $summary['order_count'] }}</dd></div><div><dt>Tổng giá trị đơn</dt><dd>{{ \App\Helpers\AppHelper::formatMoney($summary['total_sales']) }}</dd></div><div><dt>Tiền mặt đã thu</dt><dd>{{ \App\Helpers\AppHelper::formatMoney($summary['cash_sales']) }}</dd></div><div><dt>Chuyển khoản đã ghi nhận</dt><dd>{{ \App\Helpers\AppHelper::formatMoney($summary['transfer_sales']) }}</dd></div><div><dt>Tiền đầu ca</dt><dd>{{ \App\Helpers\AppHelper::formatMoney($selected->opening_cash) }}</dd></div><div><dt>Tiền mặt cần có</dt><dd>{{ \App\Helpers\AppHelper::formatMoney($summary['expected_cash']) }}</dd></div></dl>
+                <p class="pos-muted">{{ $summary['pending_transfer_count'] }} đơn chuyển khoản còn chờ {{ $selected->closed_at ? 'tại lúc đóng ca' : '' }}. Tiền mặt cần có = tiền đầu ca + tiền mặt đã thu (không gồm tiền thừa trả khách).</p>
+                @if($selected->status === \App\Enums\PosShiftStatus::Closed)
+                    <p><strong>Tiền thực đếm:</strong> {{ \App\Helpers\AppHelper::formatMoney($selected->counted_cash) }}</p><p><strong>Chênh lệch (thực đếm − cần có):</strong> {{ \App\Helpers\AppHelper::formatMoney($selected->difference) }}</p><p>Ghi chú: {{ $selected->notes ?: 'Không có' }}</p>
+                    <p class="pos-notice">Chuyển khoản ghi nhận thêm sau chốt: {{ \App\Helpers\AppHelper::formatMoney($summary['late_transfer']) }}. Không thay đổi số liệu đối soát đã chốt.</p>
+                @elseif($current?->id === $selected->id)
+                    <form wire:submit="closeShift"><div class="pos-customer-grid"><label>Tiền mặt thực đếm (₫)<input wire:model="countedCash" required type="number" min="0" max="1000000000000" step="1" inputmode="numeric"></label><label>Ghi chú / lý do chênh lệch<textarea wire:model="notes" maxlength="1000" rows="2" placeholder="Bắt buộc có lý do khi tiền mặt bị lệch"></textarea></label></div><button class="pos-button pos-primary" type="submit" wire:loading.attr="disabled" wire:confirm="Đóng ca và chốt số liệu? Ca đã đóng không thể sửa hoặc mở lại; tab POS khác sẽ phải mở ca mới.">Đóng ca và chốt đối soát</button></form>
+                @endif
+            </section>
+        @endif
+        <div class="pos-customer-table-wrap"><table class="pos-customer-table"><thead><tr><th>Thu ngân / Mở ca</th><th>Trạng thái</th><th>Tiền đầu ca</th><th>Tiền thực đếm</th><th>Chênh lệch</th><th>Thao tác</th></tr></thead><tbody>@forelse($shifts as $shift)<tr wire:key="shift-{{ $shift->uuid }}"><td>{{ $shift->cashier?->name }}<small>{{ $shift->opened_at->format('d/m/Y H:i') }}</small></td><td>{{ $shift->closed_at ? 'Đã đóng' : 'Đang mở' }}</td><td>{{ \App\Helpers\AppHelper::formatMoney($shift->opening_cash) }}</td><td>{{ $shift->counted_cash !== null ? \App\Helpers\AppHelper::formatMoney($shift->counted_cash) : 'Chưa chốt' }}</td><td>{{ $shift->difference !== null ? \App\Helpers\AppHelper::formatMoney($shift->difference) : 'Chưa chốt' }}</td><td><button type="button" class="pos-button" wire:click="showShift('{{ $shift->uuid }}')">Chi tiết</button></td></tr>@empty<tr><td colspan="6">Chưa có ca. Nhập tiền đầu ca để bắt đầu.</td></tr>@endforelse</tbody></table></div>
+        <div class="pos-pagination"><span>{{ $shifts->total() }} ca · Trang {{ $shifts->currentPage() }}</span><div><button type="button" class="pos-button" wire:click="previousPage('shiftsPage')" @disabled($shifts->onFirstPage())>Trước</button><button type="button" class="pos-button" wire:click="nextPage('shiftsPage')" @disabled(!$shifts->hasMorePages())>Sau</button></div></div>
+    @endif
+</section>

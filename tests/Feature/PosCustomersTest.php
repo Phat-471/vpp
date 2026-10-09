@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
+use App\Services\PosShiftService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
@@ -104,6 +105,7 @@ class PosCustomersTest extends TestCase
     public function test_formatted_legacy_contact_is_used_for_sale_without_duplicate_customer(): void
     {
         $this->actingAs(User::factory()->create(['role' => 'cashier']));
+        app(PosShiftService::class)->open(auth()->user(), 0);
         $customer = Customer::create(['name' => 'Khách cũ', 'phone' => '+84 901 234 567']);
         $product = Product::create(['sku' => 'TEST-LEGACY', 'slug' => 'test-legacy', 'name' => 'Giấy kiểm thử', 'retail_price' => 10000, 'cost_price' => 8000, 'stock_quantity' => 5, 'base_unit' => 'Ram', 'is_active' => true]);
         Livewire::test(PosTerminal::class)->call('addToCart', $product->id)->dispatch('pos-customer-selected', id: $customer->id)

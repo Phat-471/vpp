@@ -47,247 +47,296 @@ class RepairTicketResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Group::make()
+                Forms\Components\Grid::make(3)
                     ->schema([
-                        Forms\Components\Section::make('1. Thông tin tiếp nhận máy')
-                            ->description('Thông tin khách hàng và tình trạng thiết bị khi mang đến cửa hàng')
-                            ->schema([
-                                Forms\Components\Grid::make(3)
-                                    ->schema([
-                                        Forms\Components\Select::make('customer_id')
-                                            ->label('Khách hàng')
-                                            ->relationship('customer', 'name')
-                                            ->searchable()
-                                            ->preload()
-                                            ->createOptionForm([
-                                                Forms\Components\TextInput::make('name')->label('Tên khách')->required(),
-                                                Forms\Components\TextInput::make('phone')->label('Số điện thoại')->required(),
-                                                Forms\Components\TextInput::make('address')->label('Địa chỉ'),
-                                            ])
-                                            ->live()
-                                            ->afterStateUpdated(function ($state, callable $set) {
-                                                if ($state) {
-                                                    $c = Customer::find($state);
-                                                    if ($c) {
-                                                        $set('customer_name', $c->name);
-                                                        $set('customer_phone', $c->phone);
+                        // CỘT CHÍNH (2/3 chiều rộng): Tiếp nhận & Kỹ thuật
+                        Forms\Components\Group::make([
+                            Forms\Components\Section::make('1. Tiếp nhận thiết bị & Thông tin khách hàng')
+                                ->icon('heroicon-o-inbox-arrow-down')
+                                ->schema([
+                                    Forms\Components\Grid::make(3)
+                                        ->schema([
+                                            Forms\Components\Select::make('customer_id')
+                                                ->label('Chọn khách hàng')
+                                                ->relationship('customer', 'name')
+                                                ->searchable()
+                                                ->preload()
+                                                ->createOptionForm([
+                                                    Forms\Components\TextInput::make('name')
+                                                        ->label('Họ tên khách *')
+                                                        ->required(),
+                                                    Forms\Components\TextInput::make('phone')
+                                                        ->label('Số điện thoại *')
+                                                        ->tel()
+                                                        ->required(),
+                                                    Forms\Components\TextInput::make('address')
+                                                        ->label('Địa chỉ'),
+                                                ])
+                                                ->live()
+                                                ->afterStateUpdated(function ($state, callable $set) {
+                                                    if ($state) {
+                                                        $c = Customer::find($state);
+                                                        if ($c) {
+                                                            $set('customer_name', $c->name);
+                                                            $set('customer_phone', $c->phone);
+                                                        }
                                                     }
-                                                }
-                                            }),
+                                                }),
 
-                                        Forms\Components\TextInput::make('customer_name')
-                                            ->label('Họ tên khách hàng')
-                                            ->required(),
+                                            Forms\Components\TextInput::make('customer_name')
+                                                ->label('Họ tên khách hàng *')
+                                                ->placeholder('Khách lẻ hoặc tên cty')
+                                                ->required(),
 
-                                        Forms\Components\TextInput::make('customer_phone')
-                                            ->label('Số điện thoại')
-                                            ->tel()
-                                            ->required(),
-                                    ]),
+                                            Forms\Components\TextInput::make('customer_phone')
+                                                ->label('Số điện thoại liên hệ *')
+                                                ->tel()
+                                                ->placeholder('0912345678')
+                                                ->required(),
+                                        ]),
 
-                                Forms\Components\Grid::make(3)
-                                    ->schema([
-                                        Forms\Components\Select::make('printer_model_id')
-                                            ->label('Dòng máy in')
-                                            ->relationship('printerModel', 'model_name')
-                                            ->getOptionLabelFromRecordUsing(fn (PrinterModel $record) => "{$record->brand} {$record->model_name}")
-                                            ->searchable()
-                                            ->preload()
-                                            ->live()
-                                            ->afterStateUpdated(function ($state, callable $set) {
-                                                if ($state) {
-                                                    $pm = PrinterModel::find($state);
-                                                    if ($pm) {
-                                                        $set('device_name', "{$pm->brand} {$pm->model_name}");
+                                    Forms\Components\Grid::make(3)
+                                        ->schema([
+                                            Forms\Components\Select::make('printer_model_id')
+                                                ->label('Dòng máy in mẫu')
+                                                ->relationship('printerModel', 'model_name')
+                                                ->getOptionLabelFromRecordUsing(fn (PrinterModel $record) => "{$record->brand} {$record->model_name}")
+                                                ->searchable()
+                                                ->preload()
+                                                ->live()
+                                                ->afterStateUpdated(function ($state, callable $set) {
+                                                    if ($state) {
+                                                        $pm = PrinterModel::find($state);
+                                                        if ($pm) {
+                                                            $set('device_name', "{$pm->brand} {$pm->model_name}");
+                                                        }
                                                     }
-                                                }
-                                            }),
+                                                }),
 
-                                        Forms\Components\TextInput::make('device_name')
-                                            ->label('Tên thiết bị thực tế')
-                                            ->placeholder('VD: Canon LBP 2900')
-                                            ->required(),
+                                            Forms\Components\TextInput::make('device_name')
+                                                ->label('Tên thiết bị thực tế *')
+                                                ->placeholder('VD: Canon LBP 2900, HP 107a...')
+                                                ->required(),
 
-                                        Forms\Components\TextInput::make('serial_number')
-                                            ->label('Số sê-ri / tem máy')
-                                            ->placeholder('Nếu có'),
-                                    ]),
+                                            Forms\Components\TextInput::make('serial_number')
+                                                ->label('Số sê-ri / Mã máy')
+                                                ->placeholder('Tem phía sau máy (nếu có)'),
+                                        ]),
 
-                                Forms\Components\Grid::make(2)
-                                    ->schema([
-                                        Forms\Components\TextInput::make('accessories')
-                                            ->label('Phụ kiện đi kèm')
-                                            ->placeholder('VD: Dây nguồn, cáp USB, khay giấy...')
-                                            ->default('Dây nguồn'),
+                                    Forms\Components\Grid::make(2)
+                                        ->schema([
+                                            Forms\Components\TextInput::make('accessories')
+                                                ->label('Phụ kiện kèm theo máy')
+                                                ->placeholder('Dây nguồn, cáp USB, hộp mực cũ, khay giấy...')
+                                                ->default('Dây nguồn'),
 
-                                        Forms\Components\DateTimePicker::make('promised_at')
-                                            ->label('Hẹn thời gian trả máy')
-                                            ->default(now()->addDay()->setTime(16, 0))
-                                            ->required(),
-                                    ]),
+                                            Forms\Components\DateTimePicker::make('promised_at')
+                                                ->label('Thời gian hẹn trả máy *')
+                                                ->default(now()->addDay()->setTime(16, 0))
+                                                ->required(),
+                                        ]),
 
-                                Forms\Components\Textarea::make('issue_description')
-                                    ->label('Mô tả tình trạng máy')
-                                    ->placeholder('VD: Kẹt giấy liên tục, bản in bị sọc đen, máy kêu rè rè, không nhận lệnh in...')
-                                    ->required()
-                                    ->rows(3),
+                                    Forms\Components\Textarea::make('issue_description')
+                                        ->label('Mô tả tình trạng lỗi khi tiếp nhận *')
+                                        ->placeholder('VD: Kẹt giấy liên tục khi in từ tờ thứ 2, bản in mờ/sọc đen dọc trang, máy kêu lạch cạch, không nhận lệnh in...')
+                                        ->required()
+                                        ->rows(3)
+                                        ->columnSpanFull(),
+                                ]),
 
-                                Forms\Components\Radio::make('intake_flow')
-                                    ->label('Cách tiếp nhận sửa chữa')
-                                    ->options([
-                                        'quote_immediate' => '1. Báo giá ngay khi tiếp nhận (chuyển sang trạng thái Đang sửa)',
-                                        'quote_later' => '2. Tiếp nhận máy, kiểm tra và báo giá sau qua điện thoại',
-                                    ])
-                                    ->default('quote_immediate')
-                                    ->inline(),
-                            ]),
+                            Forms\Components\Section::make('2. Chẩn đoán kỹ thuật & Vật tư linh kiện (Tự động trừ kho)')
+                                ->icon('heroicon-o-wrench')
+                                ->schema([
+                                    Forms\Components\Grid::make(2)
+                                        ->schema([
+                                            Forms\Components\Select::make('technician_id')
+                                                ->label('Kỹ thuật viên phụ trách')
+                                                ->relationship('technician', 'name', fn (Builder $query) => $query->whereIn('role', ['technician', 'admin']))
+                                                ->searchable()
+                                                ->preload(),
 
-                        Forms\Components\Section::make('2. Chẩn đoán kỹ thuật và linh kiện thay thế (trừ kho)')
-                            ->schema([
-                                Forms\Components\Grid::make(2)
-                                    ->schema([
-                                        Forms\Components\Select::make('technician_id')
-                                            ->label('Kỹ thuật viên phụ trách')
-                                            ->relationship('technician', 'name', fn (Builder $query) => $query->whereIn('role', ['technician', 'admin']))
-                                            ->searchable()
-                                            ->preload(),
+                                            Forms\Components\TextInput::make('technician_diagnosis')
+                                                ->label('Tóm tắt bệnh lý máy in')
+                                                ->placeholder('VD: Rách bao lụa sấy, hỏng trống Drum, mòn bánh cao su cuốn giấy...'),
+                                        ]),
 
-                                        Forms\Components\Select::make('status')
-                                            ->label('Trạng thái phiếu')
-                                            ->options([
-                                                'received' => '1. Đã tiếp nhận máy',
-                                                'diagnosing' => '2. Đang kiểm tra / tháo máy',
-                                                'waiting_approval' => '3. Chờ khách duyệt giá',
-                                                'in_progress' => '4. Đang sửa chữa',
-                                                'completed' => '5. Đã sửa xong',
-                                                'delivered' => '6. Đã bàn giao cho khách',
-                                                'cancelled' => '7. Đã hủy',
-                                            ])
-                                            ->required()
-                                            ->default('received'),
-                                    ]),
-
-                                Forms\Components\Textarea::make('technician_diagnosis')
-                                    ->label('Ghi chú chẩn đoán của kỹ thuật viên')
-                                    ->placeholder('Ví dụ: lỗi cụm sấy, trống mực, gạt mực hoặc bánh răng kéo giấy...')
-                                    ->rows(2),
-
-                                Forms\Components\Repeater::make('repairItems')
-                                    ->label('Linh kiện và hộp mực thay thế (tự động trừ kho)')
-                                    ->relationship('repairItems')
-                                    ->schema([
-                                        Forms\Components\Select::make('product_id')
-                                            ->label('Chọn từ kho VPP')
-                                            ->options(fn () => Product::where('is_service_part', true)->orWhere('is_active', true)->pluck('name', 'id'))
-                                            ->searchable()
-                                            ->live()
-                                            ->afterStateUpdated(function ($state, callable $set) {
-                                                if ($state) {
-                                                    $p = Product::find($state);
-                                                    if ($p) {
-                                                        $set('item_name', $p->name);
-                                                        $set('unit', $p->base_unit);
-                                                        $set('unit_price', $p->retail_price);
-                                                        $set('cost_price', $p->cost_price);
+                                    Forms\Components\Repeater::make('repairItems')
+                                        ->label('Linh kiện & Hộp mực thay thế')
+                                        ->relationship('repairItems')
+                                        ->schema([
+                                            Forms\Components\Select::make('product_id')
+                                                ->label('Chọn từ kho linh kiện/VPP')
+                                                ->options(fn () => Product::where('is_service_part', true)->orWhere('is_active', true)->pluck('name', 'id'))
+                                                ->searchable()
+                                                ->live()
+                                                ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                                    if ($state) {
+                                                        $p = Product::find($state);
+                                                        if ($p) {
+                                                            $set('item_name', $p->name);
+                                                            $set('unit', $p->base_unit);
+                                                            $set('unit_price', $p->retail_price);
+                                                            $set('cost_price', $p->cost_price);
+                                                        }
                                                     }
-                                                }
-                                            })
-                                            ->columnSpan(2),
+                                                })
+                                                ->columnSpan(3),
 
-                                        Forms\Components\TextInput::make('item_name')
-                                            ->label('Tên linh kiện / dịch vụ')
-                                            ->required()
-                                            ->columnSpan(2),
+                                            Forms\Components\TextInput::make('item_name')
+                                                ->label('Tên linh kiện/dịch vụ')
+                                                ->required()
+                                                ->columnSpan(2),
 
-                                        Forms\Components\TextInput::make('quantity')
-                                            ->label('Số lượng')
-                                            ->numeric()
-                                            ->default(1)
-                                            ->live()
-                                            ->required(),
+                                            Forms\Components\TextInput::make('quantity')
+                                                ->label('Số lượng')
+                                                ->numeric()
+                                                ->default(1)
+                                                ->live()
+                                                ->required()
+                                                ->columnSpan(1),
 
-                                        Forms\Components\TextInput::make('unit')
-                                            ->label('Đơn vị tính')
-                                            ->default('Cái')
-                                            ->required(),
+                                            Forms\Components\TextInput::make('unit')
+                                                ->label('ĐVT')
+                                                ->default('Cái')
+                                                ->required()
+                                                ->columnSpan(1),
 
-                                        Forms\Components\TextInput::make('unit_price')
-                                            ->label('Đơn giá')
-                                            ->numeric()
-                                            ->prefix('₫')
-                                            ->required()
-                                            ->live(),
-                                    ])
-                                    ->columns(7)
-                                    ->defaultItems(0)
-                                    ->addActionLabel('Thêm linh kiện / vật tư'),
-                            ]),
-                    ])
-                    ->columnSpan(['lg' => 2]),
+                                            Forms\Components\TextInput::make('unit_price')
+                                                ->label('Đơn giá (₫)')
+                                                ->numeric()
+                                                ->prefix('₫')
+                                                ->required()
+                                                ->live()
+                                                ->columnSpan(2),
+                                        ])
+                                        ->columns(9)
+                                        ->defaultItems(0)
+                                        ->addActionLabel('+ Thêm linh kiện / vật tư')
+                                        ->live()
+                                        ->afterStateUpdated(function (callable $get, callable $set) {
+                                            $items = $get('repairItems') ?? [];
+                                            $partsTotal = 0;
+                                            foreach ($items as $item) {
+                                                $qty = (float) ($item['quantity'] ?? 0);
+                                                $price = (float) ($item['unit_price'] ?? 0);
+                                                $partsTotal += ($qty * $price);
+                                            }
+                                            $set('parts_total', $partsTotal);
 
-                Forms\Components\Group::make()
-                    ->schema([
-                        Forms\Components\Section::make('3. Chi phí và thanh toán')
-                            ->schema([
-                                Forms\Components\TextInput::make('labor_fee')
-                                    ->label('Tiền công sửa chữa')
-                                    ->numeric()
-                                    ->prefix('₫')
-                                    ->default(0)
-                                    ->live(),
+                                            $labor = (float) ($get('labor_fee') ?? 0);
+                                            $discount = (float) ($get('discount_amount') ?? 0);
+                                            $set('grand_total', max(0, $labor + $partsTotal - $discount));
+                                        }),
+                                ]),
+                        ])
+                        ->columnSpan(['lg' => 2]),
 
-                                Forms\Components\TextInput::make('parts_total')
-                                    ->label('Tiền linh kiện')
-                                    ->numeric()
-                                    ->prefix('₫')
-                                    ->disabled()
-                                    ->dehydrated(),
+                        // CỘT PHỤ (1/3 chiều rộng): Trạng thái & Chi phí
+                        Forms\Components\Group::make([
+                            Forms\Components\Section::make('3. Tiến độ sửa chữa')
+                                ->icon('heroicon-o-clock')
+                                ->schema([
+                                    Forms\Components\Select::make('status')
+                                        ->label('Trạng thái phiếu *')
+                                        ->options([
+                                            'received' => '1. 📥 Đã tiếp nhận máy',
+                                            'diagnosing' => '2. 🔍 Đang kiểm tra / tháo máy',
+                                            'waiting_approval' => '3. ⏳ Chờ khách duyệt giá',
+                                            'in_progress' => '4. ⚙️ Đang sửa chữa',
+                                            'completed' => '5. ✅ Đã sửa xong',
+                                            'delivered' => '6. 📦 Đã bàn giao cho khách',
+                                            'cancelled' => '7. ❌ Đã hủy',
+                                        ])
+                                        ->required()
+                                        ->default('received'),
 
-                                Forms\Components\TextInput::make('discount_amount')
-                                    ->label('Mức giảm giá')
-                                    ->numeric()
-                                    ->prefix('₫')
-                                    ->default(0)
-                                    ->live(),
+                                    Forms\Components\Radio::make('intake_flow')
+                                        ->label('Hình thức báo giá')
+                                        ->options([
+                                            'quote_immediate' => 'Báo giá ngay tại quầy',
+                                            'quote_later' => 'Kiểm tra báo giá sau',
+                                        ])
+                                        ->default('quote_immediate'),
+                                ]),
 
-                                Forms\Components\TextInput::make('grand_total')
-                                    ->label('Tổng thanh toán')
-                                    ->numeric()
-                                    ->prefix('₫')
-                                    ->disabled()
-                                    ->dehydrated(),
+                            Forms\Components\Section::make('4. Chi phí & Thu ngân')
+                                ->icon('heroicon-o-banknotes')
+                                ->schema([
+                                    Forms\Components\TextInput::make('labor_fee')
+                                        ->label('Tiền công kỹ thuật')
+                                        ->numeric()
+                                        ->prefix('₫')
+                                        ->default(0)
+                                        ->live()
+                                        ->afterStateUpdated(function (callable $get, callable $set) {
+                                            $labor = (float) ($get('labor_fee') ?? 0);
+                                            $parts = (float) ($get('parts_total') ?? 0);
+                                            $discount = (float) ($get('discount_amount') ?? 0);
+                                            $set('grand_total', max(0, $labor + $parts - $discount));
+                                        }),
 
-                                Forms\Components\TextInput::make('paid_amount')
-                                    ->label('Số tiền khách đã trả')
-                                    ->numeric()
-                                    ->prefix('₫')
-                                    ->default(0)
-                                    ->live(),
+                                    Forms\Components\TextInput::make('parts_total')
+                                        ->label('Tiền linh kiện')
+                                        ->numeric()
+                                        ->prefix('₫')
+                                        ->default(0)
+                                        ->disabled()
+                                        ->dehydrated(),
 
-                                Forms\Components\Select::make('payment_status')
-                                    ->label('Trạng thái thanh toán')
-                                    ->options([
-                                        'unpaid' => 'Chưa thanh toán',
-                                        'partially_paid' => 'Đã đặt cọc / Trả một phần',
-                                        'paid' => 'Đã thanh toán đủ',
-                                    ])
-                                    ->default('unpaid'),
+                                    Forms\Components\TextInput::make('discount_amount')
+                                        ->label('Giảm giá / Ưu đãi')
+                                        ->numeric()
+                                        ->prefix('₫')
+                                        ->default(0)
+                                        ->live()
+                                        ->afterStateUpdated(function (callable $get, callable $set) {
+                                            $labor = (float) ($get('labor_fee') ?? 0);
+                                            $parts = (float) ($get('parts_total') ?? 0);
+                                            $discount = (float) ($get('discount_amount') ?? 0);
+                                            $set('grand_total', max(0, $labor + $parts - $discount));
+                                        }),
 
-                                Forms\Components\Select::make('payment_method')
-                                    ->label('Phương thức thanh toán')
-                                    ->options([
-                                        'cash' => 'Tiền mặt',
-                                        'vietqr' => 'Chuyển khoản VietQR',
-                                        'transfer' => 'Chuyển khoản thường',
-                                    ])
-                                    ->default('cash'),
+                                    Forms\Components\TextInput::make('grand_total')
+                                        ->label('Tổng thanh toán')
+                                        ->numeric()
+                                        ->prefix('₫')
+                                        ->disabled()
+                                        ->dehydrated()
+                                        ->extraInputAttributes(['style' => 'font-weight: 800; font-size: 1.15rem; color: #4f46e5;']),
 
-                                Forms\Components\Textarea::make('internal_notes')
-                                    ->label('Ghi chú nội bộ')
-                                    ->rows(3),
-                            ]),
-                    ])
-                    ->columnSpan(['lg' => 1]),
+                                    Forms\Components\TextInput::make('paid_amount')
+                                        ->label('Tiền khách đã trả / Đặt cọc')
+                                        ->numeric()
+                                        ->prefix('₫')
+                                        ->default(0)
+                                        ->live(),
+
+                                    Forms\Components\Select::make('payment_status')
+                                        ->label('Trạng thái thanh toán')
+                                        ->options([
+                                            'unpaid' => 'Chưa thanh toán',
+                                            'partially_paid' => 'Đã đặt cọc / Trả một phần',
+                                            'paid' => 'Đã thanh toán đủ',
+                                        ])
+                                        ->default('unpaid'),
+
+                                    Forms\Components\Select::make('payment_method')
+                                        ->label('Phương thức thanh toán')
+                                        ->options([
+                                            'cash' => 'Tiền mặt',
+                                            'vietqr' => 'Chuyển khoản VietQR',
+                                            'transfer' => 'Chuyển khoản thường',
+                                        ])
+                                        ->default('cash'),
+
+                                    Forms\Components\Textarea::make('internal_notes')
+                                        ->label('Ghi chú nội bộ')
+                                        ->placeholder('Ghi chú cho ca sau hoặc lưu ý đặc biệt...')
+                                        ->rows(2),
+                                ]),
+                        ])
+                        ->columnSpan(['lg' => 1]),
+                    ]),
             ])
             ->columns(3);
     }
@@ -302,18 +351,21 @@ class RepairTicketResource extends Resource
                     ->sortable()
                     ->weight('bold')
                     ->copyable()
+                    ->fontFamily('mono')
                     ->description(fn (RepairTicket $r) => $r->created_at->format('d/m/Y H:i')),
 
                 Tables\Columns\TextColumn::make('customer_name')
                     ->label('Khách hàng')
                     ->searchable()
+                    ->weight('bold')
                     ->description(fn (RepairTicket $r) => $r->customer_phone),
 
                 Tables\Columns\TextColumn::make('device_name')
                     ->label('Thiết bị')
                     ->searchable()
                     ->wrap()
-                    ->description(fn (RepairTicket $r) => Str::limit($r->issue_description, 40)),
+                    ->weight('semibold')
+                    ->description(fn (RepairTicket $r) => Str::limit($r->issue_description, 45)),
 
                 Tables\Columns\TextColumn::make('status')
                     ->label('Trạng thái')
@@ -326,12 +378,27 @@ class RepairTicketResource extends Resource
                         'success' => fn ($state) => in_array($state, ['completed', 'delivered']),
                         'danger' => 'cancelled',
                     ])
-                    ->formatStateUsing(fn (RepairTicket $r) => $r->status_label),
+                    ->formatStateUsing(fn (RepairTicket $r) => match ($r->status) {
+                        'received' => 'Đã tiếp nhận',
+                        'diagnosing' => 'Đang kiểm tra',
+                        'waiting_approval' => 'Chờ duyệt giá',
+                        'in_progress' => 'Đang sửa chữa',
+                        'completed' => 'Đã sửa xong',
+                        'delivered' => 'Đã bàn giao',
+                        'cancelled' => 'Đã hủy',
+                        default => $r->status,
+                    }),
+
+                Tables\Columns\TextColumn::make('promised_at')
+                    ->label('Hẹn trả')
+                    ->dateTime('d/m H:i')
+                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('grand_total')
                     ->label('Tổng tiền')
                     ->money('VND')
-                    ->sortable(),
+                    ->sortable()
+                    ->weight('bold'),
 
                 Tables\Columns\TextColumn::make('payment_status')
                     ->label('Thanh toán')
@@ -346,27 +413,26 @@ class RepairTicketResource extends Resource
                         'partially_paid' => 'Trả một phần',
                         default => 'Chưa trả',
                     }),
-
-                Tables\Columns\TextColumn::make('promised_at')
-                    ->label('Hẹn trả')
-                    ->dateTime('d/m H:i')
-                    ->sortable(),
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
-                    ->label('Trạng thái')
+                    ->label('Trạng thái sửa')
                     ->options([
                         'received' => 'Đã tiếp nhận',
                         'diagnosing' => 'Đang kiểm tra',
-                        'waiting_approval' => 'Chờ khách duyệt giá',
+                        'waiting_approval' => 'Chờ duyệt giá',
                         'in_progress' => 'Đang sửa chữa',
-                        'completed' => 'Đã xong',
+                        'completed' => 'Đã sửa xong',
                         'delivered' => 'Đã bàn giao',
+                        'cancelled' => 'Đã hủy',
                     ]),
+
                 Tables\Filters\SelectFilter::make('payment_status')
                     ->label('Thanh toán')
                     ->options([
                         'unpaid' => 'Chưa thanh toán',
+                        'partially_paid' => 'Trả một phần',
                         'paid' => 'Đã thanh toán',
                     ]),
             ])
@@ -382,28 +448,29 @@ class RepairTicketResource extends Resource
                     ->label('VietQR')
                     ->icon('heroicon-o-qr-code')
                     ->color('success')
-                    ->modalHeading(fn (RepairTicket $record) => "Mã VietQR thanh toán cho {$record->ticket_code}")
+                    ->modalHeading(fn (RepairTicket $record) => "Mã VietQR thanh toán phiếu {$record->ticket_code}")
                     ->modalSubmitAction(false)
                     ->modalContent(fn (RepairTicket $record) => view('filament.modals.vietqr-ticket', [
                         'ticket' => $record,
-                        'amount' => $record->remaining_amount ?: $record->grand_total,
-                        'qrUrl' => "https://img.vietqr.io/image/970407-190333888999-compact2.png?amount=" . ($record->remaining_amount ?: $record->grand_total) . "&addInfo=" . $record->ticket_code . "&accountName=NGUYEN%20VAN%20A",
+                        'amount' => $record->grand_total - $record->paid_amount > 0 ? ($record->grand_total - $record->paid_amount) : $record->grand_total,
+                        'qrUrl' => "https://img.vietqr.io/image/970407-190333888999-compact2.png?amount=" . ($record->grand_total - $record->paid_amount > 0 ? ($record->grand_total - $record->paid_amount) : $record->grand_total) . "&addInfo=" . $record->ticket_code . "&accountName=NGUYEN%20VAN%20A",
                     ])),
 
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
-    }
+                Tables\Actions\EditAction::make()
+                    ->label('Sửa')
+                    ->icon('heroicon-m-pencil-square'),
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
+                Tables\Actions\DeleteAction::make()
+                    ->label('Xóa')
+                    ->icon('heroicon-m-trash')
+                    ->modalHeading('Xác nhận xóa phiếu sửa chữa')
+                    ->modalDescription(fn (RepairTicket $record) => "Bạn có chắc chắn muốn xóa phiếu sửa chữa '{$record->ticket_code}' của khách {$record->customer_name}? Hành động này không thể hoàn tác.")
+                    ->modalSubmitActionLabel('Xác nhận xóa')
+                    ->modalCancelActionLabel('Hủy bỏ'),
+            ])
+            ->emptyStateHeading('Chưa có phiếu sửa chữa nào')
+            ->emptyStateDescription('Bấm Tạo phiếu mới để tiếp nhận máy in khách mang đến bảo hành hoặc sửa chữa.')
+            ->emptyStateIcon('heroicon-o-wrench-screwdriver');
     }
 
     public static function getPages(): array

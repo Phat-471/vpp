@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use App\Services\InvoiceDetails;
+use App\Services\PosShiftService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -88,6 +89,7 @@ class BusinessTaxLookupTest extends TestCase
     public function test_pos_autofills_clears_old_company_and_saves_invoice_details(): void
     {
         $this->actingAs(User::factory()->create(['role' => 'cashier']));
+        app(PosShiftService::class)->open(auth()->user(), 0);
         $this->fake();
         $product = $this->product();
         $component = Livewire::test(PosTerminal::class)->set('isVatInvoice', true)->set('companyTaxId', '0123456789')

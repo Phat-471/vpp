@@ -26,11 +26,13 @@ final class PosOrderHistory
             'from' => ['nullable', 'date_format:Y-m-d'],
             'to' => ['nullable', 'date_format:Y-m-d', Rule::when(! empty($input['from']), ['after_or_equal:from'])],
             'payment' => ['nullable', Rule::in(array_keys(self::PAYMENT_LABELS))],
+            'shift' => ['nullable', Rule::in(['in_shift', 'outside', 'legacy'])],
         ], [
             'search.max' => 'Từ khóa không được quá 100 ký tự.',
             'date_format' => 'Ngày không hợp lệ. Vui lòng chọn lại ngày.',
             'after_or_equal' => 'Ngày kết thúc phải bằng hoặc sau ngày bắt đầu.',
             'payment.in' => 'Trạng thái thanh toán không hợp lệ. Vui lòng chọn lại.',
+            'shift.in' => 'Bộ lọc ca không hợp lệ. Vui lòng chọn lại.',
         ])->validate();
     }
 
@@ -57,9 +59,13 @@ final class PosOrderHistory
         }
 
         return $query->when(! empty($filters['payment']), fn ($q) => $q->where('payment_status', $filters['payment']))
+            ->when(($filters['shift'] ?? '') === 'outside', fn ($q) => $q->where('pos_outside_shift', true))
+            ->when(($filters['shift'] ?? '') === 'in_shift', fn ($q) => $q->whereNotNull('pos_shift_id'))
+            ->when(($filters['shift'] ?? '') === 'legacy', fn ($q) => $q->whereNull('pos_shift_id')->where('pos_outside_shift', false))
             ->orderByDesc('created_at')->orderByDesc('id')->paginate(15, [
                 'id', 'uuid', 'order_code', 'created_at', 'created_by', 'customer_name', 'customer_phone',
                 'payment_status', 'payment_method', 'grand_total', 'receipt_confirmed_at',
+                'pos_shift_id', 'pos_outside_shift',
             ]);
     }
 

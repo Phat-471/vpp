@@ -21,6 +21,8 @@ class PosOrders extends Component
 
     public string $payment = '';
 
+    public string $shift = '';
+
     #[Locked]
     public array $appliedFilters = [];
 
@@ -36,6 +38,7 @@ class PosOrders extends Component
     {
         $this->appliedFilters = $history->filters([
             'search' => trim($this->search), 'from' => $this->from, 'to' => $this->to, 'payment' => $this->payment,
+            'shift' => $this->shift,
         ]);
         $this->resetPage();
         $this->resetErrorBag();
@@ -43,7 +46,7 @@ class PosOrders extends Component
 
     public function clearFilters(): void
     {
-        $this->reset('search', 'from', 'to', 'payment', 'appliedFilters');
+        $this->reset('search', 'from', 'to', 'payment', 'shift', 'appliedFilters');
         $this->resetPage();
         $this->resetErrorBag();
     }

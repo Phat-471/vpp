@@ -11,6 +11,7 @@ use App\Models\Product;
 use App\Services\BusinessTaxLookup;
 use App\Services\PosCart;
 use App\Services\PosPayment;
+use App\Services\PosShiftService;
 use App\Support\ContactFormat;
 use App\Support\StorefrontSettings;
 use Illuminate\Support\Facades\Gate;
@@ -333,6 +334,8 @@ class PosTerminal extends Component
         }
 
         return view('livewire.pos-terminal', [
+            'currentShift' => app(PosShiftService::class)->current(auth('web')->user()),
+            'shiftRequired' => app(PosShiftService::class)->required(),
             'products' => $products, 'cartProducts' => $cartProducts,
             'categories' => Category::where('is_active', true)->orderBy('sort_order')->get(),
             'subtotal' => $subtotal, 'total' => $total, 'change' => max(0, (int) $this->cashGiven - $total),
@@ -340,5 +343,11 @@ class PosTerminal extends Component
             'qrUrl' => $completedOrder ? app(PosPayment::class)->qrUrl($completedOrder) : null,
             'hasDraft' => session()->has($this->draftKey()),
         ])->layout('layouts.pos', ['store' => app(StorefrontSettings::class)->all()]);
+    }
+
+    #[On('pos-shift-changed')]
+    public function refreshShift(): void
+    {
+        $this->resetErrorBag('shift');
     }
 }

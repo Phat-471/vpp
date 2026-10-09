@@ -11,6 +11,7 @@
         </div>
     @endif
     <section class="pos-order-panel" aria-labelledby="order-title">
+        <livewire:pos-shifts :compact="true" />
         <div class="pos-order-head">
             <div><p class="pos-eyebrow">BÁN TẠI QUẦY</p><h1 id="order-title">Đơn hàng mới</h1></div>
             <button class="pos-button pos-soft" wire:click="newSale" wire:confirm="Tạo đơn mới và bỏ nội dung giỏ hàng hiện tại?" type="button"><x-heroicon-o-plus /> Đơn mới</button>
@@ -80,7 +81,7 @@
                 <p class="pos-payment-hint">Tạo đơn để hiển thị mã QR. Đơn được ghi nhận khi hệ thống xác nhận nhận tiền.</p>
             @endif
             <div class="pos-checkout-buttons">
-                <button class="pos-button pos-primary" type="button" wire:click="checkout" wire:loading.attr="disabled" wire:target="checkout,addToCart,updateQuantity,changeUnit" @disabled(!$cart || $completedOrderUuid)><span wire:loading.remove wire:target="checkout">{{ $paymentMethod === 'cash' ? 'Thanh toán' : 'Tạo đơn VietQR' }} <small>F9</small></span><span wire:loading wire:target="checkout">Đang xử lý…</span><x-heroicon-o-arrow-right /></button>
+                <button class="pos-button pos-primary" type="button" wire:click="checkout" wire:loading.attr="disabled" wire:target="checkout,addToCart,updateQuantity,changeUnit" @disabled(!$cart || $completedOrderUuid || ($shiftRequired && !$currentShift))><span wire:loading.remove wire:target="checkout">{{ $paymentMethod === 'cash' ? 'Thanh toán' : 'Tạo đơn VietQR' }} <small>F9</small></span><span wire:loading wire:target="checkout">Đang xử lý…</span><x-heroicon-o-arrow-right /></button>
                 <button class="pos-button" type="button" wire:click="saveDraft" wire:loading.attr="disabled" @disabled(!$cart || $completedOrderUuid) @if($hasDraft) wire:confirm="Thay thế đơn tạm đang lưu bằng giỏ hàng hiện tại?" @endif title="Lưu trong phiên làm việc (F4)"><x-heroicon-o-bookmark /> Lưu tạm</button>
             </div>
             @if($hasDraft)<button class="pos-draft-link" wire:click="restoreDraft" type="button" @disabled((bool)$cart || $completedOrderUuid)>Mở đơn tạm đã lưu</button>@endif

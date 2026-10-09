@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\CustomerManagement;
 use App\Services\InvoiceDetails;
 use App\Services\PosCart;
+use App\Services\PosShiftService;
 use App\Support\ContactFormat;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -51,7 +52,7 @@ final class CreatePosOrder
                 return $existing;
             }
             $quote = app(PosCart::class)->quote($items, (int) $data['discount'], lock: true);
-            $shift = app(\App\Services\PosShiftService::class)->forCheckout($cashier);
+            $shift = app(PosShiftService::class)->forCheckout($cashier);
             $isCash = $data['payment_method'] === PosPaymentMethod::Cash->value;
             if ($isCash && $data['cash_given'] < $quote['total']) {
                 throw ValidationException::withMessages(['cashGiven' => 'Tiền khách đưa chưa đủ thanh toán.']);

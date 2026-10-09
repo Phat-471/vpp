@@ -8,9 +8,11 @@ use App\Models\Order;
 use App\Models\Product;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class OrderResource extends Resource
 {
@@ -28,210 +30,304 @@ class OrderResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
+    public static function getNavigationBadge(): ?string
+    {
+        return (string) static::getModel()::where('payment_status', 'unpaid')->count() ?: null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'danger';
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Group::make()
+                Forms\Components\Grid::make(3)
                     ->schema([
-                        Forms\Components\Section::make('Khách hàng và kênh bán')
-                            ->schema([
-                                Forms\Components\Grid::make(3)
-                                    ->schema([
-                                        Forms\Components\Select::make('customer_id')
-                                            ->label('Khách hàng')
-                                            ->relationship('customer', 'name')
-                                            ->searchable()
-                                            ->preload()
-                                            ->live()
-                                            ->afterStateUpdated(function ($state, callable $set) {
-                                                if ($state) {
-                                                    $c = Customer::find($state);
-                                                    if ($c) {
-                                                        $set('customer_name', $c->name);
-                                                        $set('customer_phone', $c->phone);
-                                                        $set('customer_address', $c->address);
+                        // CỘT CHÍNH (2/3 chiều rộng): Khách hàng, Sản phẩm & VAT
+                        Forms\Components\Group::make([
+                            Forms\Components\Section::make('Thông tin khách hàng & Bán hàng')
+                                ->icon('heroicon-o-user')
+                                ->schema([
+                                    Forms\Components\Grid::make(3)
+                                        ->schema([
+                                            Forms\Components\Select::make('customer_id')
+                                                ->label('Chọn khách hàng')
+                                                ->relationship('customer', 'name')
+                                                ->searchable()
+                                                ->preload()
+                                                ->createOptionForm([
+                                                    Forms\Components\TextInput::make('name')->label('Tên khách *')->required(),
+                                                    Forms\Components\TextInput::make('phone')->label('Số điện thoại *')->tel()->required(),
+                                                    Forms\Components\TextInput::make('address')->label('Địa chỉ'),
+                                                ])
+                                                ->live()
+                                                ->afterStateUpdated(function ($state, callable $set) {
+                                                    if ($state) {
+                                                        $c = Customer::find($state);
+                                                        if ($c) {
+                                                            $set('customer_name', $c->name);
+                                                            $set('customer_phone', $c->phone);
+                                                            $set('customer_address', $c->address);
+                                                        }
                                                     }
-                                                }
-                                            }),
+                                                }),
 
-                                        Forms\Components\TextInput::make('customer_name')
-                                            ->label('Họ tên khách')
-                                            ->placeholder('Khách lẻ vãng lai'),
+                                            Forms\Components\TextInput::make('customer_name')
+                                                ->label('Họ tên khách *')
+                                                ->placeholder('Khách lẻ tại quầy')
+                                                ->default('Khách lẻ tại quầy')
+                                                ->required(),
 
-                                        Forms\Components\TextInput::make('customer_phone')
-                                            ->label('Số điện thoại')
-                                            ->tel(),
-                                    ]),
+                                            Forms\Components\TextInput::make('customer_phone')
+                                                ->label('Số điện thoại')
+                                                ->placeholder('0912345678')
+                                                ->tel(),
+                                        ]),
 
-                                Forms\Components\Grid::make(2)
-                                    ->schema([
-                                        Forms\Components\Select::make('channel')
-                                            ->label('Kênh bán')
-                                            ->options([
-                                                'pos' => 'Bán trực tiếp tại quầy',
-                                                'online' => 'Đặt qua Website Storefront',
-                                            ])
-                                            ->default('pos')
-                                            ->required(),
+                                    Forms\Components\Grid::make(3)
+                                        ->schema([
+                                            Forms\Components\Select::make('channel')
+                                                ->label('Kênh bán hàng')
+                                                ->options([
+                                                    'pos' => '⚡ Bán trực tiếp tại quầy POS',
+                                                    'online' => '🌐 Đặt qua Website Storefront',
+                                                ])
+                                                ->default('pos')
+                                                ->required(),
 
-                                        Forms\Components\Select::make('status')
-                                            ->label('Trạng thái đơn')
-                                            ->options([
-                                                'completed' => 'Đã hoàn tất',
-                                                'pending' => 'Chờ xử lý',
-                                                'cancelled' => 'Đã hủy',
-                                            ])
-                                            ->default('completed')
-                                            ->required(),
-                                    ]),
+                                            Forms\Components\Select::make('status')
+                                                ->label('Trạng thái đơn')
+                                                ->options([
+                                                    'completed' => '✅ Đã hoàn tất & xuất kho',
+                                                    'pending' => '⏳ Chờ xử lý / Đóng gói',
+                                                    'cancelled' => '❌ Đã hủy đơn',
+                                                ])
+                                                ->default('completed')
+                                                ->required(),
 
-                                Forms\Components\Section::make('Hóa đơn giá trị gia tăng (VAT)')
-                                    ->collapsible()
-                                    ->schema([
-                                        Forms\Components\Toggle::make('is_vat_invoice')
-                                            ->label('Yêu cầu xuất hóa đơn VAT điện tử')
-                                            ->live(),
+                                            Forms\Components\TextInput::make('customer_address')
+                                                ->label('Địa chỉ giao hàng')
+                                                ->placeholder('Giao tận nơi hoặc nhận tại cửa hàng'),
+                                        ]),
+                                ]),
 
-                                        Forms\Components\Grid::make(2)
-                                            ->visible(fn (Forms\Get $get) => (bool) $get('is_vat_invoice'))
-                                            ->schema([
-                                                Forms\Components\TextInput::make('company_name')
-                                                    ->label('Tên đơn vị / Doanh nghiệp')
-                                                    ->placeholder('CÔNG TY TNHH ABC...'),
-
-                                                Forms\Components\TextInput::make('company_tax_id')
-                                                    ->label('Mã số thuế (MST)')
-                                                    ->placeholder('0101234567'),
-
-                                                Forms\Components\TextInput::make('company_address')
-                                                    ->label('Địa chỉ đăng ký kinh doanh')
-                                                    ->placeholder('Số 10 phố...'),
-
-                                                Forms\Components\TextInput::make('invoice_email')
-                                                    ->label('Email nhận hóa đơn điện tử')
-                                                    ->email()
-                                                    ->placeholder('ketoan@doanhnghiep.vn'),
-                                            ]),
-                                    ]),
-                            ]),
-
-                        Forms\Components\Section::make('Chi tiết mặt hàng')
-                            ->schema([
-                                Forms\Components\Repeater::make('orderItems')
-                                    ->label('Danh sách mặt hàng')
-                                    ->relationship('orderItems')
-                                    ->schema([
-                                        Forms\Components\Select::make('product_id')
-                                            ->label('Sản phẩm')
-                                            ->options(fn () => Product::where('is_active', true)->pluck('name', 'id'))
-                                            ->searchable()
-                                            ->required()
-                                            ->live()
-                                            ->afterStateUpdated(function ($state, callable $set) {
-                                                if ($state) {
-                                                    $p = Product::find($state);
-                                                    if ($p) {
-                                                        $set('product_name', $p->name);
-                                                        $set('unit_name', $p->base_unit);
-                                                        $set('unit_price', $p->retail_price);
-                                                        $set('cost_price', $p->cost_price);
-                                                        $set('conversion_rate', 1);
+                            Forms\Components\Section::make('Danh sách mặt hàng xuất kho')
+                                ->icon('heroicon-o-shopping-bag')
+                                ->schema([
+                                    Forms\Components\Repeater::make('orderItems')
+                                        ->label('Mặt hàng trong đơn')
+                                        ->relationship('orderItems')
+                                        ->schema([
+                                            Forms\Components\Select::make('product_id')
+                                                ->label('Chọn sản phẩm từ kho')
+                                                ->options(fn () => Product::where('is_active', true)->pluck('name', 'id'))
+                                                ->searchable()
+                                                ->required()
+                                                ->live()
+                                                ->afterStateUpdated(function ($state, callable $set) {
+                                                    if ($state) {
+                                                        $p = Product::find($state);
+                                                        if ($p) {
+                                                            $set('product_name', $p->name);
+                                                            $set('unit_name', $p->base_unit);
+                                                            $set('unit_price', $p->retail_price);
+                                                            $set('cost_price', $p->cost_price);
+                                                            $set('conversion_rate', 1);
+                                                        }
                                                     }
-                                                }
-                                            })
-                                            ->columnSpan(3),
+                                                })
+                                                ->columnSpan(4),
 
-                                        Forms\Components\TextInput::make('product_name')
-                                            ->label('Tên hiển thị trên hóa đơn')
-                                            ->required()
-                                            ->columnSpan(2),
+                                            Forms\Components\TextInput::make('product_name')
+                                                ->label('Tên in hóa đơn')
+                                                ->required()
+                                                ->columnSpan(3),
 
-                                        Forms\Components\TextInput::make('quantity')
-                                            ->label('Số lượng')
-                                            ->numeric()
-                                            ->default(1)
-                                            ->required()
-                                            ->live(),
+                                            Forms\Components\TextInput::make('quantity')
+                                                ->label('Số lượng')
+                                                ->numeric()
+                                                ->default(1)
+                                                ->required()
+                                                ->live()
+                                                ->columnSpan(1),
 
-                                        Forms\Components\TextInput::make('unit_name')
-                                            ->label('Đơn vị tính')
-                                            ->default('Cái')
-                                            ->required(),
+                                            Forms\Components\TextInput::make('unit_name')
+                                                ->label('ĐVT')
+                                                ->default('Cái')
+                                                ->required()
+                                                ->columnSpan(1),
 
-                                        Forms\Components\TextInput::make('unit_price')
-                                            ->label('Đơn giá')
-                                            ->numeric()
-                                            ->prefix('₫')
-                                            ->required()
-                                            ->live(),
-                                    ])
-                                    ->columns(8)
-                                    ->defaultItems(1)
-                                    ->addActionLabel('Thêm mặt hàng'),
-                            ]),
-                    ])
-                    ->columnSpan(['lg' => 2]),
+                                            Forms\Components\TextInput::make('unit_price')
+                                                ->label('Đơn giá (₫)')
+                                                ->numeric()
+                                                ->prefix('₫')
+                                                ->required()
+                                                ->live()
+                                                ->columnSpan(2),
+                                        ])
+                                        ->columns(11)
+                                        ->defaultItems(1)
+                                        ->addActionLabel('+ Thêm sản phẩm vào đơn')
+                                        ->live()
+                                        ->afterStateUpdated(function (callable $get, callable $set) {
+                                            $items = $get('orderItems') ?? [];
+                                            $subtotal = 0;
+                                            foreach ($items as $item) {
+                                                $qty = (float) ($item['quantity'] ?? 0);
+                                                $price = (float) ($item['unit_price'] ?? 0);
+                                                $subtotal += ($qty * $price);
+                                            }
+                                            $set('subtotal', $subtotal);
 
-                Forms\Components\Group::make()
-                    ->schema([
-                        Forms\Components\Section::make('Tổng tiền và thanh toán')
-                            ->schema([
-                                Forms\Components\TextInput::make('subtotal')
-                                    ->label('Tiền hàng')
-                                    ->numeric()
-                                    ->prefix('₫')
-                                    ->disabled()
-                                    ->dehydrated(),
+                                            $discount = (float) ($get('discount_amount') ?? 0);
+                                            $taxRate = (float) ($get('tax_rate') ?? 0);
+                                            $shipping = (float) ($get('shipping_fee') ?? 0);
+                                            $tax = ($subtotal - $discount) * ($taxRate / 100);
+                                            $set('tax_amount', max(0, $tax));
+                                            $set('grand_total', max(0, $subtotal - $discount + $tax + $shipping));
+                                        }),
+                                ]),
 
-                                Forms\Components\TextInput::make('discount_amount')
-                                    ->label('Mức giảm giá')
-                                    ->numeric()
-                                    ->prefix('₫')
-                                    ->default(0)
-                                    ->live(),
+                            Forms\Components\Section::make('Hóa đơn giá trị gia tăng (VAT Điện tử)')
+                                ->icon('heroicon-o-document-currency-dollar')
+                                ->collapsible()
+                                ->schema([
+                                    Forms\Components\Toggle::make('is_vat_invoice')
+                                        ->label('Yêu cầu xuất hóa đơn GTGT (VAT)')
+                                        ->helperText('Bật tùy chọn này nếu khách hàng là cơ quan, doanh nghiệp cần xuất VAT.')
+                                        ->live(),
 
-                                Forms\Components\TextInput::make('tax_rate')
-                                    ->label('Thuế suất VAT (%)')
-                                    ->numeric()
-                                    ->suffix('%')
-                                    ->default(0)
-                                    ->helperText('Giai đoạn đầu 0%, nâng cấp doanh nghiệp chỉ cần bật cấu hình'),
+                                    Forms\Components\Grid::make(2)
+                                        ->visible(fn (Forms\Get $get) => (bool) $get('is_vat_invoice'))
+                                        ->schema([
+                                            Forms\Components\TextInput::make('company_name')
+                                                ->label('Tên đơn vị / Doanh nghiệp *')
+                                                ->placeholder('CÔNG TY TNHH / TRƯỜNG HỌC...'),
 
-                                Forms\Components\TextInput::make('grand_total')
-                                    ->label('Tổng thanh toán')
-                                    ->numeric()
-                                    ->prefix('₫')
-                                    ->disabled()
-                                    ->dehydrated(),
+                                            Forms\Components\TextInput::make('company_tax_id')
+                                                ->label('Mã số thuế (MST) *')
+                                                ->placeholder('VD: 0101234567'),
 
-                                Forms\Components\TextInput::make('paid_amount')
-                                    ->label('Tiền khách thanh toán')
-                                    ->numeric()
-                                    ->prefix('₫')
-                                    ->default(0)
-                                    ->live(),
+                                            Forms\Components\TextInput::make('company_address')
+                                                ->label('Địa chỉ đăng ký kinh doanh')
+                                                ->placeholder('Địa chỉ trên giấy phép ĐKKD'),
 
-                                Forms\Components\Select::make('payment_status')
-                                    ->label('Trạng thái thanh toán')
-                                    ->options([
-                                        'paid' => 'Đã thanh toán đủ',
-                                        'partially_paid' => 'Một phần',
-                                        'unpaid' => 'Chưa thanh toán',
-                                    ])
-                                    ->default('paid'),
+                                            Forms\Components\TextInput::make('invoice_email')
+                                                ->label('Email nhận hóa đơn điện tử')
+                                                ->email()
+                                                ->placeholder('ketoan@doanhnghiep.vn'),
+                                        ]),
+                                ]),
+                        ])
+                        ->columnSpan(['lg' => 2]),
 
-                                Forms\Components\Select::make('payment_method')
-                                    ->label('Phương thức')
-                                    ->options([
-                                        'cash' => 'Tiền mặt',
-                                        'vietqr' => 'Chuyển khoản VietQR',
-                                        'transfer' => 'Chuyển khoản thường',
-                                    ])
-                                    ->default('cash'),
-                            ]),
-                    ])
-                    ->columnSpan(['lg' => 1]),
+                        // CỘT PHỤ (1/3 chiều rộng): Thu ngân & Thanh toán
+                        Forms\Components\Group::make([
+                            Forms\Components\Section::make('Thu ngân & Thanh toán')
+                                ->icon('heroicon-o-banknotes')
+                                ->schema([
+                                    Forms\Components\TextInput::make('subtotal')
+                                        ->label('Tổng tiền hàng')
+                                        ->numeric()
+                                        ->prefix('₫')
+                                        ->disabled()
+                                        ->dehydrated(),
+
+                                    Forms\Components\TextInput::make('discount_amount')
+                                        ->label('Giảm giá / Chiết khấu')
+                                        ->numeric()
+                                        ->prefix('₫')
+                                        ->default(0)
+                                        ->live()
+                                        ->afterStateUpdated(function (callable $get, callable $set) {
+                                            $subtotal = (float) ($get('subtotal') ?? 0);
+                                            $discount = (float) ($get('discount_amount') ?? 0);
+                                            $taxRate = (float) ($get('tax_rate') ?? 0);
+                                            $shipping = (float) ($get('shipping_fee') ?? 0);
+                                            $tax = ($subtotal - $discount) * ($taxRate / 100);
+                                            $set('tax_amount', max(0, $tax));
+                                            $set('grand_total', max(0, $subtotal - $discount + $tax + $shipping));
+                                        }),
+
+                                    Forms\Components\Grid::make(2)
+                                        ->schema([
+                                            Forms\Components\TextInput::make('tax_rate')
+                                                ->label('Thuế VAT')
+                                                ->numeric()
+                                                ->suffix('%')
+                                                ->default(0)
+                                                ->live()
+                                                ->afterStateUpdated(function (callable $get, callable $set) {
+                                                    $subtotal = (float) ($get('subtotal') ?? 0);
+                                                    $discount = (float) ($get('discount_amount') ?? 0);
+                                                    $taxRate = (float) ($get('tax_rate') ?? 0);
+                                                    $shipping = (float) ($get('shipping_fee') ?? 0);
+                                                    $tax = ($subtotal - $discount) * ($taxRate / 100);
+                                                    $set('tax_amount', max(0, $tax));
+                                                    $set('grand_total', max(0, $subtotal - $discount + $tax + $shipping));
+                                                }),
+
+                                            Forms\Components\TextInput::make('shipping_fee')
+                                                ->label('Phí vận chuyển')
+                                                ->numeric()
+                                                ->prefix('₫')
+                                                ->default(0)
+                                                ->live()
+                                                ->afterStateUpdated(function (callable $get, callable $set) {
+                                                    $subtotal = (float) ($get('subtotal') ?? 0);
+                                                    $discount = (float) ($get('discount_amount') ?? 0);
+                                                    $tax = (float) ($get('tax_amount') ?? 0);
+                                                    $shipping = (float) ($get('shipping_fee') ?? 0);
+                                                    $set('grand_total', max(0, $subtotal - $discount + $tax + $shipping));
+                                                }),
+                                        ]),
+
+                                    Forms\Components\TextInput::make('grand_total')
+                                        ->label('Tổng thanh toán')
+                                        ->numeric()
+                                        ->prefix('₫')
+                                        ->disabled()
+                                        ->dehydrated()
+                                        ->extraInputAttributes(['style' => 'font-weight: 800; font-size: 1.15rem; color: #10b981;']),
+
+                                    Forms\Components\TextInput::make('paid_amount')
+                                        ->label('Khách đã thanh toán')
+                                        ->numeric()
+                                        ->prefix('₫')
+                                        ->default(0)
+                                        ->live(),
+
+                                    Forms\Components\Select::make('payment_status')
+                                        ->label('Trạng thái thanh toán')
+                                        ->options([
+                                            'paid' => '✅ Đã thanh toán đủ',
+                                            'partially_paid' => '⏳ Trả một phần / Đặt cọc',
+                                            'unpaid' => '❌ Chưa thanh toán / Ghi nợ',
+                                        ])
+                                        ->default('paid')
+                                        ->required(),
+
+                                    Forms\Components\Select::make('payment_method')
+                                        ->label('Hình thức thanh toán')
+                                        ->options([
+                                            'cash' => '💵 Tiền mặt',
+                                            'vietqr' => '⚡ Quét mã VietQR',
+                                            'transfer' => '🏦 Chuyển khoản ngân hàng',
+                                        ])
+                                        ->default('cash')
+                                        ->required(),
+
+                                    Forms\Components\Textarea::make('notes')
+                                        ->label('Ghi chú đơn hàng')
+                                        ->placeholder('Giao giờ hành chính, đóng gói cẩn thận...')
+                                        ->rows(2),
+                                ]),
+                        ])
+                        ->columnSpan(['lg' => 1]),
+                    ]),
             ])
             ->columns(3);
     }
@@ -246,15 +342,18 @@ class OrderResource extends Resource
                     ->sortable()
                     ->weight('bold')
                     ->copyable()
+                    ->fontFamily('mono')
                     ->description(fn (Order $r) => $r->created_at->format('d/m/Y H:i')),
 
                 Tables\Columns\TextColumn::make('customer_name')
                     ->label('Khách hàng')
                     ->searchable()
-                    ->default('Khách vãng lai'),
+                    ->weight('bold')
+                    ->default('Khách vãng lai')
+                    ->description(fn (Order $r) => $r->customer_phone ?: null),
 
                 Tables\Columns\TextColumn::make('channel')
-                    ->label('Kênh')
+                    ->label('Kênh bán')
                     ->badge()
                     ->colors([
                         'primary' => 'pos',
@@ -265,7 +364,8 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('grand_total')
                     ->label('Tổng tiền')
                     ->money('VND')
-                    ->sortable(),
+                    ->sortable()
+                    ->weight('bold'),
 
                 Tables\Columns\TextColumn::make('payment_status')
                     ->label('Thanh toán')
@@ -288,20 +388,36 @@ class OrderResource extends Resource
                         'transfer' => 'Chuyển khoản',
                         default => 'Tiền mặt',
                     }),
+
+                Tables\Columns\IconColumn::make('is_vat_invoice')
+                    ->label('VAT')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-document-check')
+                    ->falseIcon('heroicon-o-minus')
+                    ->trueColor('success')
+                    ->falseColor('gray')
+                    ->tooltip(fn (Order $r) => $r->is_vat_invoice ? "Xuất VAT: {$r->company_name}" : 'Không xuất VAT'),
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
                 Tables\Filters\SelectFilter::make('channel')
                     ->label('Kênh bán')
                     ->options([
                         'pos' => 'Tại quầy POS',
-                        'online' => 'Online',
+                        'online' => 'Online Storefront',
                     ]),
+
                 Tables\Filters\SelectFilter::make('payment_status')
                     ->label('Thanh toán')
                     ->options([
                         'paid' => 'Đã thanh toán',
+                        'partially_paid' => 'Trả một phần',
                         'unpaid' => 'Chưa thanh toán',
                     ]),
+
+                Tables\Filters\Filter::make('is_vat_invoice')
+                    ->label('Đơn yêu cầu xuất VAT')
+                    ->query(fn (Builder $query) => $query->where('is_vat_invoice', true)),
             ])
             ->actions([
                 Tables\Actions\Action::make('print')
@@ -315,6 +431,7 @@ class OrderResource extends Resource
                     ->label('In VAT')
                     ->icon('heroicon-o-document-currency-dollar')
                     ->color('primary')
+                    ->visible(fn (Order $record) => (bool) $record->is_vat_invoice)
                     ->url(fn (Order $record) => url("/print/vat-invoice/{$record->id}"))
                     ->openUrlInNewTab(),
 
@@ -326,19 +443,25 @@ class OrderResource extends Resource
                     ->modalSubmitAction(false)
                     ->modalContent(fn (Order $record) => view('filament.modals.vietqr-order', [
                         'order' => $record,
-                        'amount' => $record->grand_total - $record->paid_amount ?: $record->grand_total,
-                        'qrUrl' => "https://img.vietqr.io/image/970407-190333888999-compact2.png?amount=" . ($record->grand_total - $record->paid_amount ?: $record->grand_total) . "&addInfo=" . $record->order_code . "&accountName=NGUYEN%20VAN%20A",
+                        'amount' => $record->grand_total - $record->paid_amount > 0 ? ($record->grand_total - $record->paid_amount) : $record->grand_total,
+                        'qrUrl' => "https://img.vietqr.io/image/970407-190333888999-compact2.png?amount=" . ($record->grand_total - $record->paid_amount > 0 ? ($record->grand_total - $record->paid_amount) : $record->grand_total) . "&addInfo=" . $record->order_code . "&accountName=NGUYEN%20VAN%20A",
                     ])),
 
-                Tables\Actions\EditAction::make(),
-            ]);
-    }
+                Tables\Actions\EditAction::make()
+                    ->label('Sửa')
+                    ->icon('heroicon-m-pencil-square'),
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
+                Tables\Actions\DeleteAction::make()
+                    ->label('Xóa')
+                    ->icon('heroicon-m-trash')
+                    ->modalHeading('Xác nhận xóa đơn hàng')
+                    ->modalDescription(fn (Order $record) => "Bạn có chắc chắn muốn xóa đơn hàng '{$record->order_code}' trị giá " . number_format($record->grand_total, 0, ',', '.') . "đ? Hành động này không thể hoàn tác.")
+                    ->modalSubmitActionLabel('Xác nhận xóa')
+                    ->modalCancelActionLabel('Hủy bỏ'),
+            ])
+            ->emptyStateHeading('Chưa có đơn hàng nào')
+            ->emptyStateDescription('Bấm Tạo mới đơn hàng hoặc mở Quầy POS để ghi nhận giao dịch bán văn phòng phẩm đầu tiên.')
+            ->emptyStateIcon('heroicon-o-shopping-bag');
     }
 
     public static function getPages(): array

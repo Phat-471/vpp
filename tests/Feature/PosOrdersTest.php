@@ -18,13 +18,23 @@ class PosOrdersTest extends TestCase
 
     private function order(User $user, array $attributes = []): Order
     {
-        return Order::create(array_merge([
+        $createdAt = $attributes['created_at'] ?? null;
+        unset($attributes['created_at']);
+
+        $order = Order::create(array_merge([
             'uuid' => (string) Str::uuid(), 'order_code' => 'TEST-'.Str::random(8),
             'created_by' => $user->id, 'channel' => 'pos', 'status' => 'completed',
             'customer_name' => 'Khách kiểm thử', 'customer_phone' => '0901234567',
             'subtotal' => 10000, 'grand_total' => 10000, 'paid_amount' => 10000,
             'payment_method' => 'cash', 'payment_status' => 'paid', 'cash_received' => 20000,
         ], $attributes));
+
+        if ($createdAt) {
+            $order->timestamps = false;
+            $order->forceFill(['created_at' => $createdAt])->save();
+        }
+
+        return $order;
     }
 
     public function test_page_requires_staff_cashier_access(): void

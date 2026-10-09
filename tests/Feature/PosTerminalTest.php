@@ -19,6 +19,13 @@ class PosTerminalTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Existing checkout tests cover optional mode; PosShiftsTest covers mandatory mode.
+        Setting::set('pos_shift_required', '0', 'pos');
+    }
+
     private function product(array $overrides = []): Product
     {
         return Product::create(array_merge([

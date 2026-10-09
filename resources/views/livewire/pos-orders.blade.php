@@ -8,6 +8,7 @@
         <label>Từ ngày<input wire:model="from" type="date" max="9999-12-31"></label>
         <label>Đến ngày<input wire:model="to" type="date" min="{{ $from }}" max="9999-12-31"></label>
         <label>Thanh toán<select wire:model="payment"><option value="">Tất cả trạng thái</option>@foreach($paymentLabels as $value => $label)<option value="{{ $value }}">{{ $label }}</option>@endforeach</select></label>
+        <label>Ca bán hàng<select wire:model="shift"><option value="">Tất cả đơn</option><option value="in_shift">Trong ca</option><option value="outside">Ngoài ca</option><option value="legacy">Đơn cũ chưa gắn ca</option></select></label>
         <div class="pos-customer-actions"><button class="pos-button pos-primary" type="submit" wire:loading.attr="disabled">Lọc đơn</button><button class="pos-button" type="button" wire:click="clearFilters">Xóa bộ lọc</button></div>
     </form>
     @if($errors->any())<p class="pos-alert" role="alert">{{ $errors->first() }}</p>@endif
@@ -16,7 +17,7 @@
         <table class="pos-customer-table"><thead><tr><th>Mã đơn / Thời gian</th><th>Khách hàng</th><th>Thanh toán</th><th>Tổng tiền</th><th>Thu ngân</th><th>Thao tác</th></tr></thead><tbody>
         @forelse($orders as $order)
             <tr wire:key="order-{{ $order->uuid }}">
-                <td><strong>{{ $order->order_code }}</strong><small>{{ $order->created_at->format('d/m/Y H:i') }}</small></td>
+                <td><strong>{{ $order->order_code }}</strong><small>{{ $order->created_at->format('d/m/Y H:i') }}</small><small>{{ $order->pos_shift_id ? 'Trong ca' : ($order->pos_outside_shift ? 'Ngoài ca' : 'Đơn cũ chưa gắn ca') }}</small></td>
                 <td>{{ $order->customer_name ?: 'Khách lẻ' }}<small>{{ $order->customer_phone }}</small></td>
                 <td><span class="pos-order-badge {{ $order->payment_status === 'paid' ? 'is-paid' : '' }}">{{ $paymentLabels[$order->payment_status] ?? 'Chưa xác định' }}</span><small>{{ $methodLabels[$order->payment_method] ?? 'Khác' }}</small></td>
                 <td class="pos-order-money">{{ \App\Helpers\AppHelper::formatMoney($order->grand_total) }}</td>
