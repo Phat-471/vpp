@@ -171,4 +171,32 @@ class LiveChatTest extends TestCase
         $this->browser($session)->getJson(route('chat.messages'))->assertOk();
         $this->assertSame(20, ChatMessage::count());
     }
+
+    public function test_admin_polling_keeps_new_messages_unread_until_explicit_acknowledgement(): void
+    {
+        $this->actingAs(User::factory()->create(['role' => 'admin']));
+        $session = $this->conversation();
+        $component = Livewire::test(LiveChatPage::class)->call('selectSession', $session->id);
+        app(LiveChatService::class)->sendCustomer($session, 'Tin vừa đến', (string) Str::uuid());
+        $component->call('refreshSelected')->assertSee('Tin vừa đến');
+        $this->assertSame(1, $session->fresh()->unread_admin);
+        $component->call('markSelectedRead');
+        $this->assertSame(0, $session->fresh()->unread_admin);
+    }
+
+    public function test_admin_opening_page_does_not_clear_unread_and_old_pages_remain_available(): void
+    {
+        $this->actingAs(User::factory()->create(['role' => 'admin']));
+        $session = $this->conversation();
+        for ($i = 0; $i < 55; $i++) {
+            $session->messages()->create(['sender_type' => 'customer', 'sender_name' => 'Khách', 'message' => 'Tin kiểm thử '.$i]);
+        }
+        $session->update(['unread_admin' => 55]);
+        $component = Livewire::test(LiveChatPage::class);
+        $this->assertSame(55, $session->fresh()->unread_admin);
+        $component->call('selectSession', $session->id)->assertSee('Tin kiểm thử 54')->assertDontSee('Tin kiểm thử 0');
+        $this->assertSame(5, $session->fresh()->unread_admin);
+        $component->call('setPage', 2, 'messagesPage')->assertSee('Tin kiểm thử 0')->assertDontSee('Tin kiểm thử 54');
+        $this->assertSame(0, $session->fresh()->unread_admin);
+    }
 }

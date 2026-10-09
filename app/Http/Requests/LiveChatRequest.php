@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Support\ChatContent;
 use App\Support\ContactFormat;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -35,7 +36,7 @@ class LiveChatRequest extends FormRequest
             'before_id' => ['nullable', 'integer', 'min:1'],
         ];
         if ($this->routeIs('chat.send')) {
-            $rules['message'] = ['required', 'string', 'max:2000', 'not_regex:/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/'];
+            $rules['message'] = ChatContent::rules();
             $rules['request_id'] = ['required', 'uuid'];
         }
         if ($this->routeIs('chat.read')) {
@@ -49,9 +50,7 @@ class LiveChatRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'message.required' => 'Nhập nội dung tin nhắn trước khi gửi.',
-            'message.max' => 'Tin nhắn tối đa 2.000 ký tự. Hãy chia thành các tin ngắn hơn.',
-            'message.not_regex' => 'Tin nhắn có ký tự không hợp lệ. Hãy kiểm tra lại nội dung.',
+            ...ChatContent::messages('message'),
             'customer_name.min' => 'Tên cần có ít nhất 2 ký tự.',
             'customer_name.max' => 'Tên không được vượt quá 100 ký tự.',
             'customer_name.not_regex' => 'Tên có ký tự không hợp lệ. Hãy kiểm tra lại.',

@@ -6,6 +6,7 @@ use App\Enums\ChatStatus;
 use App\Models\ChatMessage;
 use App\Models\ChatSession;
 use App\Models\User;
+use App\Support\ChatContent;
 use App\Support\StorefrontSettings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -118,12 +119,8 @@ final class LiveChatService
     {
         $text = trim($text);
         Validator::make(['replyMessage' => $text], [
-            'replyMessage' => ['required', 'string', 'max:2000', 'not_regex:/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/'],
-        ], [
-            'replyMessage.required' => 'Nhập nội dung tin nhắn trước khi gửi.',
-            'replyMessage.max' => 'Tin nhắn tối đa 2.000 ký tự.',
-            'replyMessage.not_regex' => 'Tin nhắn có ký tự không hợp lệ. Hãy kiểm tra lại.',
-        ])->validate();
+            'replyMessage' => ChatContent::rules(),
+        ], ChatContent::messages('replyMessage'))->validate();
 
         return DB::transaction(function () use ($session, $sender, $name, $text) {
             $locked = ChatSession::whereKey($session->id)->lockForUpdate()->firstOrFail();

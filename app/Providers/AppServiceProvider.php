@@ -45,7 +45,7 @@ class AppServiceProvider extends ServiceProvider
         foreach (['init' => 10, 'send' => 20, 'messages' => 90, 'read' => 90] as $operation => $limit) {
             RateLimiter::for('chat-'.$operation, fn (Request $request) => Limit::perMinute($limit)
                 ->by('chat-'.$operation.'|'.$request->ip())
-                ->response(fn () => response()->json(['success' => false, 'message' => 'Bạn đang thao tác quá nhanh. Hãy chờ một phút rồi thử lại.'], 429)));
+                ->response(fn (Request $request, array $headers) => response()->json(['success' => false, 'message' => 'Bạn đang thao tác quá nhanh. Hãy chờ một phút rồi thử lại.'], 429, $headers)));
         }
 
         View::composer(['layouts.storefront', 'storefront.*', 'lookup.*', 'print.order'], function ($view) {

@@ -168,7 +168,7 @@
     </div>
 
     <!-- 4. FLOATING ACTION WIDGETS (Zalo & Hotline - Ghim cố định góc phải) -->
-    <div class="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-40 flex flex-col space-y-2.5">
+    <div id="storefront-contact-shortcuts" class="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-40 flex flex-col space-y-2.5">
         <a href="{{ $storefrontSettings['zalo_url'] }}" target="_blank" class="flex items-center space-x-2 bg-[#0068ff] hover:bg-blue-600 text-white px-3.5 py-2.5 rounded-full shadow-xl transition transform hover:scale-105 group border-2 border-white">
             <span class="w-6 h-6 rounded-full bg-white text-[#0068ff] font-black text-xs flex items-center justify-center">Z</span>
             <span class="text-xs font-bold hidden sm:inline">Zalo Chat</span>

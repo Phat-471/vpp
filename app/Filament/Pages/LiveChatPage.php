@@ -56,10 +56,8 @@ class LiveChatPage extends Page
         ChatSession::findOrFail($sessionId);
         $this->selectedSessionId = $sessionId;
         $this->replyMessage = '';
-        $this->resetPage('messagesPage');
         $this->resetValidation();
-        unset($this->currentSession, $this->messages);
-        $this->markSelectedRead();
+        $this->resetPage('messagesPage'); // The pagination hook acknowledges the displayed group.
         $this->dispatch('chat-session-selected');
     }
 
@@ -111,7 +109,6 @@ class LiveChatPage extends Page
         app(LiveChatService::class)->reply(auth()->user(), $session, $this->replyMessage);
         $this->replyMessage = '';
         $this->resetPage('messagesPage');
-        $this->markSelectedRead();
         $this->dispatch('chat-reply-sent');
     }
 
@@ -169,5 +166,42 @@ class LiveChatPage extends Page
         Gate::authorize('manage-live-chat');
 
         return $this->currentSession?->messages()->reorder()->orderByDesc('id')->paginate(50, pageName: 'messagesPage');
+    }
+
+    public function getUnreadCountProperty(): int
+    {
+        return ChatSession::query()->where('unread_admin', '>', 0)->count();
+    }
+
+    public function getActiveCountProperty(): int
+    {
+        return ChatSession::query()->where('status', 'active')->count();
+    }
+
+    public function getClosedCountProperty(): int
+    {
+        return ChatSession::query()->where('status', 'closed')->count();
+    }
+
+    public function getTotalCountProperty(): int
+    {
+        return ChatSession::query()->count();
+    }
+
+    public function getCustomerDetailsProperty(): ?\App\Models\Customer
+    {
+        if (! $this->currentSession) {
+            return null;
+        }
+
+        if ($this->currentSession->customer) {
+            return $this->currentSession->customer;
+        }
+
+        if (! empty($this->currentSession->customer_phone)) {
+            return \App\Models\Customer::query()->where('phone', $this->currentSession->customer_phone)->first();
+        }
+
+        return null;
     }
 }
