@@ -15,11 +15,33 @@ class EditOrder extends EditRecord
     {
         return [
             Actions\Action::make('print')
-                ->label('In hóa đơn')
+                ->label('In bill A5')
                 ->icon('heroicon-o-printer')
                 ->color('info')
                 ->url(fn (Order $record) => url("/print/order/{$record->id}"))
                 ->openUrlInNewTab(),
+
+            Actions\Action::make('print_k80')
+                ->label('In bill K80')
+                ->icon('heroicon-o-receipt-percent')
+                ->color('warning')
+                ->url(fn (Order $record) => url("/print/order/{$record->id}?format=k80"))
+                ->openUrlInNewTab(),
+
+            Actions\Action::make('vietqr')
+                ->label('VietQR')
+                ->icon('heroicon-o-qr-code')
+                ->color('success')
+                ->modalHeading(fn (Order $record) => "Mã VietQR cho đơn {$record->order_code}")
+                ->modalSubmitAction(false)
+                ->modalContent(fn (Order $record) => view('filament.modals.vietqr-order', [
+                    'order' => $record,
+                    'amount' => $record->grand_total - $record->paid_amount > 0 ? ($record->grand_total - $record->paid_amount) : $record->grand_total,
+                    'qrUrl' => \App\Helpers\AppHelper::generateVietQrUrl(
+                        (float) ($record->grand_total - $record->paid_amount > 0 ? ($record->grand_total - $record->paid_amount) : $record->grand_total),
+                        $record->order_code
+                    ),
+                ])),
 
             Actions\Action::make('print_vat')
                 ->label('In VAT')

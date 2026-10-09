@@ -3,39 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hóa Đơn Bán Lẻ - {{ $order->order_code }}</title>
+    <title>Hóa Đơn Bán Lẻ {{ request('format') === 'k80' ? '(K80)' : '(A5)' }} - {{ $order->order_code }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @media print {
             .no-print { display: none !important; }
             body { margin: 0; padding: 0; background: #fff; }
-            .print-page { box-shadow: none; border: none; margin: 0; width: 100%; max-width: 100%; padding: 8mm; }
+            .print-page { box-shadow: none !important; border: none !important; margin: 0 !important; width: 100% !important; padding: 2mm !important; }
         }
+        @if(request('format') === 'k80')
+        @page {
+            size: 80mm auto;
+            margin: 2mm;
+        }
+        @else
         @page {
             size: A5 portrait;
             margin: 6mm;
         }
+        @endif
     </style>
 </head>
 <body class="bg-gray-100 text-gray-900 font-sans antialiased text-sm">
 
+    @php
+        $isK80 = request('format') === 'k80';
+    @endphp
+
     <!-- Print Action Bar for Screen -->
-    <div class="no-print bg-slate-800 text-white p-3 fixed top-0 left-0 right-0 z-50 flex items-center justify-between shadow-lg">
+    <div class="no-print bg-slate-900 text-white p-3 fixed top-0 left-0 right-0 z-50 flex items-center justify-between shadow-lg">
         <div class="flex items-center space-x-3">
-            <span class="font-bold text-emerald-400">HÓA ĐƠN BÁN LẺ:</span>
-            <span class="bg-slate-700 px-2 py-0.5 rounded font-mono">{{ $order->order_code }}</span>
-            <span class="text-xs text-gray-300">Khổ in: A5 / 1/2 A4</span>
+            <span class="font-bold text-emerald-400">🧾 HÓA ĐƠN BÁN LẺ:</span>
+            <span class="bg-slate-700 px-2 py-0.5 rounded font-mono font-bold">{{ $order->order_code }}</span>
+            <span class="text-xs text-gray-300">Khổ in: <b class="text-amber-400">{{ $isK80 ? 'Máy in nhiệt K80 (80mm)' : 'Máy in văn phòng A5 / A4' }}</b></span>
         </div>
-        <div class="flex space-x-2">
+        <div class="flex items-center space-x-2">
+            <a href="{{ request()->fullUrlWithQuery(['format' => null]) }}" class="px-3 py-1.5 rounded font-bold text-xs transition {{ !$isK80 ? 'bg-indigo-600 text-white shadow' : 'bg-slate-800 text-gray-300 hover:bg-slate-700' }}">
+                📄 Khổ A5 (Mặc định)
+            </a>
+            <a href="{{ request()->fullUrlWithQuery(['format' => 'k80']) }}" class="px-3 py-1.5 rounded font-bold text-xs transition {{ $isK80 ? 'bg-indigo-600 text-white shadow' : 'bg-slate-800 text-gray-300 hover:bg-slate-700' }}">
+                🧾 Khổ K80 (Nhiệt 80mm)
+            </a>
+            @if($order->is_vat_invoice)
+            <a href="{{ url("/print/vat-invoice/{$order->id}") }}" class="px-3 py-1.5 rounded font-bold text-xs bg-amber-600 hover:bg-amber-500 text-white transition">
+                📄 Xem Hóa đơn VAT
+            </a>
+            @endif
             <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-1.5 rounded shadow flex items-center space-x-1 cursor-pointer">
-                <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
                 <span>BẤM ĐỂ IN (CTRL + P)</span>
             </button>
-            <button onclick="window.close()" class="bg-gray-600 hover:bg-gray-500 text-white px-3 py-1.5 rounded">Đóng</button>
+            <button onclick="window.close()" class="bg-gray-600 hover:bg-gray-500 text-white px-3 py-1.5 rounded text-xs">Đóng</button>
         </div>
     </div>
 
-    <div class="max-w-[148mm] mx-auto bg-white p-6 my-14 shadow-md border border-gray-300 print-page">
+    <div class="{{ $isK80 ? 'max-w-[76mm] w-[76mm] p-2 text-xs' : 'max-w-[148mm] p-6 text-sm' }} mx-auto bg-white my-14 shadow-md border border-gray-300 print-page">
         <!-- Shop Header -->
         <div class="text-center border-b border-gray-300 pb-3 mb-3">
             <h1 class="text-base font-black uppercase text-indigo-950">{{ $storefrontSettings['site_name'] }}</h1>
@@ -64,7 +85,26 @@
                 <p class="text-gray-500">Phiếu bán hàng này không thay thế hóa đơn điện tử.</p>
             </div>
         @endif
-        <!-- Order Items Table -->
+        <!-- Order Items Display -->
+        @if($isK80)
+        <!-- K80 Receipt Items (Chuẩn máy in nhiệt 80mm) -->
+        <div class="border-t border-b border-dashed border-gray-400 py-1.5 my-2">
+            <div class="flex justify-between font-bold text-[11px] text-gray-700 pb-1 border-b border-gray-200">
+                <span>MẶT HÀNG</span>
+                <span>T.TIỀN</span>
+            </div>
+            @foreach($order->orderItems as $index => $item)
+            <div class="py-1 border-b border-gray-100 last:border-0 text-[11px]">
+                <div class="font-semibold text-gray-900 leading-tight">{{ $item->product_name }}</div>
+                <div class="flex justify-between text-[10px] text-gray-600 font-mono mt-0.5">
+                    <span>{{ $item->quantity }} {{ $item->unit_name }} x {{ number_format($item->unit_price, 0, ',', '.') }}</span>
+                    <span class="font-bold text-gray-900">{{ number_format($item->subtotal, 0, ',', '.') }} ₫</span>
+                </div>
+            </div>
+            @endforeach
+        </div>
+        @else
+        <!-- Order Items Table A5 -->
         <table class="w-full text-xs text-left border-collapse border border-gray-300 mb-3">
             <thead class="bg-gray-100 font-bold text-gray-700">
                 <tr>
@@ -89,8 +129,9 @@
                 @endforeach
             </tbody>
         </table>
+        @endif
 
-        <!-- Totals & VAT Breakdown (Ready for Business upgrade) -->
+        <!-- Totals & VAT Breakdown -->
         <div class="text-xs border-t border-gray-300 pt-2 space-y-1">
             <div class="flex justify-between">
                 <span class="text-gray-600">Tiền hàng:</span>
@@ -102,13 +143,15 @@
                 <span class="font-mono">-{{ number_format($order->discount_amount, 0, ',', '.') }} ₫</span>
             </div>
             @endif
+            @if($order->tax_amount > 0)
             <div class="flex justify-between text-gray-500 text-[11px]">
                 <span>Thuế suất VAT ({{ $order->tax_rate }}%):</span>
                 <span class="font-mono">{{ number_format($order->tax_amount, 0, ',', '.') }} ₫</span>
             </div>
-            <div class="flex justify-between text-sm font-black border-t border-gray-400 pt-1 text-gray-900">
-                <span>TỔNG CỘNG THANH TOÁN:</span>
-                <span class="text-base text-red-600 font-mono">{{ number_format($order->grand_total, 0, ',', '.') }} ₫</span>
+            @endif
+            <div class="flex justify-between items-baseline text-sm font-black border-t border-gray-400 pt-1 text-gray-900">
+                <span class="{{ $isK80 ? 'text-xs' : 'text-sm' }} uppercase">TỔNG CỘNG:</span>
+                <span class="{{ $isK80 ? 'text-sm' : 'text-base' }} text-red-600 font-mono font-bold">{{ number_format($order->grand_total, 0, ',', '.') }} ₫</span>
             </div>
             <div class="flex justify-between text-[11px] text-gray-600">
                 <span>Hình thức: {{ $order->payment_method === 'vietqr' ? 'VietQR Động' : ($order->payment_method === 'transfer' ? 'Chuyển khoản' : 'Tiền mặt') }}</span>

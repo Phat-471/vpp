@@ -3,9 +3,11 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\OrderResource\Pages;
+use App\Helpers\AppHelper;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Product;
+use App\Services\BusinessTaxLookup;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -13,6 +15,8 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class OrderResource extends Resource
 {
@@ -87,6 +91,21 @@ class OrderResource extends Resource
                                                 ->tel(),
                                         ]),
 
+                                    Forms\Components\Actions::make([
+                                        Forms\Components\Actions\Action::make('set_retail')
+                                            ->label('👤 Khách lẻ vãng lai tại quầy')
+                                            ->icon('heroicon-m-user')
+                                            ->size('xs')
+                                            ->color('gray')
+                                            ->action(function (callable $set) {
+                                                $set('customer_id', null);
+                                                $set('customer_name', 'Khách lẻ tại quầy');
+                                                $set('customer_phone', '');
+                                                $set('customer_address', '');
+                                            }),
+                                    ])
+                                        ->columnSpanFull(),
+
                                     Forms\Components\Grid::make(3)
                                         ->schema([
                                             Forms\Components\Select::make('channel')
@@ -102,6 +121,7 @@ class OrderResource extends Resource
                                                 ->label('Trạng thái đơn')
                                                 ->options([
                                                     'completed' => '✅ Đã hoàn tất & xuất kho',
+                                                    'shipping' => '🚚 Đang giao hàng',
                                                     'pending' => '⏳ Chờ xử lý / Đóng gói',
                                                     'cancelled' => '❌ Đã hủy đơn',
                                                 ])
@@ -209,7 +229,32 @@ class OrderResource extends Resource
 
                                             Forms\Components\TextInput::make('company_tax_id')
                                                 ->label('Mã số thuế (MST) *')
-                                                ->placeholder('VD: 0101234567'),
+                                                ->placeholder('VD: 0101234567')
+                                                ->suffixAction(
+                                                    Forms\Components\Actions\Action::make('lookup_tax')
+                                                        ->label('Tra cứu MST')
+                                                        ->icon('heroicon-m-magnifying-glass')
+                                                        ->color('primary')
+                                                        ->action(function ($state, callable $set) {
+                                                            if (! $state) {
+                                                                Notification::make()->warning()->title('Vui lòng nhập MST trước khi tra cứu')->send();
+                                                                return;
+                                                            }
+                                                            try {
+                                                                $lookup = app(BusinessTaxLookup::class);
+                                                                $res = $lookup->find($state);
+                                                                if ($res) {
+                                                                    $set('company_name', $res['name'] ?? '');
+                                                                    $set('company_address', $res['address'] ?? '');
+                                                                    Notification::make()->success()->title('Đã tìm thấy thông tin DN')->body($res['name'] ?? '')->send();
+                                                                } else {
+                                                                    Notification::make()->warning()->title('Không tìm thấy doanh nghiệp')->body('Vui lòng nhập thủ công.')->send();
+                                                                }
+                                                            } catch (\Throwable $e) {
+                                                                Notification::make()->danger()->title('Lỗi tra cứu MST')->body($e->getMessage())->send();
+                                                            }
+                                                        })
+                                                ),
 
                                             Forms\Components\TextInput::make('company_address')
                                                 ->label('Địa chỉ đăng ký kinh doanh')
@@ -300,6 +345,63 @@ class OrderResource extends Resource
                                         ->default(0)
                                         ->live(),
 
+                                    Forms\Components\Actions::make([
+                                        Forms\Components\Actions\Action::make('pay_full')
+                                            ->label('Trả đủ')
+                                            ->size('xs')
+                                            ->color('success')
+                                            ->action(function (callable $get, callable $set) {
+                                                $gt = (float)($get('grand_total') ?? 0);
+                                                $set('paid_amount', $gt);
+                                                $set('payment_status', 'paid');
+                                            }),
+                                        Forms\Components\Actions\Action::make('add_100k')
+                                            ->label('+100k')
+                                            ->size('xs')
+                                            ->color('gray')
+                                            ->action(function (callable $get, callable $set) {
+                                                $cur = (float)($get('paid_amount') ?? 0);
+                                                $set('paid_amount', $cur + 100000);
+                                            }),
+                                        Forms\Components\Actions\Action::make('add_200k')
+                                            ->label('+200k')
+                                            ->size('xs')
+                                            ->color('gray')
+                                            ->action(function (callable $get, callable $set) {
+                                                $cur = (float)($get('paid_amount') ?? 0);
+                                                $set('paid_amount', $cur + 200000);
+                                            }),
+                                        Forms\Components\Actions\Action::make('add_500k')
+                                            ->label('+500k')
+                                            ->size('xs')
+                                            ->color('gray')
+                                            ->action(function (callable $get, callable $set) {
+                                                $cur = (float)($get('paid_amount') ?? 0);
+                                                $set('paid_amount', $cur + 500000);
+                                            }),
+                                    ])
+                                        ->columnSpanFull(),
+
+                                    Forms\Components\Placeholder::make('remaining_due')
+                                        ->label('Còn lại phải thu / Tiền thừa')
+                                        ->content(function (callable $get) {
+                                            $grand = (float) ($get('grand_total') ?? 0);
+                                            $paid = (float) ($get('paid_amount') ?? 0);
+                                            if ($paid >= $grand && $grand > 0) {
+                                                $excess = $paid - $grand;
+                                                return $excess > 0
+                                                    ? '💵 Tiền thừa trả khách: ' . number_format($excess, 0, ',', '.') . ' ₫'
+                                                    : '✅ Đã thanh toán đủ (0 ₫)';
+                                            }
+                                            $rem = max(0, $grand - $paid);
+                                            return '🔴 Còn nợ cần thu: ' . number_format($rem, 0, ',', '.') . ' ₫';
+                                        })
+                                        ->extraAttributes(fn (callable $get) => [
+                                            'class' => ((float)($get('paid_amount') ?? 0) >= (float)($get('grand_total') ?? 0) && (float)($get('grand_total') ?? 0) > 0)
+                                                ? 'text-emerald-700 font-bold text-sm'
+                                                : 'text-rose-600 font-bold text-sm'
+                                        ]),
+
                                     Forms\Components\Select::make('payment_status')
                                         ->label('Trạng thái thanh toán')
                                         ->options([
@@ -361,6 +463,23 @@ class OrderResource extends Resource
                     ])
                     ->formatStateUsing(fn ($state) => $state === 'pos' ? 'Tại quầy' : 'Online'),
 
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Trạng thái')
+                    ->badge()
+                    ->colors([
+                        'success' => 'completed',
+                        'info' => 'shipping',
+                        'warning' => 'pending',
+                        'danger' => 'cancelled',
+                    ])
+                    ->formatStateUsing(fn ($state) => match ($state) {
+                        'completed' => 'Đã hoàn tất',
+                        'shipping' => 'Đang giao',
+                        'pending' => 'Chờ xử lý',
+                        'cancelled' => 'Đã hủy',
+                        default => $state,
+                    }),
+
                 Tables\Columns\TextColumn::make('grand_total')
                     ->label('Tổng tiền')
                     ->money('VND')
@@ -400,6 +519,15 @@ class OrderResource extends Resource
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Trạng thái đơn')
+                    ->options([
+                        'completed' => 'Đã hoàn tất',
+                        'shipping' => 'Đang giao',
+                        'pending' => 'Chờ xử lý',
+                        'cancelled' => 'Đã hủy',
+                    ]),
+
                 Tables\Filters\SelectFilter::make('channel')
                     ->label('Kênh bán')
                     ->options([
@@ -420,11 +548,75 @@ class OrderResource extends Resource
                     ->query(fn (Builder $query) => $query->where('is_vat_invoice', true)),
             ])
             ->actions([
+                Tables\Actions\Action::make('quick_status')
+                    ->label('Đổi trạng thái')
+                    ->icon('heroicon-m-arrow-path')
+                    ->color('warning')
+                    ->form([
+                        Forms\Components\Select::make('status')
+                            ->label('Trạng thái đơn *')
+                            ->options([
+                                'completed' => '✅ Đã hoàn tất & xuất kho',
+                                'shipping' => '🚚 Đang giao hàng',
+                                'pending' => '⏳ Chờ xử lý / Đóng gói',
+                                'cancelled' => '❌ Đã hủy đơn',
+                            ])
+                            ->required(),
+                        Forms\Components\Select::make('payment_status')
+                            ->label('Trạng thái thanh toán *')
+                            ->options([
+                                'paid' => '✅ Đã thanh toán đủ',
+                                'partially_paid' => '⏳ Trả một phần / Đặt cọc',
+                                'unpaid' => '❌ Chưa thanh toán / Ghi nợ',
+                            ])
+                            ->required(),
+                        Forms\Components\Select::make('payment_method')
+                            ->label('Hình thức thanh toán')
+                            ->options([
+                                'cash' => '💵 Tiền mặt',
+                                'vietqr' => '⚡ Quét mã VietQR',
+                                'transfer' => '🏦 Chuyển khoản ngân hàng',
+                            ]),
+                        Forms\Components\Textarea::make('notes')
+                            ->label('Ghi chú')
+                            ->rows(2),
+                    ])
+                    ->fillForm(fn (Order $record): array => [
+                        'status' => $record->status,
+                        'payment_status' => $record->payment_status,
+                        'payment_method' => $record->payment_method,
+                        'notes' => $record->notes,
+                    ])
+                    ->action(function (Order $record, array $data): void {
+                        DB::transaction(function () use ($record, $data) {
+                            $record->update([
+                                'status' => $data['status'],
+                                'payment_status' => $data['payment_status'],
+                                'payment_method' => $data['payment_method'] ?? $record->payment_method,
+                                'notes' => $data['notes'] ?? $record->notes,
+                                'paid_amount' => $data['payment_status'] === 'paid' ? $record->grand_total : $record->paid_amount,
+                            ]);
+                        });
+
+                        Notification::make()
+                            ->title('Cập nhật trạng thái thành công')
+                            ->body("Đơn hàng {$record->order_code} đã được cập nhật.")
+                            ->success()
+                            ->send();
+                    }),
+
                 Tables\Actions\Action::make('print')
-                    ->label('In bill')
+                    ->label('In bill A5')
                     ->icon('heroicon-o-printer')
                     ->color('info')
                     ->url(fn (Order $record) => url("/print/order/{$record->id}"))
+                    ->openUrlInNewTab(),
+
+                Tables\Actions\Action::make('print_k80')
+                    ->label('In bill K80')
+                    ->icon('heroicon-o-receipt-percent')
+                    ->color('warning')
+                    ->url(fn (Order $record) => url("/print/order/{$record->id}?format=k80"))
                     ->openUrlInNewTab(),
 
                 Tables\Actions\Action::make('print_vat')
@@ -444,7 +636,10 @@ class OrderResource extends Resource
                     ->modalContent(fn (Order $record) => view('filament.modals.vietqr-order', [
                         'order' => $record,
                         'amount' => $record->grand_total - $record->paid_amount > 0 ? ($record->grand_total - $record->paid_amount) : $record->grand_total,
-                        'qrUrl' => "https://img.vietqr.io/image/970407-190333888999-compact2.png?amount=" . ($record->grand_total - $record->paid_amount > 0 ? ($record->grand_total - $record->paid_amount) : $record->grand_total) . "&addInfo=" . $record->order_code . "&accountName=NGUYEN%20VAN%20A",
+                        'qrUrl' => AppHelper::generateVietQrUrl(
+                            (float) ($record->grand_total - $record->paid_amount > 0 ? ($record->grand_total - $record->paid_amount) : $record->grand_total),
+                            $record->order_code
+                        ),
                     ])),
 
                 Tables\Actions\EditAction::make()

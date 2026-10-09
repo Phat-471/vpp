@@ -30,6 +30,8 @@ class PrintController extends Controller
     public function order($id)
     {
         $order = Order::with(['orderItems', 'customer', 'creator'])->findOrFail($id);
+        $due = max(0, (float) $order->grand_total - (float) $order->paid_amount);
+        $vietQrUrl = AppHelper::generateVietQrUrl($due > 0 ? $due : (float) $order->grand_total, $order->order_code);
 
         return view('print.order', compact('order', 'vietQrUrl'));
     }
