@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\RepairTicketResource\Pages;
+use App\Helpers\AppHelper;
 use App\Models\Customer;
 use App\Models\PrinterModel;
 use App\Models\Product;
@@ -15,6 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class RepairTicketResource extends Resource
@@ -123,6 +125,51 @@ class RepairTicketResource extends Resource
                                                 ->placeholder('Tem phía sau máy (nếu có)'),
                                         ]),
 
+                                    Forms\Components\Actions::make([
+                                        Forms\Components\Actions\Action::make('m_canon_2900')
+                                            ->label('Canon 2900')
+                                            ->icon('heroicon-m-printer')
+                                            ->size('xs')
+                                            ->color('gray')
+                                            ->action(fn (callable $set) => $set('device_name', 'Canon LBP 2900')),
+
+                                        Forms\Components\Actions\Action::make('m_canon_3300')
+                                            ->label('Canon 3300')
+                                            ->icon('heroicon-m-printer')
+                                            ->size('xs')
+                                            ->color('gray')
+                                            ->action(fn (callable $set) => $set('device_name', 'Canon LBP 3300')),
+
+                                        Forms\Components\Actions\Action::make('m_hp_1102')
+                                            ->label('HP 1102/1020')
+                                            ->icon('heroicon-m-printer')
+                                            ->size('xs')
+                                            ->color('gray')
+                                            ->action(fn (callable $set) => $set('device_name', 'HP LaserJet P1102')),
+
+                                        Forms\Components\Actions\Action::make('m_brother_2321')
+                                            ->label('Brother 2321D')
+                                            ->icon('heroicon-m-printer')
+                                            ->size('xs')
+                                            ->color('gray')
+                                            ->action(fn (callable $set) => $set('device_name', 'Brother HL-L2321D')),
+
+                                        Forms\Components\Actions\Action::make('m_brother_7535')
+                                            ->label('Brother 7535DW')
+                                            ->icon('heroicon-m-printer')
+                                            ->size('xs')
+                                            ->color('gray')
+                                            ->action(fn (callable $set) => $set('device_name', 'Brother DCP-B7535DW')),
+
+                                        Forms\Components\Actions\Action::make('m_epson_3210')
+                                            ->label('Epson L3210')
+                                            ->icon('heroicon-m-printer')
+                                            ->size('xs')
+                                            ->color('gray')
+                                            ->action(fn (callable $set) => $set('device_name', 'Epson EcoTank L3210')),
+                                    ])
+                                        ->columnSpanFull(),
+
                                     Forms\Components\Grid::make(2)
                                         ->schema([
                                             Forms\Components\TextInput::make('accessories')
@@ -136,11 +183,140 @@ class RepairTicketResource extends Resource
                                                 ->required(),
                                         ]),
 
+                                    Forms\Components\Actions::make([
+                                        Forms\Components\Actions\Action::make('acc_pwr')
+                                            ->label('+ Dây nguồn')
+                                            ->size('xs')
+                                            ->color('gray')
+                                            ->action(function (callable $get, callable $set) {
+                                                $c = trim($get('accessories') ?? '');
+                                                if (!Str::contains($c, 'Dây nguồn')) {
+                                                    $set('accessories', $c ? "{$c}, Dây nguồn" : 'Dây nguồn');
+                                                }
+                                            }),
+                                        Forms\Components\Actions\Action::make('acc_usb')
+                                            ->label('+ Cáp USB')
+                                            ->size('xs')
+                                            ->color('gray')
+                                            ->action(function (callable $get, callable $set) {
+                                                $c = trim($get('accessories') ?? '');
+                                                if (!Str::contains($c, 'Cáp USB')) {
+                                                    $set('accessories', $c ? "{$c}, Cáp USB" : 'Cáp USB');
+                                                }
+                                            }),
+                                        Forms\Components\Actions\Action::make('acc_cartridge')
+                                            ->label('+ Hộp mực')
+                                            ->size('xs')
+                                            ->color('gray')
+                                            ->action(function (callable $get, callable $set) {
+                                                $c = trim($get('accessories') ?? '');
+                                                if (!Str::contains($c, 'Hộp mực')) {
+                                                    $set('accessories', $c ? "{$c}, Hộp mực" : 'Hộp mực');
+                                                }
+                                            }),
+                                        Forms\Components\Actions\Action::make('acc_tray')
+                                            ->label('+ Khay giấy')
+                                            ->size('xs')
+                                            ->color('gray')
+                                            ->action(function (callable $get, callable $set) {
+                                                $c = trim($get('accessories') ?? '');
+                                                if (!Str::contains($c, 'Khay giấy')) {
+                                                    $set('accessories', $c ? "{$c}, Khay giấy" : 'Khay giấy');
+                                                }
+                                            }),
+                                        Forms\Components\Actions\Action::make('acc_adapter')
+                                            ->label('+ Adapter nguồn')
+                                            ->size('xs')
+                                            ->color('gray')
+                                            ->action(function (callable $get, callable $set) {
+                                                $c = trim($get('accessories') ?? '');
+                                                if (!Str::contains($c, 'Adapter')) {
+                                                    $set('accessories', $c ? "{$c}, Adapter" : 'Adapter');
+                                                }
+                                            }),
+                                        Forms\Components\Actions\Action::make('acc_none')
+                                            ->label('✕ Không phụ kiện')
+                                            ->size('xs')
+                                            ->color('danger')
+                                            ->action(fn (callable $set) => $set('accessories', 'Không kèm phụ kiện')),
+                                    ])
+                                        ->columnSpanFull(),
+
                                     Forms\Components\Textarea::make('issue_description')
                                         ->label('Mô tả tình trạng lỗi khi tiếp nhận *')
                                         ->placeholder('VD: Kẹt giấy liên tục khi in từ tờ thứ 2, bản in mờ/sọc đen dọc trang, máy kêu lạch cạch, không nhận lệnh in...')
                                         ->required()
                                         ->rows(3)
+                                        ->columnSpanFull(),
+
+                                    Forms\Components\Actions::make([
+                                        Forms\Components\Actions\Action::make('sym_jam')
+                                            ->label('⚠️ Kẹt giấy')
+                                            ->size('xs')
+                                            ->color('gray')
+                                            ->action(function (callable $get, callable $set) {
+                                                $c = trim($get('issue_description') ?? '');
+                                                $s = 'Kẹt giấy liên tục khi in';
+                                                if (!Str::contains($c, $s)) {
+                                                    $set('issue_description', $c ? "{$c}. {$s}" : $s);
+                                                }
+                                            }),
+                                        Forms\Components\Actions\Action::make('sym_fade')
+                                            ->label('📄 Bản in mờ / Sọc đen')
+                                            ->size('xs')
+                                            ->color('gray')
+                                            ->action(function (callable $get, callable $set) {
+                                                $c = trim($get('issue_description') ?? '');
+                                                $s = 'Bản in mờ, có vệt sọc đen dọc trang';
+                                                if (!Str::contains($c, $s)) {
+                                                    $set('issue_description', $c ? "{$c}. {$s}" : $s);
+                                                }
+                                            }),
+                                        Forms\Components\Actions\Action::make('sym_roller')
+                                            ->label('🚫 Không kéo giấy')
+                                            ->size('xs')
+                                            ->color('gray')
+                                            ->action(function (callable $get, callable $set) {
+                                                $c = trim($get('issue_description') ?? '');
+                                                $s = 'Không kéo giấy, trượt bánh cao su cuốn giấy';
+                                                if (!Str::contains($c, $s)) {
+                                                    $set('issue_description', $c ? "{$c}. {$s}" : $s);
+                                                }
+                                            }),
+                                        Forms\Components\Actions\Action::make('sym_noise')
+                                            ->label('🔊 Kêu lạch cạch')
+                                            ->size('xs')
+                                            ->color('gray')
+                                            ->action(function (callable $get, callable $set) {
+                                                $c = trim($get('issue_description') ?? '');
+                                                $s = 'Máy phát tiếng kêu cọt kẹt, lạch cạch cơ nhông';
+                                                if (!Str::contains($c, $s)) {
+                                                    $set('issue_description', $c ? "{$c}. {$s}" : $s);
+                                                }
+                                            }),
+                                        Forms\Components\Actions\Action::make('sym_refill')
+                                            ->label('🧪 Nạp mực / Hết mực')
+                                            ->size('xs')
+                                            ->color('gray')
+                                            ->action(function (callable $get, callable $set) {
+                                                $c = trim($get('issue_description') ?? '');
+                                                $s = 'Nạp mực và vệ sinh bảo dưỡng hộp mực';
+                                                if (!Str::contains($c, $s)) {
+                                                    $set('issue_description', $c ? "{$c}. {$s}" : $s);
+                                                }
+                                            }),
+                                        Forms\Components\Actions\Action::make('sym_power')
+                                            ->label('🔌 Mất nguồn')
+                                            ->size('xs')
+                                            ->color('gray')
+                                            ->action(function (callable $get, callable $set) {
+                                                $c = trim($get('issue_description') ?? '');
+                                                $s = 'Không lên nguồn / mất điện hoàn toàn';
+                                                if (!Str::contains($c, $s)) {
+                                                    $set('issue_description', $c ? "{$c}. {$s}" : $s);
+                                                }
+                                            }),
+                                    ])
                                         ->columnSpanFull(),
                                 ]),
 
@@ -311,6 +487,16 @@ class RepairTicketResource extends Resource
                                         ->default(0)
                                         ->live(),
 
+                                    Forms\Components\Placeholder::make('remaining_due')
+                                        ->label('Còn lại phải thu')
+                                        ->content(function (callable $get) {
+                                            $grand = (float) ($get('grand_total') ?? 0);
+                                            $paid = (float) ($get('paid_amount') ?? 0);
+                                            $rem = max(0, $grand - $paid);
+                                            return number_format($rem, 0, ',', '.') . ' ₫';
+                                        })
+                                        ->extraAttributes(['class' => 'text-rose-600 font-bold text-base']),
+
                                     Forms\Components\Select::make('payment_status')
                                         ->label('Trạng thái thanh toán')
                                         ->options([
@@ -437,11 +623,67 @@ class RepairTicketResource extends Resource
                     ]),
             ])
             ->actions([
+                Tables\Actions\Action::make('quick_status')
+                    ->label('Đổi trạng thái')
+                    ->icon('heroicon-m-arrow-path')
+                    ->color('warning')
+                    ->form([
+                        Forms\Components\Select::make('status')
+                            ->label('Trạng thái mới *')
+                            ->options([
+                                'received' => '1. 📥 Đã tiếp nhận máy',
+                                'diagnosing' => '2. 🔍 Đang kiểm tra / tháo máy',
+                                'waiting_approval' => '3. ⏳ Chờ khách duyệt giá',
+                                'in_progress' => '4. ⚙️ Đang sửa chữa',
+                                'completed' => '5. ✅ Đã sửa xong',
+                                'delivered' => '6. 📦 Đã bàn giao cho khách',
+                                'cancelled' => '7. ❌ Đã hủy',
+                            ])
+                            ->required(),
+                        Forms\Components\Select::make('payment_status')
+                            ->label('Trạng thái thanh toán')
+                            ->options([
+                                'unpaid' => 'Chưa thanh toán',
+                                'partially_paid' => 'Đã đặt cọc / Trả một phần',
+                                'paid' => 'Đã thanh toán đủ',
+                            ]),
+                        Forms\Components\Textarea::make('technician_diagnosis')
+                            ->label('Ghi chú tình trạng / Bệnh lý')
+                            ->rows(2),
+                    ])
+                    ->fillForm(fn (RepairTicket $record): array => [
+                        'status' => $record->status,
+                        'payment_status' => $record->payment_status,
+                        'technician_diagnosis' => $record->technician_diagnosis,
+                    ])
+                    ->action(function (RepairTicket $record, array $data): void {
+                        DB::transaction(function () use ($record, $data) {
+                            $record->update([
+                                'status' => $data['status'],
+                                'payment_status' => $data['payment_status'] ?? $record->payment_status,
+                                'technician_diagnosis' => $data['technician_diagnosis'] ?? $record->technician_diagnosis,
+                            ]);
+                        });
+
+                        Notification::make()
+                            ->title('Cập nhật trạng thái thành công')
+                            ->body("Phiếu {$record->ticket_code} đã được cập nhật.")
+                            ->success()
+                            ->send();
+                    }),
+
                 Tables\Actions\Action::make('print')
                     ->label('In phiếu')
                     ->icon('heroicon-o-printer')
                     ->color('info')
                     ->url(fn (RepairTicket $record) => url("/print/repair-ticket/{$record->id}"))
+                    ->openUrlInNewTab(),
+
+                Tables\Actions\Action::make('print_sticker')
+                    ->label('In tem dán')
+                    ->icon('heroicon-o-tag')
+                    ->color('gray')
+                    ->url(fn (RepairTicket $record) => url("/print/repair-ticket-sticker/{$record->id}"))
                     ->openUrlInNewTab(),
 
                 Tables\Actions\Action::make('vietqr')
@@ -453,7 +695,10 @@ class RepairTicketResource extends Resource
                     ->modalContent(fn (RepairTicket $record) => view('filament.modals.vietqr-ticket', [
                         'ticket' => $record,
                         'amount' => $record->grand_total - $record->paid_amount > 0 ? ($record->grand_total - $record->paid_amount) : $record->grand_total,
-                        'qrUrl' => "https://img.vietqr.io/image/970407-190333888999-compact2.png?amount=" . ($record->grand_total - $record->paid_amount > 0 ? ($record->grand_total - $record->paid_amount) : $record->grand_total) . "&addInfo=" . $record->ticket_code . "&accountName=NGUYEN%20VAN%20A",
+                        'qrUrl' => AppHelper::generateVietQrUrl(
+                            (float) ($record->grand_total - $record->paid_amount > 0 ? ($record->grand_total - $record->paid_amount) : $record->grand_total),
+                            $record->ticket_code
+                        ),
                     ])),
 
                 Tables\Actions\EditAction::make()

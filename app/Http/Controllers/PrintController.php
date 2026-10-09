@@ -19,6 +19,14 @@ class PrintController extends Controller
         return view('print.repair-ticket', compact('ticket', 'lookupUrl', 'vietQrUrl'));
     }
 
+    public function repairTicketSticker($id)
+    {
+        $ticket = RepairTicket::with(['customer', 'printerModel', 'technician'])->findOrFail($id);
+        $lookupUrl = AppHelper::generateLookupUrl($ticket->ticket_code, $ticket->phone_last4);
+
+        return view('print.repair-ticket-sticker', compact('ticket', 'lookupUrl'));
+    }
+
     public function order($id)
     {
         $order = Order::with(['orderItems', 'customer', 'creator'])->findOrFail($id);

@@ -27,6 +27,9 @@
             <span class="text-xs text-gray-300">Khổ in: A4 / A5 (Máy in văn phòng)</span>
         </div>
         <div class="flex space-x-2">
+            <a href="{{ route('print.repair-ticket-sticker', $ticket->id) }}" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-3 py-1.5 rounded shadow flex items-center space-x-1">
+                <span>🏷️ IN TEM DÁN MÁY</span>
+            </a>
             <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-1.5 rounded shadow flex items-center space-x-1 cursor-pointer">
                 <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
                 <span>BẤM ĐỂ IN (CTRL + P)</span>
@@ -50,20 +53,24 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-2 text-xs">
-                <div>
+            <div class="grid grid-cols-12 gap-3 text-xs items-center">
+                <div class="col-span-5">
                     <p><span class="font-semibold text-gray-700">Khách hàng:</span> <span class="font-bold text-sm">{{ $ticket->customer_name }}</span></p>
                     <p><span class="font-semibold text-gray-700">Điện thoại:</span> <span class="font-bold font-mono">{{ $ticket->customer_phone }}</span></p>
                     <p><span class="font-semibold text-gray-700">Thiết bị:</span> <span class="font-bold text-indigo-700">{{ $ticket->device_name }}</span> (S/N: {{ $ticket->serial_number ?: 'Không' }})</p>
                     <p><span class="font-semibold text-gray-700">Phụ kiện kèm:</span> {{ $ticket->accessories ?: 'Không có' }}</p>
                 </div>
-                <div class="bg-white p-2 rounded border border-gray-300">
+                <div class="col-span-5 bg-white p-2 rounded border border-gray-300">
                     <p class="font-semibold text-red-700">Hiện trạng lỗi ghi nhận:</p>
                     <p class="italic text-gray-800">{{ $ticket->issue_description }}</p>
                     <div class="mt-2 pt-1 border-t border-gray-200 flex justify-between items-center text-[11px]">
                         <span>Thợ: <b>{{ $ticket->technician?->name ?: 'Chưa phân công' }}</b></span>
                         <span class="text-red-600 font-bold">Hẹn trả: {{ $ticket->promised_at?->format('H:i d/m') }}</span>
                     </div>
+                </div>
+                <div class="col-span-2 text-center bg-white p-1 rounded border border-gray-300">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data={{ urlencode($lookupUrl) }}" alt="QR Tra cứu" class="w-16 h-16 mx-auto" />
+                    <span class="text-[9px] font-bold text-gray-600 block mt-0.5">QUÉT XEM LỖI</span>
                 </div>
             </div>
         </div>
@@ -81,13 +88,17 @@
             <!-- Header Shop -->
             <div class="flex justify-between items-start border-b border-gray-300 pb-3 mb-3">
                 <div class="flex items-center space-x-3">
-                    <div class="w-12 h-12 bg-indigo-600 text-white rounded-lg flex items-center justify-center font-black text-xl shadow">
-                        VPP
-                    </div>
+                    @if(!empty($storefrontSettings['logo_url']))
+                        <img src="{{ $storefrontSettings['logo_url'] }}" alt="{{ $storefrontSettings['site_name'] }}" class="h-12 w-auto object-contain rounded">
+                    @else
+                        <div class="w-12 h-12 bg-indigo-600 text-white rounded-lg flex items-center justify-center font-black text-xl shadow">
+                            VPP
+                        </div>
+                    @endif
                     <div>
-                        <h1 class="text-lg font-black text-indigo-900 uppercase">CỬA HÀNG VĂN PHÒNG PHẨM & DỊCH VỤ MÁY IN</h1>
-                        <p class="text-xs text-gray-600">ĐC: Số 123 Đường Văn Phòng Phẩm, P. Trung Tâm, TP.HCM</p>
-                        <p class="text-xs text-gray-600 font-bold">Hotline: <span class="text-red-600">0901.234.567</span> | Zalo: <span class="text-blue-600">0901.234.567</span></p>
+                        <h1 class="text-lg font-black text-indigo-900 uppercase">{{ $storefrontSettings['site_name'] ?? 'CỬA HÀNG VĂN PHÒNG PHẨM & DỊCH VỤ MÁY IN' }}</h1>
+                        <p class="text-xs text-gray-600">ĐC: {{ $storefrontSettings['address'] ?? 'Số 123 Đường Văn Phòng Phẩm, TP.HCM' }}</p>
+                        <p class="text-xs text-gray-600 font-bold">Hotline: <span class="text-red-600">{{ $storefrontSettings['hotline'] ?? '0901.234.567' }}</span> | Zalo: <span class="text-blue-600">{{ $storefrontSettings['zalo'] ?? '0901.234.567' }}</span></p>
                     </div>
                 </div>
                 <div class="text-right">
@@ -107,7 +118,7 @@
                 <div>
                     <p><span class="text-gray-600">Tên thiết bị:</span> <b class="text-indigo-800 text-sm">{{ $ticket->device_name }}</b></p>
                     <p><span class="text-gray-600">Tình trạng lỗi:</span> <span class="italic text-gray-800">{{ $ticket->issue_description }}</span></p>
-                    <p><span class="text-gray-600">Thời gian hẹn trả:</span> <b class="text-red-600 text-sm font-black">{{ $ticket->promised_at?->format('H:i - ngày d/m/Y') }}</b></p>
+                    <p><span class="text-gray-600">Thời gian hẹn trả:</span> <b class="text-red-600 text-sm font-black">{{ $ticket->promised_at ? $ticket->promised_at->format('H:i') . ' - Ngày ' . $ticket->promised_at->format('d/m/Y') : 'Chưa hẹn' }}</b></p>
                 </div>
             </div>
 
@@ -187,7 +198,7 @@
 
             <!-- Notes & Signatures -->
             <div class="mt-4 pt-2 border-t border-gray-200 text-[11px] text-gray-500">
-                <p><b>* Lưu ý:</b> Quý khách vui lòng mang theo phiếu này khi đến nhận máy. Bảo hành linh kiện thay thế 03 tháng. Sau 30 ngày kể từ ngày hẹn nếu quý khách không đến nhận, cửa hàng không chịu trách nhiệm bảo quản thiết bị.</p>
+                <p><b>* Lưu ý:</b> Quý khách vui lòng mang theo phiếu này khi đến nhận máy. Bảo hành linh kiện thay thế {{ $storefrontSettings['warranty_period_days'] ?? 30 }} ngày theo quy định của cửa hàng. Sau 30 ngày kể từ ngày hẹn nếu quý khách không đến nhận, cửa hàng không chịu trách nhiệm bảo quản thiết bị.</p>
                 <div class="grid grid-cols-2 text-center mt-3 text-xs">
                     <div>
                         <p class="font-bold text-gray-800">KHÁCH HÀNG KÝ NHẬN</p>

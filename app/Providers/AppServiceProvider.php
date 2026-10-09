@@ -48,7 +48,7 @@ class AppServiceProvider extends ServiceProvider
                 ->response(fn (Request $request, array $headers) => response()->json(['success' => false, 'message' => 'Bạn đang thao tác quá nhanh. Hãy chờ một phút rồi thử lại.'], 429, $headers)));
         }
 
-        View::composer(['layouts.storefront', 'storefront.*', 'lookup.*', 'print.order'], function ($view) {
+        View::composer(['layouts.storefront', 'storefront.*', 'lookup.*', 'print.*'], function ($view) {
             $view->with('storefrontSettings', app(StorefrontSettings::class)->all());
             if ($view->name() === 'print.order') {
                 $view->with('paymentSummary', app(PosOrderHistory::class)->paymentSummary($view->getData()['order']));

@@ -75,7 +75,8 @@ Route::get('/tra-cuu', [LookupController::class, 'index'])->name('lookup.index')
 Route::post('/tra-cuu', [LookupController::class, 'search'])->name('lookup.search');
 Route::get('/tra-cuu/{code}', [LookupController::class, 'view'])->name('lookup.view');
 
-// 7. In ấn chuẩn A4 / A5 máy in văn phòng
+// 7. In ấn chuẩn A4 / A5 máy in văn phòng & Tem dán máy in
 Route::get('/print/repair-ticket/{id}', [PrintController::class, 'repairTicket'])->name('print.repair-ticket');
+Route::get('/print/repair-ticket-sticker/{id}', [PrintController::class, 'repairTicketSticker'])->name('print.repair-ticket-sticker');
 Route::get('/print/order/{id}', [PrintController::class, 'order'])->name('print.order');
 Route::get('/print/vat-invoice/{id}', [PrintController::class, 'vatInvoice'])->name('print.vat-invoice');

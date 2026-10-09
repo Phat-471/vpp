@@ -15,10 +15,17 @@ class EditRepairTicket extends EditRecord
     {
         return [
             Actions\Action::make('print')
-                ->label('In phiếu')
+                ->label('In phiếu A4/A5')
                 ->icon('heroicon-o-printer')
                 ->color('info')
-                ->url(fn (RepairTicket $record) => url("/print/repair-ticket/{$record->id}"))
+                ->url(fn (RepairTicket $record) => route('print.repair-ticket', $record->id))
+                ->openUrlInNewTab(),
+
+            Actions\Action::make('print_sticker')
+                ->label('In tem dán máy')
+                ->icon('heroicon-o-tag')
+                ->color('primary')
+                ->url(fn (RepairTicket $record) => route('print.repair-ticket-sticker', $record->id))
                 ->openUrlInNewTab(),
 
             Actions\DeleteAction::make()

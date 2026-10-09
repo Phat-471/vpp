@@ -47,13 +47,17 @@ class AppHelper
     /**
      * Generate dynamic VietQR image URL directly (Zero external heavy library required)
      */
-    public static function generateVietQrUrl(float|int $amount, string $referenceCode, string $bankBin = '970407', string $accountNumber = '190333888999', string $accountName = 'NGUYEN VAN A'): string
+    public static function generateVietQrUrl(float|int $amount, string $referenceCode, ?string $bankBin = null, ?string $accountNumber = null, ?string $accountName = null): string
     {
+        $bank = $bankBin ?: \App\Models\Setting::get('vietqr_bank_code', 'MB');
+        $acc = $accountNumber ?: \App\Models\Setting::get('vietqr_account_number', '190333888999');
+        $name = $accountName ?: \App\Models\Setting::get('vietqr_account_name', 'NGUYEN VAN A');
+
         $safeAmount = max(0, (int) round($amount));
         $encodedRef = urlencode(strtoupper(trim($referenceCode)));
-        $encodedName = urlencode($accountName);
+        $encodedName = urlencode($name);
 
-        return "https://img.vietqr.io/image/{$bankBin}-{$accountNumber}-compact2.png?amount={$safeAmount}&addInfo={$encodedRef}&accountName={$encodedName}";
+        return "https://img.vietqr.io/image/{$bank}-{$acc}-compact2.png?amount={$safeAmount}&addInfo={$encodedRef}&accountName={$encodedName}";
     }
 
     /**
