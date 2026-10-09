@@ -49,9 +49,9 @@
         <div class="flex items-center justify-between border-b-2 border-slate-900 pb-1.5 mb-1.5">
             <div>
                 <span class="text-[10px] font-black uppercase text-indigo-900 block leading-tight">
-                    {{ $storefrontSettings['site_name'] ?? 'ÁNH DƯƠNG VPP & MÁY IN' }}
+                    {{ $storefrontSettings['site_name'] ?? 'VPP & THIẾT BỊ MÁY IN' }}
                 </span>
-                <span class="text-[9px] text-slate-500">Hotline: {{ $storefrontSettings['hotline'] ?? '0901.234.567' }}</span>
+                <span class="text-[9px] text-slate-500">Hotline: {{ $storefrontSettings['hotline'] ?? '0974.194.305' }}</span>
             </div>
             <div class="text-right">
                 <span class="text-[9px] font-bold text-slate-500 block uppercase">MÃ TIẾP NHẬN</span>

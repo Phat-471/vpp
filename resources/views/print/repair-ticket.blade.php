@@ -97,8 +97,8 @@
                     @endif
                     <div>
                         <h1 class="text-lg font-black text-indigo-900 uppercase">{{ $storefrontSettings['site_name'] ?? 'CỬA HÀNG VĂN PHÒNG PHẨM & DỊCH VỤ MÁY IN' }}</h1>
-                        <p class="text-xs text-gray-600">ĐC: {{ $storefrontSettings['address'] ?? 'Số 123 Đường Văn Phòng Phẩm, TP.HCM' }}</p>
-                        <p class="text-xs text-gray-600 font-bold">Hotline: <span class="text-red-600">{{ $storefrontSettings['hotline'] ?? '0901.234.567' }}</span> | Zalo: <span class="text-blue-600">{{ $storefrontSettings['zalo'] ?? '0901.234.567' }}</span></p>
+                        <p class="text-xs text-gray-600">ĐC: {{ $storefrontSettings['address'] ?? '30 Bình Hòa, Đồng Nai' }}</p>
+                        <p class="text-xs text-gray-600 font-bold">Hotline: <span class="text-red-600">{{ $storefrontSettings['hotline'] ?? '0974.194.305' }}</span> | Zalo: <span class="text-blue-600">{{ $storefrontSettings['zalo'] ?? '0974.194.305' }}</span></p>
                     </div>
                 </div>
                 <div class="text-right">

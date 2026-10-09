@@ -16,9 +16,9 @@
                 <h1 class="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
                     <span>{{ $customer->name }}</span>
                     @if($customer->phone_verified_at)
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40" title="Đã xác thực số điện thoại qua Zalo">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40" title="Tài khoản chính thức đã kích hoạt">
                             <svg class="w-3 h-3 mr-1 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                            Đã xác thực Zalo
+                            Tài khoản chính thức
                         </span>
                     @endif
                 </h1>

@@ -290,7 +290,7 @@
                 <h3 class="font-bold text-slate-900 text-sm">Chính Sách Bán Hàng & Hậu Mãi:</h3>
                 <ul class="list-disc pl-5 space-y-1.5 text-xs text-slate-600">
                     <li><b>Đồng kiểm khi nhận hàng:</b> Quý khách được quyền mở kiện hàng kiểm tra đúng chủng loại và số lượng trước khi thanh toán.</li>
-                    <li><b>Giao hàng hỏa tốc:</b> Đơn hàng nội thành TP.HCM được xử lý giao trong 2 giờ. Miễn phí ship cho đơn từ 500.000₫.</li>
+                    <li><b>Giao hàng hỏa tốc:</b> Đơn hàng tại khu vực Đồng Nai được xử lý giao trong 2 giờ. Miễn phí ship cho đơn từ 500.000₫.</li>
                     <li><b>Hóa đơn điện tử VAT:</b> Cửa hàng hỗ trợ xuất hóa đơn GTGT đầy đủ cho công ty, doanh nghiệp trong ngày.</li>
                     <li><b>Đổi trả 1-đổi-1:</b> Trong vòng 7 ngày nếu phát hiện lỗi kỹ thuật từ nhà sản xuất.</li>
                 </ul>

@@ -4,9 +4,9 @@
     </div>
     <div style="display: flex; flex-direction: column; text-align: left; line-height: 1.25;">
         <span style="font-size: 14px; font-weight: 850; color: #ffffff; letter-spacing: -0.02em; display: flex; align-items: center; gap: 6px;">
-            ÁNH DƯƠNG
+            {{ setting('site_name', 'VPP & MÁY IN') }}
             <span style="font-size: 9px; font-weight: 900; text-transform: uppercase; padding: 2px 5px; background: rgba(99, 102, 241, 0.35); color: #c7d2fe; border-radius: 4px; border: 1px solid rgba(165, 180, 252, 0.3);">ERP</span>
         </span>
-        <span style="font-size: 11px; color: #cbd5e1; font-weight: 500; letter-spacing: 0.01em;">VPP & Sửa Máy In</span>
+        <span style="font-size: 11px; color: #cbd5e1; font-weight: 500; letter-spacing: 0.01em;">{{ setting('site_slogan', 'Văn Phòng Phẩm & Dịch Vụ Máy In') }}</span>
     </div>
 </div>

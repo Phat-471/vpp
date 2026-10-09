@@ -185,7 +185,7 @@
             </div>
             <div>
                 <h3 class="text-xs sm:text-sm font-black text-slate-900">Giao Siêu Tốc 2H</h3>
-                <p class="text-[11px] text-slate-500 leading-tight mt-0.5">Nội thành TP.HCM nhận trong 120 phút</p>
+                <p class="text-[11px] text-slate-500 leading-tight mt-0.5">Khu vực Đồng Nai nhận trong 120 phút</p>
             </div>
         </div>
 

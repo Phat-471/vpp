@@ -21,7 +21,7 @@
         <div class="inline-flex items-center space-x-1.5 px-3 py-0.5 rounded-full bg-blue-500/20 text-blue-400 text-[10px] font-extrabold uppercase tracking-wider mb-1">
             <span>ỨNG DỤNG XÁC THỰC ZALO</span>
         </div>
-        <h1 class="text-base font-black text-white">VPP & Dịch Vụ Máy In Ánh Dương</h1>
+        <h1 class="text-base font-black text-white">{{ $storefrontSettings['site_name'] ?? 'VPP & Dịch Vụ Máy In' }}</h1>
         <p class="text-xs text-slate-300 mt-1">
             Yêu cầu cấp quyền thông tin để xác thực tài khoản và hỗ trợ giao hàng / sửa máy:
         </p>

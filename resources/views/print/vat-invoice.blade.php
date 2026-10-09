@@ -176,11 +176,11 @@
         <!-- THÔNG TIN ĐƠN VỊ BÁN HÀNG -->
         <div class="border-box">
             <div class="company-info">
-                <p><span class="label">Đơn vị bán hàng:</span> <strong style="text-transform: uppercase; color: #1e3a8a;">{{ setting('company_name', 'CÔNG TY TNHH THƯƠNG MẠI VÀ DỊCH VỤ VPP ÁNH DƯƠNG') }}</strong></p>
+                <p><span class="label">Đơn vị bán hàng:</span> <strong style="text-transform: uppercase; color: #1e3a8a;">{{ setting('company_name', 'CÔNG TY TNHH THƯƠNG MẠI VÀ DỊCH VỤ VPP') }}</strong></p>
                 <p><span class="label">Mã số thuế:</span> <strong style="font-size: 13px; letter-spacing: 1px;">{{ setting('company_tax_id', '0109887766') }}</strong></p>
-                <p><span class="label">Địa chỉ:</span> {{ setting('company_address', 'Số 123 Đường Cầu Giấy, Phường Dịch Vọng, Quận Cầu Giấy, TP. Hà Nội') }}</p>
-                <p><span class="label">Điện thoại / Hotline:</span> {{ setting('hotline', '1900 6868') }} - <span class="label">Website:</span> www.vppanhduong.vn</p>
-                <p><span class="label">Số tài khoản:</span> {{ setting('vietqr_account_number', '190333888999') }} tại {{ setting('vietqr_bank_name', 'Ngân hàng TMCP Quân Đội (MB Bank)') }}</p>
+                <p><span class="label">Địa chỉ:</span> {{ setting('company_address', '30 Bình Hòa, Đồng Nai, Việt Nam') }}</p>
+                <p><span class="label">Điện thoại / Hotline:</span> {{ setting('hotline', '0974.194.305') }}</p>
+                <p><span class="label">Số tài khoản:</span> {{ setting('vietqr_account_number', '9974194305') }} tại {{ setting('vietqr_bank_name', 'Techcombank (TCB)') }}</p>
             </div>
         </div>
 
@@ -287,7 +287,7 @@
                 <div class="sig-title">NGƯỜI BÁN HÀNG</div>
                 <div class="sig-note">(Ký điện tử, đóng dấu)</div>
                 <div class="stamp-box">
-                    ✓ KÝ BỞI: VPP ÁNH DƯƠNG<br>
+                    ✓ KÝ BỞI: {{ strtoupper(setting('company_name', 'VPP & THIẾT BỊ MÁY IN')) }}<br>
                     NGÀY KÝ: {{ $order->created_at->format('d/m/Y H:i:s') }}
                 </div>
             </div>
