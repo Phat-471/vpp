@@ -33,10 +33,31 @@ class OtpController extends Controller
             return redirect()->route('customer.profile');
         }
 
+        // Lấy mã OTP mới nhất còn hiệu lực
+        $otpRecord = \App\Models\PhoneOtp::where('phone', $cleanedPhone)
+            ->where('is_used', false)
+            ->where('expires_at', '>', now())
+            ->latest('id')
+            ->first();
+
+        if (!$otpRecord) {
+            $gen = $this->otpService->generate($cleanedPhone, 'verify', $customer, $request->ip());
+            $otpCode = $gen['dev_otp'] ?? null;
+        } else {
+            $otpCode = $otpRecord->otp_code;
+        }
+
+        $storeSettings = app(\App\Support\StorefrontSettings::class)->all();
+        $zaloNumber = preg_replace('/\D/', '', (string) ($storeSettings['zalo'] ?? $storeSettings['hotline'] ?? '0974194305'));
+        $zaloUrl = 'https://zalo.me/' . $zaloNumber;
+
         return view('storefront.auth.otp-verify', [
             'phone' => $cleanedPhone,
             'maskedPhone' => AppHelper::maskPhone($cleanedPhone),
             'customer' => $customer,
+            'otpCode' => $otpCode,
+            'zaloUrl' => $zaloUrl,
+            'zaloNumber' => $zaloNumber,
         ]);
     }
 
