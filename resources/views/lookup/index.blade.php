@@ -1,7 +1,30 @@
 @extends('layouts.storefront')
 
-@section('title', 'Tra Cứu Tiến Độ Sửa Máy In & Nạp Mực | VPP')
-@section('meta_description', 'Hệ thống tra cứu tiến độ sửa chữa máy in, nạp mực online bảo mật 2 lớp chống rò rỉ thông tin khách hàng.')
+@section('title', 'Tra Cứu Tiến Độ Sửa Máy In & Nạp Mực Online | ' . ($storefrontSettings['site_name'] ?? 'VPP & Dịch Vụ Máy In'))
+@section('meta_description', 'Hệ thống tra cứu tiến độ sửa chữa máy in, nạp mực online bảo mật 2 lớp chống rò rỉ thông tin khách hàng tại Đồng Nai.')
+
+@section('schema_extra')
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Trang chủ",
+      "item": "{{ route('storefront.index') }}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Tra cứu phiếu sửa chữa",
+      "item": "{{ route('lookup.index') }}"
+    }
+  ]
+}
+</script>
+@endsection
 
 @section('content')
 <main class="max-w-4xl mx-auto w-full px-4 sm:px-6 py-8 sm:py-12 space-y-6">

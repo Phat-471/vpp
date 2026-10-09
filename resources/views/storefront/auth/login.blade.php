@@ -1,258 +1,130 @@
 @extends('layouts.storefront')
 
-@section('title', 'Đăng Nhập Khách Hàng | VPP & Dịch Vụ Máy In')
-@section('meta_description', 'Đăng nhập để theo dõi đơn hàng và tra cứu lịch sử sửa máy in của bạn tại Cửa hàng VPP & Dịch Vụ Máy In.')
+@section('title', 'Đăng Nhập Khách Hàng | ' . ($storefrontSettings['site_name'] ?? 'VPP & Dịch Vụ Máy In'))
+@section('meta_description', 'Đăng nhập để theo dõi đơn hàng và tra cứu lịch sử sửa máy in của bạn tại ' . ($storefrontSettings['site_name'] ?? 'VPP & Dịch Vụ Máy In'))
 
 @section('content')
-    <div class="max-w-md mx-auto px-4 py-8 sm:py-16 space-y-6">
+<div class="max-w-md mx-auto px-4 py-8 sm:py-16 space-y-6">
 
-        <div class="text-center space-y-2">
-            <div
-                class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-700 to-amber-500 text-white flex items-center justify-center font-black text-xl mx-auto shadow-sm">
-                VP
-            </div>
-            <h1 class="text-xl sm:text-2xl font-black text-slate-900">Đăng Nhập Khách Hàng</h1>
-            <p class="text-xs text-slate-500">
-                Nhập số điện thoại hoặc quét mã Zalo 1 chạm để quản lý tài khoản của bạn.
-            </p>
+    <!-- Header Box -->
+    <div class="text-center space-y-2">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-700 via-indigo-700 to-emerald-600 text-white flex items-center justify-center font-black text-2xl mx-auto shadow-md">
+            🔐
         </div>
+        <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Đăng Nhập Khách Hàng</h1>
+        <p class="text-xs sm:text-sm text-slate-500 max-w-sm mx-auto leading-relaxed">
+            Nhập số điện thoại và mật khẩu để quản lý đơn hàng và theo dõi tiến độ sửa chữa máy in.
+        </p>
+    </div>
 
-        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-5">
+    <!-- Main Card -->
+    <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-5">
 
-            <!-- NÚT ĐĂNG NHẬP NHANH QUA ZALO -->
-            <div class="p-4 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-md space-y-3">
-                <div class="flex items-center space-x-3">
-                    <div
-                        class="w-10 h-10 rounded-xl bg-white text-blue-600 flex items-center justify-center font-black text-xs shadow-xs shrink-0">
-                        Zalo
-                    </div>
-                    <div>
-                        <h3 class="text-xs font-black uppercase tracking-wide">Đăng nhập nhanh bằng Zalo</h3>
-                        <p class="text-[11px] text-blue-100 mt-0.5">Không cần gõ mật khẩu • Nhận diện tức thì</p>
-                    </div>
+        <!-- Hiển thị thông báo flash -->
+        @if(session('success'))
+            <div class="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center space-x-2">
+                <span>✓</span>
+                <span>{{ session('success') }}</span>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold flex items-center space-x-2">
+                <span>⚠️</span>
+                <span>{{ session('error') }}</span>
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div class="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold space-y-1">
+                <div class="font-bold flex items-center space-x-1.5 text-rose-800">
+                    <span>⚠️</span>
+                    <span>Đăng nhập không thành công:</span>
                 </div>
-                <button type="button" onclick="openZaloModal()"
-                    class="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-blue-50 text-blue-700 font-extrabold text-xs shadow-sm transition flex items-center justify-center space-x-2 active:scale-98">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-                    </svg>
-                    <span>Quét Mã QR Zalo Để Đăng Nhập</span>
-                </button>
+                <ul class="list-disc list-inside space-y-0.5 text-[11px] pl-1 font-medium">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <!-- Form Đăng Nhập -->
+        <form action="{{ route('customer.post-login') }}" method="POST" class="space-y-4">
+            @csrf
+
+            <!-- Số điện thoại -->
+            <div>
+                <label for="loginPhone" class="block text-xs font-bold text-slate-700 mb-1">
+                    Số điện thoại <span class="text-rose-500">*</span>
+                </label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-xs">
+                        🇻🇳 +84
+                    </span>
+                    <input type="tel" id="loginPhone" name="phone" required maxlength="10"
+                        value="{{ old('phone') }}" placeholder="0901234567"
+                        class="w-full text-xs sm:text-sm pl-16 pr-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-600 focus:outline-none font-mono font-medium transition" />
+                </div>
             </div>
 
-            <div class="relative flex items-center justify-center my-4">
-                <div class="border-t border-slate-200 w-full"></div>
-                <span class="bg-white px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider relative">Hoặc dùng
-                    số điện thoại</span>
-            </div>
-
-            <!-- FORM ĐĂNG NHẬP TRUYỀN THỐNG -->
-            <form action="{{ route('customer.post-login') }}" method="POST" class="space-y-4">
-                @csrf
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Số điện thoại *</label>
-                    <input type="tel" name="phone" required value="{{ old('phone') }}" placeholder="VD: 0901 234 567"
-                        class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 bg-slate-50 font-medium" />
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Mật khẩu *</label>
-                    <input type="password" name="password" required placeholder="Nhập mật khẩu..."
-                        class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 bg-slate-50 font-medium" />
-                </div>
-
-                <div class="flex items-center justify-between text-xs">
-                    <label class="flex items-center space-x-2 text-slate-600 cursor-pointer">
-                        <input type="checkbox" name="remember" class="w-4 h-4 accent-indigo-600 rounded" />
-                        <span>Ghi nhớ đăng nhập</span>
+            <!-- Mật khẩu -->
+            <div>
+                <div class="flex items-center justify-between mb-1">
+                    <label for="loginPassword" class="block text-xs font-bold text-slate-700">
+                        Mật khẩu <span class="text-rose-500">*</span>
                     </label>
-                    <a href="{{ route('lookup.index') }}" class="text-indigo-600 hover:underline">
+                    <a href="{{ route('lookup.index') }}" class="text-[11px] font-bold text-indigo-700 hover:underline">
                         Quên mật khẩu?
                     </a>
                 </div>
-
-                <button type="submit" id="btnLoginSubmit"
-                    class="w-full py-3.5 px-4 bg-slate-800 hover:bg-slate-900 text-white font-black text-xs rounded-xl shadow-xs transition">
-                    ĐĂNG NHẬP BẰNG MẬT KHẨU
-                </button>
-            </form>
-
-            <div class="pt-2 border-t border-slate-100 text-center text-xs text-slate-500">
-                <span>Chưa có tài khoản?</span>
-                <a href="{{ route('customer.register') }}" class="font-bold text-indigo-600 hover:underline ml-1">Đăng ký
-                    tài khoản mới</a>
+                <input type="password" id="loginPassword" name="password" required placeholder="Nhập mật khẩu của bạn..."
+                    class="w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-600 focus:outline-none font-medium transition" />
             </div>
 
-        </div>
+            <!-- Ghi nhớ đăng nhập -->
+            <div class="flex items-center justify-between text-xs">
+                <label class="flex items-center space-x-2 text-slate-600 cursor-pointer">
+                    <input type="checkbox" name="remember" class="w-4 h-4 accent-indigo-600 rounded" />
+                    <span class="font-medium">Duy trì đăng nhập</span>
+                </label>
+            </div>
 
-    </div>
-
-    <!-- MODAL POPUP QUÉT MÃ QR ZALO NATIVE -->
-    <div id="zaloModal"
-        class="hidden fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div
-            class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-sm w-full p-6 text-center relative animate-fade-in space-y-4">
-
-            <!-- Nút Đóng -->
-            <button type="button" onclick="closeZaloModal()"
-                class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center text-sm font-bold transition">
-                ✕
+            <!-- Nút submit -->
+            <button type="submit" id="btnLoginSubmit"
+                class="w-full py-3.5 px-4 bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 text-white font-black text-xs sm:text-sm rounded-xl shadow-md shadow-indigo-500/20 transition flex items-center justify-center space-x-2 active:scale-98">
+                <span>ĐĂNG NHẬP NGAY</span>
+                <span>→</span>
             </button>
+        </form>
 
-            <div
-                class="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-black text-sm mx-auto shadow-sm">
-                Zalo
-            </div>
-
-            <div>
-                <h3 class="text-base font-black text-slate-900">Đăng Nhập Nhanh Qua Zalo</h3>
-                <p class="text-[11px] text-slate-500 mt-1">Quét mã bằng app Zalo ➔ Bấm "Chia sẻ" để đăng nhập ngay lập tức
-                </p>
-            </div>
-
-            <!-- Khung Chứa Mã QR -->
-            <div class="p-3 bg-slate-50 border-2 border-blue-500/30 rounded-2xl inline-block relative mx-auto">
-                <div id="qrLoading" class="w-48 h-48 flex flex-col items-center justify-center space-y-2 text-slate-400">
-                    <div class="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                    <span class="text-[10px] font-bold">Đang tạo mã QR...</span>
-                </div>
-                <img id="qrImage" src="" alt="Mã QR Zalo" class="hidden w-48 h-48 rounded-xl object-contain" />
-            </div>
-
-            <!-- Đồng Hồ Đếm Ngược & Trạng Thái -->
-            <div id="timerBox" class="text-[11px] text-slate-500 flex items-center justify-center space-x-1 font-medium">
-                <span>Mã có hiệu lực trong:</span>
-                <strong id="timerCountdown" class="text-amber-600 font-mono font-bold text-xs">05:00</strong>
-            </div>
-
-            <!-- Trạng thái xác thực thành công -->
-            <div id="statusSuccess"
-                class="hidden p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold">
-                ✓ Xác thực thành công! Đang chuyển hướng...
-            </div>
-
-            <!-- Nút Giả Lập Thử Nghiệm Ngay -->
-            <div class="pt-2 border-t border-slate-100">
-                <button type="button" onclick="mockScanZalo()"
-                    class="w-full py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] transition flex items-center justify-center space-x-1.5">
-                    <span>🔄 Bấm Giả Lập Khách Quét Xong (Test)</span>
-                </button>
-            </div>
-
+        <div class="pt-3 border-t border-slate-100 text-center text-xs text-slate-500">
+            <span>Chưa có tài khoản?</span>
+            <a href="{{ route('customer.register') }}" class="font-bold text-indigo-700 hover:underline ml-1">
+                Đăng ký tài khoản mới ngay
+            </a>
         </div>
+
     </div>
 
-    <script>
-        let currentToken = null;
-        let pollInterval = null;
-        let countdownInterval = null;
-        let secondsLeft = 300;
+    <!-- Tra cứu không cần đăng nhập -->
+    <div class="p-4 rounded-2xl bg-blue-50/80 border border-blue-200/60 text-center space-y-1">
+        <p class="text-xs font-bold text-blue-900">🔍 Cần tra cứu tiến độ sửa chữa máy in?</p>
+        <p class="text-[11px] text-blue-700">
+            Bạn không cần đăng nhập. <a href="{{ route('lookup.index') }}" class="font-black underline hover:text-blue-900">Tra cứu nhanh tại đây</a> với Mã phiếu và SĐT.
+        </p>
+    </div>
 
-        async function openZaloModal() {
-            document.getElementById('zaloModal').classList.remove('hidden');
-            document.getElementById('qrLoading').classList.remove('hidden');
-            document.getElementById('qrImage').classList.add('hidden');
-            document.getElementById('statusSuccess').classList.add('hidden');
+</div>
 
-            try {
-                const res = await fetch("{{ route('zalo.verify.init') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                });
-                const result = await res.json();
-                if (result.success && result.data) {
-                    currentToken = result.data.token;
-                    document.getElementById('qrImage').src = result.data.qr_image_url;
-                    document.getElementById('qrImage').onload = () => {
-                        document.getElementById('qrLoading').classList.add('hidden');
-                        document.getElementById('qrImage').classList.remove('hidden');
-                    };
-
-                    startCountdown(result.data.seconds_remaining || 300);
-                    startPolling();
-                }
-            } catch (e) {
-                alert('Không thể tạo mã QR Zalo, vui lòng thử lại.');
-            }
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const phoneInput = document.getElementById('loginPhone');
+        if (phoneInput) {
+            phoneInput.addEventListener('input', function() {
+                this.value = this.value.replace(/\D/g, '').slice(0, 10);
+            });
         }
-
-        function closeZaloModal() {
-            document.getElementById('zaloModal').classList.add('hidden');
-            clearInterval(pollInterval);
-            clearInterval(countdownInterval);
-        }
-
-        function startCountdown(seconds) {
-            clearInterval(countdownInterval);
-            secondsLeft = Math.floor(seconds);
-            updateTimerDisplay();
-            countdownInterval = setInterval(() => {
-                secondsLeft--;
-                if (secondsLeft <= 0) {
-                    clearInterval(countdownInterval);
-                    clearInterval(pollInterval);
-                    document.getElementById('timerBox').innerHTML = '<span class="text-rose-600 font-bold">Mã đã hết hạn, vui lòng mở lại</span>';
-                } else {
-                    updateTimerDisplay();
-                }
-            }, 1000);
-        }
-
-        function updateTimerDisplay() {
-            const m = Math.floor(secondsLeft / 60);
-            const s = secondsLeft % 60;
-            document.getElementById('timerCountdown').innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-        }
-
-        function startPolling() {
-            clearInterval(pollInterval);
-            pollInterval = setInterval(async () => {
-                if (!currentToken) return;
-                try {
-                    const res = await fetch(`{{ url('/zalo-auth/check') }}/${currentToken}`);
-                    const data = await res.json();
-                    if (data.success && data.data && data.data.verified) {
-                        clearInterval(pollInterval);
-                        clearInterval(countdownInterval);
-                        document.getElementById('statusSuccess').classList.remove('hidden');
-                        document.getElementById('statusSuccess').innerText = `✓ Chào mừng ${data.data.customer_name}! Đang đăng nhập...`;
-                        setTimeout(() => {
-                            window.location.href = data.data.redirect_url || "{{ route('customer.profile') }}";
-                        }, 1200);
-                    }
-                } catch (err) {
-                    console.error(err);
-                }
-            }, 2000);
-        }
-
-        async function mockScanZalo() {
-            if (!currentToken) return;
-            try {
-                const res = await fetch("{{ route('zalo.verify.mock-confirm') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({ token: currentToken })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    document.getElementById('statusSuccess').classList.remove('hidden');
-                    document.getElementById('statusSuccess').innerText = `✓ Đăng nhập thành công: ${data.data.customer_name}!`;
-                    setTimeout(() => {
-                        window.location.href = data.redirect_url || "{{ route('customer.profile') }}";
-                    }, 1000);
-                }
-            } catch (e) {
-                alert('Lỗi giả lập, vui lòng thử lại.');
-            }
-        }
-    </script>
+    });
+</script>
 @endsection

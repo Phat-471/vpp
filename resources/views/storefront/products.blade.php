@@ -1,7 +1,38 @@
 @extends('layouts.storefront')
 
-@section('title', 'Sản Phẩm Văn Phòng Phẩm & Hộp Mực Máy In | VPP')
-@section('meta_description', 'Khám phá hơn 1.000 mặt hàng văn phòng phẩm, giấy in Double A, PaperOne, hộp mực 12A, linh kiện máy in giá sỉ tại TP.HCM.')
+@section('title', ($currentCategory ? $currentCategory->name . ' Giá Sỉ Tận Gốc | ' : 'Văn Phòng Phẩm & Mực Máy In Giá Sỉ | ') . ($storefrontSettings['site_name'] ?? 'VPP & Dịch Vụ Máy In'))
+@section('meta_description', 'Khám phá hơn 1.000 mặt hàng văn phòng phẩm, giấy in Double A, PaperOne, bút Thiên Long, hộp mực máy in Canon 2900 giá sỉ tại Đồng Nai. Giao siêu tốc, xuất hóa đơn VAT.')
+
+@section('schema_extra')
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Trang chủ",
+      "item": "{{ route('storefront.index') }}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Sản phẩm",
+      "item": "{{ route('storefront.products') }}"
+    }
+    @if($currentCategory)
+    ,{
+      "@type": "ListItem",
+      "position": 3,
+      "name": "{{ $currentCategory->name }}",
+      "item": "{{ route('storefront.products', ['category' => $currentCategory->slug]) }}"
+    }
+    @endif
+  ]
+}
+</script>
+@endsection
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">

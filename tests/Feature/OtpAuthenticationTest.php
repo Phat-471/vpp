@@ -12,7 +12,7 @@ class OtpAuthenticationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_customer_registration_generates_otp_and_redirects_to_verify_page(): void
+    public function test_customer_registration_activates_customer_and_logs_in(): void
     {
         $response = $this->post('/dang-ky', [
             'name' => 'Nguyễn Văn Minh',
@@ -21,16 +21,12 @@ class OtpAuthenticationTest extends TestCase
             'password_confirmation' => '12345678',
         ]);
 
-        $response->assertRedirect(route('otp.verify.page', ['phone' => '0988776655']));
+        $response->assertRedirect(route('customer.profile'));
 
         $customer = Customer::where('phone', '0988776655')->first();
         $this->assertNotNull($customer);
-        $this->assertFalse($customer->isActivated());
-
-        $this->assertDatabaseHas('phone_otps', [
-            'phone' => '0988776655',
-            'is_used' => false,
-        ]);
+        $this->assertTrue($customer->isActivated());
+        $this->assertAuthenticatedAs($customer, 'customer');
     }
 
     public function test_correct_otp_activates_customer_and_logs_in(): void
@@ -115,14 +111,14 @@ class OtpAuthenticationTest extends TestCase
         $this->assertGreaterThan(0, $second['wait_seconds']);
     }
 
-    public function test_unactivated_login_redirects_to_otp_verification(): void
+    public function test_customer_login_logs_in_and_redirects_to_profile(): void
     {
-        Customer::create([
-            'name' => 'Khách Chưa Verify',
+        $customer = Customer::create([
+            'name' => 'Khách Trực Tiếp',
             'phone' => '0966554433',
             'phone_last4' => '4433',
             'password' => bcrypt('secret123'),
-            'phone_verified_at' => null,
+            'phone_verified_at' => now(),
         ]);
 
         $response = $this->post('/dang-nhap', [
@@ -130,7 +126,7 @@ class OtpAuthenticationTest extends TestCase
             'password' => 'secret123',
         ]);
 
-        $response->assertRedirect(route('otp.verify.page', ['phone' => '0966554433']));
-        $this->assertGuest('customer');
+        $response->assertRedirect(route('customer.profile'));
+        $this->assertAuthenticatedAs($customer, 'customer');
     }
 }

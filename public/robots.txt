@@ -1,2 +1,29 @@
+# Robots.txt for VPP & Thiet Bi May In (stvpp.click)
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /admin/
+Disallow: /pos/
+Disallow: /api/
+Disallow: /print/
+
+# AI Search Engines & Web Crawlers (GEO Optimization)
+User-agent: GPTBot
+Allow: /
+Disallow: /admin/
+Disallow: /pos/
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# Sitemap & LLMs context
+Sitemap: https://stvpp.click/sitemap.xml
+# AI Model Knowledge File: https://stvpp.click/llms.txt

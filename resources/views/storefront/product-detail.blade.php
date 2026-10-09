@@ -1,7 +1,84 @@
 @extends('layouts.storefront')
 
-@section('title', $product->name . ' | VPP & Dịch Vụ Máy In')
-@section('meta_description', 'Mua ' . $product->name . ' chính hãng giá sỉ tốt nhất. SKU: ' . $product->sku . '. Giao nhanh 2h, xuất hóa đơn VAT điện tử.')
+@section('title', $product->name . ' chính hãng giá sỉ | ' . ($storefrontSettings['site_name'] ?? 'VPP & Dịch Vụ Máy In'))
+@section('meta_description', 'Mua ' . $product->name . ' chính hãng giá sỉ tốt nhất tại Đồng Nai. SKU: ' . $product->sku . '. Giao hỏa tốc, xuất hóa đơn VAT điện tử.')
+
+@section('schema_extra')
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Product",
+      "@id": "{{ url()->current() }}#product",
+      "name": "{{ $product->name }}",
+      "sku": "{{ $product->sku }}",
+      @if($product->barcode)
+      "gtin": "{{ $product->barcode }}",
+      @endif
+      "image": "{{ $product->image_url }}",
+      "description": "{{ Str::limit(strip_tags($product->description ?? ($product->name . ' chính hãng giá sỉ tại Đồng Nai')), 200) }}",
+      "brand": {
+        "@type": "Brand",
+        "name": "{{ $product->category?->name ?? 'Chính Hãng' }}"
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": "{{ url()->current() }}",
+        "priceCurrency": "VND",
+        "price": "{{ (float) $product->retail_price }}",
+        "priceValidUntil": "{{ now()->addYear()->format('Y-m-d') }}",
+        "itemCondition": "https://schema.org/NewCondition",
+        "availability": "{{ $product->stock_quantity > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock' }}",
+        "seller": {
+          "@type": "Organization",
+          "name": "{{ $storefrontSettings['site_name'] ?? 'VPP & Thiết Bị Máy In' }}"
+        }
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "{{ url()->current() }}#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Trang chủ",
+          "item": "{{ route('storefront.index') }}"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Sản phẩm",
+          "item": "{{ route('storefront.products') }}"
+        }
+        @if($product->category)
+        ,{
+          "@type": "ListItem",
+          "position": 3,
+          "name": "{{ $product->category->name }}",
+          "item": "{{ route('storefront.products', ['category' => $product->category->slug]) }}"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "{{ $product->name }}",
+          "item": "{{ url()->current() }}"
+        }
+        @else
+        ,{
+          "@type": "ListItem",
+          "position": 3,
+          "name": "{{ $product->name }}",
+          "item": "{{ url()->current() }}"
+        }
+        @endif
+      ]
+    }
+  ]
+}
+</script>
+@endsection
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
@@ -37,8 +114,8 @@
             <!-- Trust Badges Under Image -->
             <div class="grid grid-cols-3 gap-2 text-center text-[11px] pt-1">
                 <div class="p-2 bg-slate-50 rounded-xl border border-slate-100">
-                    <span class="block font-bold text-indigo-700">🚚 Giao 2 Giờ</span>
-                    <span class="text-slate-400">Nội thành TP.HCM</span>
+                    <span class="block font-bold text-indigo-700">🚚 Giao Siêu Tốc</span>
+                    <span class="text-slate-400">Khu vực Đồng Nai</span>
                 </div>
                 <div class="p-2 bg-slate-50 rounded-xl border border-slate-100">
                     <span class="block font-bold text-emerald-600">🔄 Đổi Trả 7 Ngày</span>

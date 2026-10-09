@@ -1,14 +1,134 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" prefix="og: https://ogp.me/ns#">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', $storefrontSettings['site_name'].' - Tổng Kho Văn Phòng Phẩm & Dịch Vụ Máy In')</title>
-    <meta name="description" content="@yield('meta_description', 'Tổng kho hơn 1.000 SKU văn phòng phẩm, giấy in photo Double A, PaperOne, bút Thiên Long, hộp mực máy in Canon 2900, Brother, HP chính hãng giá sỉ.')">
+    <title>@yield('title', ($storefrontSettings['site_name'] ?? 'VPP & Thiết Bị Máy In') . ' - Tổng Kho Văn Phòng Phẩm & Dịch Vụ Máy In')</title>
+    <meta name="description" content="@yield('meta_description', 'Tổng kho hơn 1.000 mặt hàng văn phòng phẩm giá sỉ, giấy in photo Double A, PaperOne, bút Thiên Long, dịch vụ nạp mực & sửa chữa máy in tận nơi tại Bình Hòa, Biên Hòa, Đồng Nai nhanh chóng, uy tín.')">
+    <meta name="keywords" content="@yield('meta_keywords', 'văn phòng phẩm, văn phòng phẩm đồng nai, nạp mực máy in, sửa máy in đồng nai, bơm mực canon 2900, giấy in photo a4, giấy double a giá sỉ, bút thiên long, thiết bị máy in bình hòa')">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="author" content="{{ $storefrontSettings['company_name'] ?? $storefrontSettings['site_name'] }}">
+    <link rel="canonical" href="@yield('canonical_url', url()->current())">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <!-- SEO LOCAL & GEOTARGETING (Chuẩn Google Maps & Tìm Kiếm Khu Vực Đồng Nai) -->
+    <meta name="geo.region" content="VN-39">
+    <meta name="geo.placename" content="Bình Hòa, Đồng Nai, Việt Nam">
+    <meta name="geo.position" content="10.9984;106.8458">
+    <meta name="ICBM" content="10.9984, 106.8458">
+
+    <!-- OPEN GRAPH (Facebook, Zalo, LinkedIn) -->
+    <meta property="og:locale" content="vi_VN">
+    <meta property="og:type" content="@yield('og_type', 'website')">
+    <meta property="og:title" content="@yield('title', ($storefrontSettings['site_name'] ?? 'VPP & Thiết Bị Máy In') . ' - Tổng Kho Văn Phòng Phẩm & Dịch Vụ Máy In')">
+    <meta property="og:description" content="@yield('meta_description', 'Tổng kho văn phòng phẩm và dịch vụ nạp mực máy in tận nơi tại Bình Hòa, Đồng Nai uy tín, nhanh chóng.')">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:site_name" content="{{ $storefrontSettings['site_name'] ?? 'VPP & Thiết Bị Máy In' }}">
+    <meta property="og:image" content="@yield('og_image', !empty($storefrontSettings['logo_url']) ? $storefrontSettings['logo_url'] : asset('favicon.ico'))">
+
+    <!-- TWITTER CARD -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('title', ($storefrontSettings['site_name'] ?? 'VPP & Thiết Bị Máy In'))">
+    <meta name="twitter:description" content="@yield('meta_description', 'Tổng kho văn phòng phẩm & Dịch vụ kỹ thuật máy in tận nơi')">
+    <meta name="twitter:image" content="@yield('og_image', !empty($storefrontSettings['logo_url']) ? $storefrontSettings['logo_url'] : asset('favicon.ico'))">
+
+    <!-- AI SEARCH ENGINE OPTIMIZATION (GEO: Perplexity, ChatGPT, Claude, Gemini) -->
+    <link rel="alternate" type="text/plain" href="{{ url('/llms.txt') }}" title="LLMs.txt for AI Search Engines">
+
     @if(!empty($storefrontSettings['favicon_url']))
         <link rel="icon" href="{{ $storefrontSettings['favicon_url'] }}">
+    @else
+        <link rel="icon" href="{{ asset('favicon.ico') }}">
     @endif
+
+    <!-- STRUCTURED DATA: SCHEMA.ORG JSON-LD LOCAL BUSINESS & WEBSITE -->
+    <script type="application/ld+json">
+    {
+      "@@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": ["LocalBusiness", "Store", "HomeGoodsStore"],
+          "@id": "{{ url('/') }}#store",
+          "name": "{{ $storefrontSettings['site_name'] ?? 'VPP & Thiết Bị Máy In' }}",
+          "alternateName": "Tổng Kho Văn Phòng Phẩm & Dịch Vụ Máy In Đồng Nai",
+          "url": "{{ url('/') }}",
+          "telephone": "{{ $storefrontSettings['hotline'] ?? '0974.194.305' }}",
+          "email": "{{ $storefrontSettings['email'] ?? 'hotro@vpp.vn' }}",
+          "priceRange": "10.000đ - 10.000.000đ",
+          "currenciesAccepted": "VND",
+          "paymentAccepted": "Tiền mặt, Chuyển khoản VietQR, Thẻ ngân hàng",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "{{ $storefrontSettings['address'] ?? '30 Bình Hòa' }}",
+            "addressLocality": "Bình Hòa",
+            "addressRegion": "Đồng Nai",
+            "addressCountry": "VN"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": "10.9984",
+            "longitude": "106.8458"
+          },
+          "openingHoursSpecification": [
+            {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+              "opens": "07:30",
+              "closes": "18:30"
+            },
+            {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": "Sunday",
+              "opens": "08:00",
+              "closes": "17:00"
+            }
+          ],
+          "areaServed": [
+            {"@type": "AdministrativeArea", "name": "Đồng Nai"},
+            {"@type": "AdministrativeArea", "name": "Bình Hòa"},
+            {"@type": "AdministrativeArea", "name": "Biên Hòa"},
+            {"@type": "AdministrativeArea", "name": "Vĩnh Cửu"},
+            {"@type": "AdministrativeArea", "name": "Bình Dương"},
+            {"@type": "AdministrativeArea", "name": "TP.HCM"}
+          ],
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Danh mục sản phẩm & dịch vụ chính",
+            "itemListElement": [
+              {
+                "@type": "OfferCatalog",
+                "name": "Văn phòng phẩm & Giấy in",
+                "description": "Giấy photo Double A, PaperOne, IK Plus, Bút viết Thiên Long, Bìa còng file hồ sơ"
+              },
+              {
+                "@type": "OfferCatalog",
+                "name": "Dịch vụ kỹ thuật máy in",
+                "description": "Nạp mực máy in tận nơi trong 30 phút, thay linh kiện trống gạt trục sạc máy in Canon, HP, Brother"
+              }
+            ]
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "{{ url('/') }}#website",
+          "url": "{{ url('/') }}",
+          "name": "{{ $storefrontSettings['site_name'] ?? 'VPP & Thiết Bị Máy In' }}",
+          "inLanguage": "vi-VN",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "{{ route('storefront.products') }}?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
+        }
+      ]
+    }
+    </script>
+
+    @yield('schema_extra')
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
@@ -186,7 +306,7 @@
             <div class="space-y-3">
                 <span class="text-white font-black text-lg block">{{ $storefrontSettings['site_name'] }}</span>
                 <p class="text-xs leading-relaxed text-slate-400">
-                    Tổng kho phân phối sỉ & lẻ văn phòng phẩm, giấy in photo Double A, PaperOne, hộp mực và linh kiện máy in Canon, Brother, HP chính hãng tại TP.HCM.
+                    Tổng kho phân phối sỉ & lẻ văn phòng phẩm, giấy in photo Double A, PaperOne, hộp mực và linh kiện máy in Canon, Brother, HP chính hãng tại Đồng Nai. Hỗ trợ nạp mực & sửa chữa máy in tận nơi trong 30 phút.
                 </p>
                 <div class="text-xs text-slate-300 space-y-1">
                     <p>📍 Địa chỉ: {{ $storefrontSettings['address'] }}</p>
@@ -197,9 +317,9 @@
                     <p>Email: {{ $storefrontSettings['email'] }}</p>
                     <p>⏰ Mở cửa: {{ $storefrontSettings['opening_hours'] }}</p>
                     @if(!empty($storefrontSettings['facebook_url']))
-                        <p>🌐 Fanpage: <a href="{{ $storefrontSettings['facebook_url'] }}" target="_blank" rel="noopener noreferrer" class="text-sky-400 hover:underline">Facebook Ánh Dương</a></p>
+                        <p>🌐 Fanpage: <a href="{{ $storefrontSettings['facebook_url'] }}" target="_blank" rel="noopener noreferrer" class="text-sky-400 hover:underline">Facebook Cửa Hàng</a></p>
                     @endif
-                    <p>Miễn phí giao hàng cho đơn từ {{ $storefrontSettings['freeship_label'] }}</p>
+                    <p>🚀 Miễn phí giao hàng cho đơn từ {{ $storefrontSettings['freeship_label'] }}</p>
                 </div>
             </div>
 

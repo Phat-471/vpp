@@ -1,7 +1,50 @@
 @extends('layouts.storefront')
 
-@section('title', $storefrontSettings['site_name'].' - Tổng Kho Văn Phòng Phẩm & Dịch Vụ Máy In Chuyên Nghiệp')
-@section('meta_description', 'Tổng kho hơn 1.000 SKU văn phòng phẩm, giấy in photo Double A, PaperOne, bút Thiên Long giá sỉ & lẻ. Hộp mực, trống drum linh kiện máy in Canon 2900, Brother, HP chính hãng. Giao siêu tốc 2H.')
+@section('title', ($storefrontSettings['site_name'] ?? 'VPP & Thiết Bị Máy In') . ' - Tổng Kho Văn Phòng Phẩm & Dịch Vụ Máy In Tận Nơi Đồng Nai')
+@section('meta_description', 'Tổng kho hơn 1.000 sản phẩm văn phòng phẩm chính hãng, giấy in photo Double A giá sỉ, dịch vụ nạp mực & sửa chữa máy in tận nơi trong 30 phút tại Đồng Nai. Hóa đơn VAT đầy đủ.')
+
+@section('schema_extra')
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Bơm mực máy in tận nơi tại Đồng Nai giá bao nhiêu và mất bao lâu?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Dịch vụ nạp mực máy in tận nơi tại Đồng Nai có giá dao động từ 80.000đ đến 150.000đ tùy theo dòng máy in (Canon 2900, HP, Brother, Epson...). Kỹ thuật viên có mặt tận nơi trong vòng 30 - 45 phút, quy trình bao gồm hút sạch mực thải, vệ sinh linh kiện và in bản test sắc nét trước khi bàn giao."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Cửa hàng có giao văn phòng phẩm tận nơi miễn phí không?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Cửa hàng miễn phí giao hàng cho tất cả các đơn hàng từ 500.000đ tại khu vực Đồng Nai. Hỗ trợ giao hỏa tốc trong 2 giờ và giao tận bàn làm việc cho các văn phòng, trường học và khu công nghiệp."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Chính sách bảo hành sau khi sửa máy in và nạp mực như thế nào?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Cửa hàng cam kết bảo hành chất lượng bản in đến khi hết hạt mực cuối cùng. Các linh kiện thay thế như trống in (drum), gạt mực, trục từ, bao lụa được bảo hành 1 đổi 1 từ 1 đến 3 tháng."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Doanh nghiệp, trường học mua sỉ văn phòng phẩm có được chiết khấu và xuất hóa đơn VAT không?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Có, chúng tôi cung cấp mức chiết khấu từ 15% đến 25% cho khách hàng mua số lượng lớn, hỗ trợ công nợ 30 ngày và xuất hóa đơn điện tử VAT hợp lệ 100% theo quy định trong vòng 15 phút."
+      }
+    }
+  ]
+}
+</script>
+@endsection
 
 @section('content')
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8 w-full">
@@ -28,7 +71,7 @@
                         ⭐ TỔNG KHO SỈ & LẺ CHÍNH HÃNG
                     </span>
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                        ⚡ Giao Siêu Tốc 2 Giờ TP.HCM
+                        ⚡ Giao Siêu Tốc Tại Đồng Nai
                     </span>
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-slate-200 border border-white/10">
                         🏢 Hóa Đơn VAT Điện Tử
@@ -406,7 +449,7 @@
                 <ul class="space-y-2 text-xs text-slate-200">
                     <li class="flex items-start space-x-2">
                         <span class="text-emerald-400 font-bold">✓</span>
-                        <span>Bảng báo giá cạnh tranh nhất TP.HCM</span>
+                        <span>Bảng báo giá sỉ cạnh tranh nhất Đồng Nai</span>
                     </li>
                     <li class="flex items-start space-x-2">
                         <span class="text-emerald-400 font-bold">✓</span>
@@ -425,7 +468,168 @@
         </div>
     </div>
 
-    <!-- 6. LOOKUP REPAIR TICKET SHORTCUT BANNER -->
+    <!-- 6. DỊCH VỤ NẠP MỰC & SỬA MÁY IN TẬN NƠI TẠI ĐỒNG NAI (LOCAL SEO & BẢNG GIÁ MINH BẠCH) -->
+    <div class="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 rounded-3xl p-6 sm:p-10 text-white shadow-xl border border-slate-800 space-y-8">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-800 pb-6">
+            <div class="space-y-2">
+                <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-black text-xs uppercase tracking-wider border border-emerald-500/30">
+                    🛠️ DỊCH VỤ KỸ THUẬT TẬN NƠI TRONG 30 PHÚT
+                </span>
+                <h2 class="text-xl sm:text-3xl font-black text-white tracking-tight">
+                    Nạp Mực & Sửa Chữa Máy In Tận Nơi Tại Đồng Nai
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-400 max-w-2xl">
+                    Chuyên xử lý máy in Canon, HP, Brother, Epson: nạp mực siêu mịn, sửa kẹt giấy, bản in lem mờ, thay trống gạt chính hãng. Bảo hành đến giọt mực cuối cùng!
+                </p>
+            </div>
+            <div class="shrink-0 flex items-center space-x-3">
+                <a href="{{ $storefrontSettings['technical_hotline_url'] ?? $storefrontSettings['hotline_url'] }}" class="px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs sm:text-sm shadow-lg shadow-emerald-500/25 transition flex items-center space-x-2">
+                    <span>📞 Gọi Thợ Ngay: {{ $storefrontSettings['technical_hotline'] ?? $storefrontSettings['hotline'] }}</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Bảng Giá Dịch Vụ Minh Bạch (Rất Tốt Cho AI Search Trích Dẫn) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Gói 1 -->
+            <div class="bg-white/5 rounded-2xl p-5 border border-white/10 space-y-3 hover:bg-white/10 transition">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="text-[11px] font-bold text-emerald-400 uppercase">Phổ Biến Nhất</span>
+                        <h3 class="text-base font-bold text-white mt-0.5">Nạp Mực Máy In Laser Canon / HP</h3>
+                    </div>
+                    <span class="text-base font-mono font-black text-amber-400">80k - 100k</span>
+                </div>
+                <p class="text-[11px] text-slate-400 leading-relaxed">
+                    Áp dụng cho Canon LBP 2900, 3000, 3300, HP 1020, 1005, P1102, M12a... Mực siêu mịn, hút sạch mực thải, vệ sinh máy miễn phí.
+                </p>
+                <div class="text-[10px] text-emerald-300 font-semibold flex items-center space-x-1">
+                    <span>✓</span> <span>Bảo hành nét chữ đến hết hộp mực</span>
+                </div>
+            </div>
+
+            <!-- Gói 2 -->
+            <div class="bg-white/5 rounded-2xl p-5 border border-white/10 space-y-3 hover:bg-white/10 transition">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="text-[11px] font-bold text-sky-400 uppercase">Dòng Máy Brother</span>
+                        <h3 class="text-base font-bold text-white mt-0.5">Nạp Mực & Reset Máy In Brother</h3>
+                    </div>
+                    <span class="text-base font-mono font-black text-amber-400">120k - 150k</span>
+                </div>
+                <p class="text-[11px] text-slate-400 leading-relaxed">
+                    Dòng máy Brother HL-L2321D, L2366DW, DCP-B7535DW (mã hộp mực TN-2385, TN-B022). Đã bao gồm reset nhông mực & vệ sinh cụm Drum.
+                </p>
+                <div class="text-[10px] text-emerald-300 font-semibold flex items-center space-x-1">
+                    <span>✓</span> <span>Bản in đậm đẹp không xám nền</span>
+                </div>
+            </div>
+
+            <!-- Gói 3 -->
+            <div class="bg-white/5 rounded-2xl p-5 border border-white/10 space-y-3 hover:bg-white/10 transition">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="text-[11px] font-bold text-purple-400 uppercase">Linh Kiện Thay Thế</span>
+                        <h3 class="text-base font-bold text-white mt-0.5">Thay Trống In, Gạt, Trục Từ, Sấy</h3>
+                    </div>
+                    <span class="text-base font-mono font-black text-amber-400">130k - 250k</span>
+                </div>
+                <p class="text-[11px] text-slate-400 leading-relaxed">
+                    Khắc phục dứt điểm tình trạng bản in bị vệt đen dọc trang giấy, chấm đen lặp lại, mờ mịt hoặc kẹt giấy liên tục. Linh kiện loại 1 nhập khẩu.
+                </p>
+                <div class="text-[10px] text-emerald-300 font-semibold flex items-center space-x-1">
+                    <span>✓</span> <span>Bảo hành 1 đổi 1 trong 3 tháng</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cam Kết 4 Điểm Vàng -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2 text-center text-xs">
+            <div class="p-3 rounded-xl bg-white/5 border border-white/5">
+                <span class="text-xl block mb-1">⚡</span>
+                <span class="font-bold text-white block">Có mặt trong 30-45P</span>
+                <span class="text-[10px] text-slate-400">Khu vực Đồng Nai</span>
+            </div>
+            <div class="p-3 rounded-xl bg-white/5 border border-white/5">
+                <span class="text-xl block mb-1">🔍</span>
+                <span class="font-bold text-white block">In test nghiệm thu</span>
+                <span class="text-[10px] text-slate-400">Đạt chuẩn mới thanh toán</span>
+            </div>
+            <div class="p-3 rounded-xl bg-white/5 border border-white/5">
+                <span class="text-xl block mb-1">🛡️</span>
+                <span class="font-bold text-white block">Bảo hành hạt mực</span>
+                <span class="text-[10px] text-slate-400">Hỗ trợ kỹ thuật 24/7</span>
+            </div>
+            <div class="p-3 rounded-xl bg-white/5 border border-white/5">
+                <span class="text-xl block mb-1">📑</span>
+                <span class="font-bold text-white block">Hóa đơn VAT đầy đủ</span>
+                <span class="text-[10px] text-slate-400">Cho công ty & cơ quan</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. KHỐI CÂU HỎI THƯỜNG GẶP (FAQ SECTION - SEO & AI SEARCH OVERVIEW) -->
+    <div class="bg-white rounded-3xl p-6 sm:p-10 shadow-sm border border-slate-200 space-y-6">
+        <div class="text-center space-y-2">
+            <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-700 font-black text-xs uppercase tracking-wider border border-blue-200">
+                ❓ GIẢI ĐÁP NHANH
+            </span>
+            <h2 class="text-xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                Câu Hỏi Thường Gặp Của Khách Hàng
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 max-w-xl mx-auto">
+                Những thông tin được tìm kiếm nhiều nhất về chính sách giao hàng, thanh toán và bảo hành tại cửa hàng.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+            <!-- FAQ 1 -->
+            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+                <h3 class="text-xs sm:text-sm font-bold text-slate-900 flex items-start space-x-2">
+                    <span class="text-blue-600 font-black">Q1:</span>
+                    <span>Bơm mực máy in tận nơi tại Đồng Nai giá bao nhiêu và mất bao lâu?</span>
+                </h3>
+                <p class="text-xs text-slate-600 leading-relaxed pl-6">
+                    Giá dịch vụ nạp mực chỉ từ <strong>80.000đ đến 150.000đ</strong> tùy dòng máy. Kỹ thuật viên có mặt tại địa chỉ của Quý khách trong vòng <strong>30 - 45 phút</strong>, gồm vệ sinh máy và hút sạch mực thải miễn phí.
+                </p>
+            </div>
+
+            <!-- FAQ 2 -->
+            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+                <h3 class="text-xs sm:text-sm font-bold text-slate-900 flex items-start space-x-2">
+                    <span class="text-blue-600 font-black">Q2:</span>
+                    <span>Cửa hàng có giao văn phòng phẩm tận nơi miễn phí không?</span>
+                </h3>
+                <p class="text-xs text-slate-600 leading-relaxed pl-6">
+                    Chúng tôi <strong>miễn phí giao hàng</strong> cho mọi đơn từ 500.000đ tại Đồng Nai. Hỗ trợ giao hàng hỏa tốc trong 2 giờ và giao tận bàn làm việc cho các văn phòng, trường học, khu công nghiệp.
+                </p>
+            </div>
+
+            <!-- FAQ 3 -->
+            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+                <h3 class="text-xs sm:text-sm font-bold text-slate-900 flex items-start space-x-2">
+                    <span class="text-blue-600 font-black">Q3:</span>
+                    <span>Chính sách bảo hành sau khi sửa máy in và nạp mực như thế nào?</span>
+                </h3>
+                <p class="text-xs text-slate-600 leading-relaxed pl-6">
+                    Cam kết bảo hành chất lượng bản in đến khi <strong>hết hạt mực cuối cùng</strong>. Các linh kiện thay thế như trống in (drum), gạt mực, trục sạc được bảo hành 1 đổi 1 từ 1 đến 3 tháng.
+                </p>
+            </div>
+
+            <!-- FAQ 4 -->
+            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+                <h3 class="text-xs sm:text-sm font-bold text-slate-900 flex items-start space-x-2">
+                    <span class="text-blue-600 font-black">Q4:</span>
+                    <span>Doanh nghiệp, trường học mua sỉ có được chiết khấu và hóa đơn VAT không?</span>
+                </h3>
+                <p class="text-xs text-slate-600 leading-relaxed pl-6">
+                    Có! Mức chiết khấu từ <strong>15% đến 25%</strong> cho khách hàng định kỳ, xuất hóa đơn VAT điện tử hợp lệ 100% trong 15 phút và hỗ trợ công nợ thanh toán 30 ngày.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. LOOKUP REPAIR TICKET SHORTCUT BANNER -->
     <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 flex flex-col md:flex-row items-center justify-between gap-6">
         <div class="flex items-center space-x-4">
             <div class="w-14 h-14 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-2xl font-black shrink-0">
@@ -433,16 +637,16 @@
             </div>
             <div>
                 <h3 class="text-base sm:text-lg font-black text-slate-900">
-                    Tra Cứu Tiến Độ Sửa Máy In & Nạp Mực
+                    Tra Cứu Tiến Độ Sửa Máy In & Nạp Mực Online
                 </h3>
                 <p class="text-xs text-slate-500 mt-0.5">
-                    Khách hàng đã gửi máy tại cửa hàng có thể tra cứu tình trạng xử lý và hình ảnh thực tế trực tuyến 24/7.
+                    Khách hàng đã gửi máy tại cửa hàng có thể tra cứu tình trạng xử lý và hình ảnh thực tế trực tuyến 24/7 chỉ với Mã phiếu & 4 số cuối SĐT.
                 </p>
             </div>
         </div>
         <div class="shrink-0 w-full md:w-auto">
             <a href="{{ route('lookup.index') }}" class="w-full md:w-auto inline-flex items-center justify-center space-x-2 px-6 py-3 bg-[#1e3a8a] hover:bg-blue-900 text-white font-extrabold text-xs sm:text-sm rounded-xl shadow transition">
-                <span>Tra Cứu Phiếu Tiếp Nhận</span>
+                <span>Tra Cứu Phiếu Tiếp Nhận Ngay</span>
                 <span>→</span>
             </a>
         </div>

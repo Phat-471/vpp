@@ -411,6 +411,7 @@ class StorefrontController extends Controller
                 'email' => $request->email ? trim($request->email) : $customer->email,
                 'address' => $request->address ? trim($request->address) : $customer->address,
                 'password' => $request->password,
+                'phone_verified_at' => $customer->phone_verified_at ?? now(),
             ]);
         } else {
             $customer = Customer::create([
@@ -420,21 +421,16 @@ class StorefrontController extends Controller
                 'email' => $request->email ? trim($request->email) : null,
                 'address' => $request->address ? trim($request->address) : null,
                 'password' => $request->password,
+                'phone_verified_at' => now(),
             ]);
         }
 
-        // Phát hành mã xác thực OTP 6 số (qua Zalo ZNS / SMS)
-        $otpService = app(\App\Services\OtpService::class);
-        $otpResult = $otpService->generate(
-            phone: $cleanedPhone,
-            action: 'verify',
-            customer: $customer,
-            ip: $request->ip()
-        );
+        // Đăng nhập trực tiếp và đưa vào trang tài khoản
+        auth('customer')->login($customer, true);
+        $request->session()->regenerate();
 
-        return redirect()->route('otp.verify.page', ['phone' => $cleanedPhone])
-            ->with('success', 'Đăng ký thành công! Mã xác thực OTP 6 số đã được gửi đến số ' . $cleanedPhone . ', vui lòng nhập mã để kích hoạt tài khoản.')
-            ->with('dev_otp', $otpResult['dev_otp'] ?? null);
+        return redirect()->route('customer.profile')
+            ->with('success', 'Đăng ký tài khoản thành công! Chào mừng ' . $customer->name . ' đến với hệ thống.');
     }
 
     public function loginForm()
@@ -464,24 +460,6 @@ class StorefrontController extends Controller
 
         if (auth('customer')->attempt($credentials, $request->boolean('remember'))) {
             $customer = auth('customer')->user();
-
-            // Kiểm tra trạng thái kích hoạt tài khoản qua OTP
-            if (!$customer->isActivated()) {
-                auth('customer')->logout();
-
-                $otpService = app(\App\Services\OtpService::class);
-                $otpResult = $otpService->generate(
-                    phone: $cleanedPhone,
-                    action: 'verify',
-                    customer: $customer,
-                    ip: $request->ip()
-                );
-
-                return redirect()->route('otp.verify.page', ['phone' => $cleanedPhone])
-                    ->with('warning', 'Tài khoản chưa được kích hoạt số điện thoại! Vui lòng nhập mã OTP vừa gửi tới Zalo / SMS để kích hoạt.')
-                    ->with('dev_otp', $otpResult['dev_otp'] ?? null);
-            }
-
             $request->session()->regenerate();
             return redirect()->intended(route('customer.profile'))->with('success', 'Đăng nhập thành công! Chào mừng ' . $customer->name);
         }

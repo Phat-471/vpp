@@ -1,7 +1,30 @@
 @extends('layouts.storefront')
 
-@section('title', 'Đăng Ký Đại Lý & Khách Hàng Doanh Nghiệp Mua Sỉ | VPP')
-@section('meta_description', 'Chính sách chiết khấu tới 20-30% cho đại lý, doanh nghiệp mua văn phòng phẩm số lượng lớn. Hỗ trợ công nợ 30 ngày, xuất hóa đơn VAT trong ngày.')
+@section('title', 'Đăng Ký Nhận Báo Giá Sỉ Cho Doanh Nghiệp & Đại Lý | ' . ($storefrontSettings['site_name'] ?? 'VPP & Dịch Vụ Máy In'))
+@section('meta_description', 'Chính sách chiết khấu tới 20-30% cho đại lý, doanh nghiệp mua văn phòng phẩm số lượng lớn tại Đồng Nai. Hỗ trợ công nợ 30 ngày, xuất hóa đơn VAT điện tử trong ngày.')
+
+@section('schema_extra')
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Trang chủ",
+      "item": "{{ route('storefront.index') }}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Đăng ký đại lý sỉ",
+      "item": "{{ route('storefront.wholesale') }}"
+    }
+  ]
+}
+</script>
+@endsection
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-10">
@@ -30,7 +53,7 @@
                 Cung Ứng Văn Phòng Phẩm Tận Gốc & Dịch Vụ Máy In Doanh Nghiệp
             </h1>
             <p class="text-xs sm:text-base text-slate-300 leading-relaxed font-normal">
-                Chúng tôi chuyên cung cấp trọn gói cho hơn <b>1.000+ công ty, ngân hàng, trường học và đại lý bán lẻ</b> tại TP.HCM và các tỉnh lân cận với bảng giá chiết khấu đặc biệt theo sản lượng.
+                Chúng tôi chuyên cung cấp trọn gói cho hơn <b>1.000+ công ty, ngân hàng, trường học và đại lý bán lẻ</b> tại Đồng Nai và các tỉnh lân cận với bảng giá chiết khấu đặc biệt theo sản lượng.
             </p>
             <div class="pt-2 flex flex-wrap gap-4 text-xs font-bold">
                 <span class="flex items-center space-x-1.5 text-amber-300">
