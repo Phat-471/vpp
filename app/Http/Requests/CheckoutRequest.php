@@ -32,6 +32,7 @@ class CheckoutRequest extends FormRequest
             'customer_address' => ['required', 'string', 'min:5', 'max:255', 'regex:/\p{L}/u'],
             'payment_method' => ['required', 'in:cod,vietqr'],
             'notes' => ['nullable', 'string', 'max:500'],
+            'website_url' => ['nullable', 'prohibited'],
             'items' => ['required', 'array', 'min:1', 'max:200'],
             'items.*.product_id' => ['required', 'integer', 'exists:products,id'],
             'items.*.unit_id' => ['nullable', 'integer', 'exists:product_units,id'],
@@ -42,6 +43,7 @@ class CheckoutRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'website_url.prohibited' => 'Yêu cầu đặt hàng bị từ chối do phát hiện dấu hiệu spam tự động.',
             'required' => 'Vui lòng nhập :attribute.',
             'string' => ':attribute phải là văn bản.',
             'customer_name.min' => 'Họ tên cần ít nhất 2 ký tự.',

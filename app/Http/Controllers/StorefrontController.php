@@ -176,6 +176,19 @@ class StorefrontController extends Controller
                 );
             }
 
+            $clientIp = $request->ip();
+            $recentOrdersCount = Order::where(function ($q) use ($cleanedPhone, $clientIp) {
+                    $q->where('customer_phone', $cleanedPhone)
+                      ->orWhere('ip_address', $clientIp);
+                })
+                ->where('created_at', '>=', now()->subMinutes(15))
+                ->count();
+
+            $isSuspicious = $recentOrdersCount >= 2;
+            $suspiciousReason = $isSuspicious
+                ? "Phát hiện cùng SĐT hoặc IP vừa tạo {$recentOrdersCount} đơn hàng trong vòng 15 phút qua."
+                : null;
+
             $order = Order::create([
                 'customer_id' => $customer->id,
                 'customer_name' => $request->customer_name,
@@ -192,6 +205,9 @@ class StorefrontController extends Controller
                 'payment_status' => 'pending',
                 'payment_method' => $request->payment_method,
                 'notes' => $request->notes,
+                'ip_address' => $clientIp,
+                'is_suspicious' => $isSuspicious,
+                'suspicious_reason' => $suspiciousReason,
             ]);
 
             $total = 0;

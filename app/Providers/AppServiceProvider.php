@@ -42,6 +42,44 @@ class AppServiceProvider extends ServiceProvider
             Limit::perMinute(10)->by($request->ip()),
             Limit::perMinute(5)->by(app(StaffLogin::class)->throttleKey((string) $request->input('identifier')).'|'.$request->ip()),
         ]);
+
+        RateLimiter::for('customer-login', function (Request $request) {
+            if (app()->runningUnitTests()) {
+                return Limit::none();
+            }
+
+            return [
+                Limit::perMinute(10)->by($request->ip()),
+                Limit::perMinute(5)->by('customer-login|'.(string) $request->input('phone').'|'.$request->ip())
+                    ->response(function (Request $request, array $headers) {
+                        if ($request->expectsJson() || $request->ajax()) {
+                            return response()->json([
+                                'success' => false,
+                                'message' => 'Bạn đã thử đăng nhập sai quá nhiều lần. Vui lòng chờ 1 phút rồi thử lại.',
+                            ], 429, $headers);
+                        }
+                        return back()->withInput()->with('error', 'Bạn đã thử đăng nhập sai quá nhiều lần liên tiếp. Vui lòng chờ 1 phút rồi thử lại.');
+                    }),
+            ];
+        });
+
+        RateLimiter::for('online-checkout', function (Request $request) {
+            if (app()->runningUnitTests()) {
+                return Limit::none();
+            }
+
+            return Limit::perMinute(5)->by('online-checkout|'.$request->ip())
+                ->response(function (Request $request, array $headers) {
+                    if ($request->expectsJson() || $request->ajax()) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Bạn đang thao tác đặt hàng quá nhanh. Vui lòng chờ 1 phút rồi thử lại.',
+                        ], 429, $headers);
+                    }
+                    return back()->withInput()->with('error', 'Bạn đang thao tác đặt hàng quá nhanh. Vui lòng chờ 1 phút rồi thử lại.');
+                });
+        });
+
         foreach (['init' => 10, 'send' => 20, 'messages' => 90, 'read' => 90] as $operation => $limit) {
             RateLimiter::for('chat-'.$operation, fn (Request $request) => Limit::perMinute($limit)
                 ->by('chat-'.$operation.'|'.$request->ip())

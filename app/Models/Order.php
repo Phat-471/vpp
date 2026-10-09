@@ -38,6 +38,9 @@ class Order extends Model
         'invoice_email',
         'shipping_fee',
         'notes',
+        'ip_address',
+        'is_suspicious',
+        'suspicious_reason',
         'created_by',
         'pos_shift_id',
         'pos_outside_shift',
@@ -48,6 +51,7 @@ class Order extends Model
     {
         return [
             'is_vat_invoice' => 'boolean',
+            'is_suspicious' => 'boolean',
             'shipping_fee' => 'decimal:2',
             'subtotal' => 'decimal:2',
             'discount_amount' => 'decimal:2',
@@ -60,6 +64,11 @@ class Order extends Model
             'pos_outside_shift' => 'boolean',
             'pos_shift_paid_at_close' => 'decimal:2',
         ];
+    }
+
+    public function scopeSuspicious($query)
+    {
+        return $query->where('is_suspicious', true);
     }
 
     protected static function booted(): void

@@ -452,7 +452,24 @@ class OrderResource extends Resource
                     ->searchable()
                     ->weight('bold')
                     ->default('Khách vãng lai')
-                    ->description(fn (Order $r) => $r->customer_phone ?: null),
+                    ->description(function (Order $r) {
+                        $desc = $r->customer_phone ?: '';
+                        if ($r->is_suspicious) {
+                            $spamNote = '⚠️ Cảnh báo spam: ' . ($r->suspicious_reason ?? 'Nghi vấn đặt liên tiếp');
+                            return $desc ? "{$spamNote} • {$desc}" : $spamNote;
+                        }
+                        return $desc ?: null;
+                    }),
+
+                Tables\Columns\IconColumn::make('is_suspicious')
+                    ->label('An ninh')
+                    ->boolean()
+                    ->trueIcon('heroicon-s-exclamation-triangle')
+                    ->falseIcon('heroicon-o-shield-check')
+                    ->trueColor('danger')
+                    ->falseColor('gray')
+                    ->tooltip(fn (Order $r) => $r->is_suspicious ? ('⚠️ CẢNH BÁO SPAM: ' . ($r->suspicious_reason ?? 'Nghi vấn đặt liên tiếp')) : 'An toàn')
+                    ->toggleable(),
 
                 Tables\Columns\TextColumn::make('channel')
                     ->label('Kênh bán')
@@ -519,6 +536,12 @@ class OrderResource extends Resource
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
+                Tables\Filters\TernaryFilter::make('is_suspicious')
+                    ->label('Cảnh báo spam')
+                    ->placeholder('Tất cả đơn hàng')
+                    ->trueLabel('⚠️ Chỉ đơn nghi vấn spam')
+                    ->falseLabel('✅ Chỉ đơn an toàn'),
+
                 Tables\Filters\SelectFilter::make('status')
                     ->label('Trạng thái đơn')
                     ->options([
@@ -601,6 +624,27 @@ class OrderResource extends Resource
                         Notification::make()
                             ->title('Cập nhật trạng thái thành công')
                             ->body("Đơn hàng {$record->order_code} đã được cập nhật.")
+                            ->success()
+                            ->send();
+                    }),
+
+                Tables\Actions\Action::make('mark_safe')
+                    ->label('Bỏ cờ spam')
+                    ->icon('heroicon-o-shield-check')
+                    ->color('success')
+                    ->visible(fn (Order $record) => (bool) $record->is_suspicious)
+                    ->requiresConfirmation()
+                    ->modalHeading('Xác minh khách hàng thật')
+                    ->modalDescription('Bạn đã liên hệ xác nhận người mua này là thật và muốn bỏ đánh dấu nghi vấn spam?')
+                    ->action(function (Order $record) {
+                        $record->update([
+                            'is_suspicious' => false,
+                            'suspicious_reason' => 'Đã xác minh khách thật lúc ' . now()->format('H:i d/m/Y'),
+                        ]);
+
+                        Notification::make()
+                            ->title('Đã bỏ cờ spam thành công')
+                            ->body("Đơn hàng {$record->order_code} đã được đánh dấu an toàn.")
                             ->success()
                             ->send();
                     }),

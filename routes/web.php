@@ -31,7 +31,7 @@ Route::get('/san-pham', [StorefrontController::class, 'products'])->name('storef
 Route::get('/san-pham/{slug}', [StorefrontController::class, 'productDetail'])->name('storefront.product-detail');
 Route::get('/gio-hang', [StorefrontController::class, 'checkoutPage'])->name('storefront.cart');
 Route::get('/thanh-toan', [StorefrontController::class, 'checkoutPage'])->name('storefront.checkout-page');
-Route::post('/dat-hang-online', [StorefrontController::class, 'checkout'])->name('storefront.checkout');
+Route::post('/dat-hang-online', [StorefrontController::class, 'checkout'])->middleware('throttle:online-checkout')->name('storefront.checkout');
 Route::post('/tra-cuu-doanh-nghiep', BusinessTaxLookupController::class)->middleware('throttle:30,1')->name('business.lookup');
 
 // 2. Đăng ký đại lý & Mua sỉ số lượng lớn
@@ -42,7 +42,7 @@ Route::post('/dang-ky-dai-ly', [StorefrontController::class, 'postWholesale'])->
 Route::get('/dang-ky', [StorefrontController::class, 'registerForm'])->name('customer.register');
 Route::post('/dang-ky', [StorefrontController::class, 'postRegister'])->middleware('throttle:10,1')->name('customer.post-register');
 Route::get('/dang-nhap', [StorefrontController::class, 'loginForm'])->name('customer.login');
-Route::post('/dang-nhap', [StorefrontController::class, 'postLogin'])->name('customer.post-login');
+Route::post('/dang-nhap', [StorefrontController::class, 'postLogin'])->middleware('throttle:customer-login')->name('customer.post-login');
 Route::match(['get', 'post'], '/dang-xuat', [StorefrontController::class, 'logout'])->name('customer.logout');
 Route::get('/tai-khoan', [StorefrontController::class, 'profile'])->name('customer.profile');
 Route::post('/tai-khoan', [StorefrontController::class, 'updateProfile'])->name('customer.update-profile');

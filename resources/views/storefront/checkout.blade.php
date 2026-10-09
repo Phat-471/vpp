@@ -53,6 +53,11 @@
             
             <form id="main-checkout-form" onsubmit="submitCheckoutPage(event)" class="space-y-6">
                 
+                <!-- Honeypot chống bot spam đặt hàng ảo (Ẩn hoàn toàn, bot tự điền sẽ bị từ chối) -->
+                <div style="display:none !important;" aria-hidden="true">
+                    <input type="text" name="website_url" id="chk-website-url" tabindex="-1" autocomplete="off" />
+                </div>
+
                 <!-- 1. Customer Details -->
                 <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-4">
                     <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -358,6 +363,8 @@
         const notes = document.getElementById('chk-notes').value.trim();
         const paymentMethod = document.querySelector('input[name="payment_method"]:checked')?.value || 'cod';
 
+        const websiteUrl = document.getElementById('chk-website-url')?.value || '';
+
         const btn = document.getElementById('btn-submit-checkout');
         const errBox = document.getElementById('checkout-error-alert');
         errBox.classList.add('hidden');
@@ -380,6 +387,7 @@
                     customer_address: address,
                     payment_method: paymentMethod,
                     notes: notes,
+                    website_url: websiteUrl,
                     ...window.InvoiceForm.read('checkout-invoice'),
                     items: cart.map(i => ({
                         product_id: i.product_id,
