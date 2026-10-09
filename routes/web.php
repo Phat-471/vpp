@@ -8,6 +8,9 @@ use App\Http\Controllers\PosReceiptController;
 use App\Http\Controllers\PrintController;
 use App\Http\Controllers\StorefrontController;
 use App\Http\Controllers\ZaloAuthController;
+use App\Livewire\PosCustomers;
+use App\Livewire\PosOrders;
+use App\Livewire\PosShifts;
 use App\Livewire\PosTerminal;
 use Illuminate\Support\Facades\Route;
 
@@ -15,9 +18,9 @@ Route::get('/pos/login', [PosAuthController::class, 'create'])->name('pos.login'
 Route::post('/pos/login', [PosAuthController::class, 'store'])->middleware(['guest:web', 'throttle:pos-login'])->name('pos.authenticate');
 Route::middleware(['auth:web', 'can:use-pos'])->prefix('pos')->name('pos.')->group(function () {
     Route::get('/', PosTerminal::class)->name('index');
-    Route::get('/khach-hang', \App\Livewire\PosCustomers::class)->name('customers');
-    Route::get('/don-hang', \App\Livewire\PosOrders::class)->name('orders');
-    Route::get('/ca-ban-hang', \App\Livewire\PosShifts::class)->name('shifts');
+    Route::get('/khach-hang', PosCustomers::class)->name('customers');
+    Route::get('/don-hang', PosOrders::class)->name('orders');
+    Route::get('/ca-ban-hang', PosShifts::class)->name('shifts');
     Route::post('/logout', [PosAuthController::class, 'destroy'])->name('logout');
     Route::get('/hoa-don/{order:uuid}', PosReceiptController::class)->name('receipt');
 });
@@ -62,9 +65,10 @@ Route::get('/chinh-sach-mua-hang', [StorefrontController::class, 'terms'])->name
 Route::post('/dat-lich-sua-chua', [StorefrontController::class, 'bookRepair'])->name('storefront.book');
 
 // 5. Live Chat Khách hàng 2 chiều
-Route::post('/api/chat/init', [LiveChatController::class, 'init'])->name('chat.init');
-Route::post('/api/chat/send', [LiveChatController::class, 'send'])->name('chat.send');
-Route::get('/api/chat/messages', [LiveChatController::class, 'getMessages'])->name('chat.messages');
+Route::post('/api/chat/init', [LiveChatController::class, 'init'])->middleware('throttle:chat-init')->block(10, 10)->name('chat.init');
+Route::post('/api/chat/send', [LiveChatController::class, 'send'])->middleware('throttle:chat-send')->block(10, 10)->name('chat.send');
+Route::get('/api/chat/messages', [LiveChatController::class, 'getMessages'])->middleware('throttle:chat-messages')->name('chat.messages');
+Route::post('/api/chat/read', [LiveChatController::class, 'read'])->middleware('throttle:chat-read')->block(10, 10)->name('chat.read');
 
 // 6. Tra cứu tiến độ sửa máy in (Chống IDOR: Mã phiếu + 4 số cuối SĐT)
 Route::get('/tra-cuu', [LookupController::class, 'index'])->name('lookup.index');

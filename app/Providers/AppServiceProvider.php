@@ -35,12 +35,18 @@ class AppServiceProvider extends ServiceProvider
         Schema::defaultStringLength(191);
 
         Gate::define('use-pos', fn (User $user) => $user->isCashier());
+        Gate::define('manage-live-chat', fn (User $user) => $user->isAdmin());
         Gate::define('view-pos-order', fn (User $user, Order $order) => $user->isCashier()
             && $order->channel === 'pos' && ($user->isAdmin() || $order->created_by === $user->id));
         RateLimiter::for('pos-login', fn (Request $request) => [
             Limit::perMinute(10)->by($request->ip()),
             Limit::perMinute(5)->by(app(StaffLogin::class)->throttleKey((string) $request->input('identifier')).'|'.$request->ip()),
         ]);
+        foreach (['init' => 10, 'send' => 20, 'messages' => 90, 'read' => 90] as $operation => $limit) {
+            RateLimiter::for('chat-'.$operation, fn (Request $request) => Limit::perMinute($limit)
+                ->by('chat-'.$operation.'|'.$request->ip())
+                ->response(fn () => response()->json(['success' => false, 'message' => 'Bạn đang thao tác quá nhanh. Hãy chờ một phút rồi thử lại.'], 429)));
+        }
 
         View::composer(['layouts.storefront', 'storefront.*', 'lookup.*', 'print.order'], function ($view) {
             $view->with('storefrontSettings', app(StorefrontSettings::class)->all());

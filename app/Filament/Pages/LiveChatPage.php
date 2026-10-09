@@ -2,16 +2,18 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\ChatMessage;
 use App\Models\ChatSession;
+use App\Services\LiveChatService;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Gate;
+use Livewire\Attributes\Locked;
+use Livewire\WithPagination;
 
 class LiveChatPage extends Page
 {
+    use WithPagination;
+
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
     protected static ?string $navigationGroup = 'Chăm sóc khách hàng';
@@ -24,127 +26,148 @@ class LiveChatPage extends Page
 
     protected static string $view = 'filament.pages.live-chat-page';
 
+    #[Locked]
     public ?int $selectedSessionId = null;
+
     public string $replyMessage = '';
-    public string $filter = 'all'; // all, unread, active
+
+    public string $filter = 'all';
+
     public string $search = '';
 
-    public array $quickReplies = [
-        'Dạ em chào anh/chị ạ! Em là nhân viên tư vấn của VPP Ánh Dương. Em có thể hỗ trợ gì cho anh/chị hôm nay ạ?',
-        'Dạ sản phẩm này bên em đang có sẵn số lượng lớn tại kho. Bên em hỗ trợ giao nhanh trong 2 giờ ạ!',
-        'Dạ về dịch vụ nạp mực / sửa máy in tận nơi, kỹ thuật viên bên em sẽ đến sau 15-30 phút ạ. Anh/chị cho em xin địa chỉ cụ thể nhé ạ!',
-        'Dạ đơn hàng mua sỉ / số lượng lớn bên em có chính sách chiết khấu 15% - 30% và xuất đầy đủ hóa đơn VAT điện tử ạ.',
-        'Dạ vâng ạ, bên em đã ghi nhận thông tin và sẽ xử lý ngay cho anh/chị ạ!',
-    ];
+    public static function canAccess(): bool
+    {
+        return Gate::allows('manage-live-chat');
+    }
+
+    public function boot(): void
+    {
+        Gate::authorize('manage-live-chat');
+    }
 
     public function mount(): void
     {
-        $firstSession = ChatSession::orderBy('last_message_at', 'desc')->first();
-        if ($firstSession) {
-            $this->selectSession($firstSession->id);
-        }
+        // Selecting a conversation is explicit; opening the page never clears unread messages.
     }
 
     public function selectSession(int $sessionId): void
     {
+        Gate::authorize('manage-live-chat');
+        ChatSession::findOrFail($sessionId);
         $this->selectedSessionId = $sessionId;
-        $session = ChatSession::find($sessionId);
-        if ($session) {
-            $session->update(['unread_admin' => 0]);
-            ChatMessage::where('chat_session_id', $sessionId)
-                ->where('sender_type', 'customer')
-                ->where('is_read', false)
-                ->update(['is_read' => true]);
+        $this->replyMessage = '';
+        $this->resetPage('messagesPage');
+        $this->resetValidation();
+        unset($this->currentSession, $this->messages);
+        $this->markSelectedRead();
+        $this->dispatch('chat-session-selected');
+    }
+
+    public function refreshSelected(): void
+    {
+        Gate::authorize('manage-live-chat');
+        unset($this->messages, $this->currentSession, $this->sessions);
+    }
+
+    public function markSelectedRead(): void
+    {
+        $this->refreshSelected();
+        if ($session = $this->currentSession) {
+            $ids = $this->messages->getCollection()->pluck('id');
+            if ($ids->isNotEmpty()) {
+                app(LiveChatService::class)->markReadByAdmin(auth()->user(), $session, $ids->min(), $ids->max());
+                unset($this->messages, $this->currentSession, $this->sessions);
+            }
+        }
+    }
+
+    public function updatedSearch(): void
+    {
+        $this->validateOnly('search', ['search' => ['string', 'max:100']]);
+        $this->resetPage('sessionsPage');
+    }
+
+    public function updatedFilter(): void
+    {
+        $this->validateOnly('filter', ['filter' => ['in:all,unread,active,closed']]);
+        $this->resetPage('sessionsPage');
+    }
+
+    public function updatedPaginators($page, $pageName): void
+    {
+        if ($pageName === 'messagesPage') {
+            $this->markSelectedRead();
         }
     }
 
     public function sendReply(): void
     {
-        $clean = trim($this->replyMessage);
-        if (empty($clean) || !$this->selectedSessionId) {
+        Gate::authorize('manage-live-chat');
+        if (! $session = $this->currentSession) {
+            $this->addError('replyMessage', 'Chọn một hội thoại trước khi gửi tin nhắn.');
+
             return;
         }
-
-        $session = ChatSession::find($this->selectedSessionId);
-        if (!$session) {
-            Notification::make()->title('Không tìm thấy phiên trò chuyện')->danger()->send();
-            return;
-        }
-
-        DB::transaction(function () use ($session, $clean) {
-            $adminName = Auth::user()?->name ?? 'Quản trị viên';
-
-            ChatMessage::create([
-                'chat_session_id' => $session->id,
-                'sender_type' => 'admin',
-                'sender_name' => $adminName,
-                'message' => $clean,
-                'is_read' => false,
-            ]);
-
-            $session->unread_customer += 1;
-            $session->last_message = Str::limit($clean, 80);
-            $session->last_message_at = now();
-            $session->save();
-        });
-
+        app(LiveChatService::class)->reply(auth()->user(), $session, $this->replyMessage);
         $this->replyMessage = '';
-
-        Notification::make()
-            ->title('Đã gửi trả lời cho khách hàng')
-            ->success()
-            ->send();
+        $this->resetPage('messagesPage');
+        $this->markSelectedRead();
+        $this->dispatch('chat-reply-sent');
     }
 
-    public function useQuickReply(string $template): void
+    public function getQuickRepliesProperty(): array
     {
-        $this->replyMessage = $template;
+        return [
+            'Xin chào anh/chị! Anh/chị cần tư vấn sản phẩm hay hỗ trợ máy in ạ?',
+            'Anh/chị cho em xin tên sản phẩm và số lượng cần mua để em kiểm tra giá và tồn kho nhé.',
+            'Anh/chị cho em xin dòng máy in và mô tả lỗi để em chuyển thông tin cho kỹ thuật viên nhé.',
+            'Anh/chị có thể cung cấp mã đơn hàng để em kiểm tra tình trạng giao hàng.',
+            'Bên em đã ghi nhận yêu cầu. Nhân viên sẽ kiểm tra và phản hồi tại đây.',
+        ];
+    }
+
+    public function useQuickReply(int $index): void
+    {
+        Gate::authorize('manage-live-chat');
+        abort_unless(array_key_exists($index, $this->quickReplies), 422);
+        $this->replyMessage = $this->quickReplies[$index];
     }
 
     public function toggleSessionStatus(): void
     {
-        if (!$this->selectedSessionId) return;
-
-        $session = ChatSession::find($this->selectedSessionId);
-        if ($session) {
-            $newStatus = $session->status === 'active' ? 'closed' : 'active';
-            $session->update(['status' => $newStatus]);
-
-            Notification::make()
-                ->title($newStatus === 'active' ? 'Đã mở lại phiên trò chuyện' : 'Đã đóng phiên trò chuyện')
-                ->info()
-                ->send();
+        Gate::authorize('manage-live-chat');
+        if ($session = $this->currentSession) {
+            app(LiveChatService::class)->toggle(auth()->user(), $session);
+            unset($this->currentSession, $this->sessions);
+            Notification::make()->title($this->currentSession->status === 'active' ? 'Đã mở lại hội thoại' : 'Đã đóng hội thoại')->success()->send();
         }
     }
 
     public function getSessionsProperty()
     {
-        $query = ChatSession::orderBy('last_message_at', 'desc');
+        Gate::authorize('manage-live-chat');
+        $this->validate(['filter' => ['in:all,unread,active,closed'], 'search' => ['string', 'max:100']]);
 
-        if ($this->filter === 'unread') {
-            $query->where('unread_admin', '>', 0);
-        } elseif ($this->filter === 'active') {
-            $query->where('status', 'active');
-        }
-
-        if (!empty($this->search)) {
-            $search = '%' . trim($this->search) . '%';
-            $query->where(function ($q) use ($search) {
-                $q->where('customer_name', 'LIKE', $search)
-                  ->orWhere('customer_phone', 'LIKE', $search)
-                  ->orWhere('last_message', 'LIKE', $search);
-            });
-        }
-
-        return $query->take(30)->get();
+        return ChatSession::query()->select(['id', 'customer_name', 'customer_phone', 'status', 'unread_admin', 'last_message', 'last_message_at'])
+            ->when($this->filter === 'unread', fn ($query) => $query->where('unread_admin', '>', 0))
+            ->when(in_array($this->filter, ['active', 'closed']), fn ($query) => $query->where('status', $this->filter))
+            ->when(trim($this->search) !== '', function ($query) {
+                $search = '%'.trim($this->search).'%';
+                $query->where(fn ($q) => $q->where('customer_name', 'like', $search)->orWhere('customer_phone', 'like', $search)->orWhere('last_message', 'like', $search));
+            })->orderByDesc('last_message_at')->orderByDesc('id')->paginate(20, pageName: 'sessionsPage');
     }
 
-    public function getCurrentSessionProperty()
+    public function getCurrentSessionProperty(): ?ChatSession
     {
-        if (!$this->selectedSessionId) {
-            return null;
-        }
+        Gate::authorize('manage-live-chat');
 
-        return ChatSession::with(['messages'])->find($this->selectedSessionId);
+        return $this->selectedSessionId ? ChatSession::findOrFail($this->selectedSessionId) : null;
+    }
+
+    public function getMessagesProperty()
+    {
+        Gate::authorize('manage-live-chat');
+
+        return $this->currentSession?->messages()->reorder()->orderByDesc('id')->paginate(50, pageName: 'messagesPage');
     }
 }

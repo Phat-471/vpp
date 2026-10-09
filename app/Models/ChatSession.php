@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ChatSession extends Model
 {
+    protected $hidden = ['session_token'];
+
     protected $fillable = [
         'session_token',
         'customer_id',

@@ -6,6 +6,9 @@
     <title>@yield('title', $storefrontSettings['site_name'].' - Tổng Kho Văn Phòng Phẩm & Dịch Vụ Máy In')</title>
     <meta name="description" content="@yield('meta_description', 'Tổng kho hơn 1.000 SKU văn phòng phẩm, giấy in photo Double A, PaperOne, bút Thiên Long, hộp mực máy in Canon 2900, Brother, HP chính hãng giá sỉ.')">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    @if(!empty($storefrontSettings['favicon_url']))
+        <link rel="icon" href="{{ $storefrontSettings['favicon_url'] }}">
+    @endif
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
@@ -18,7 +21,7 @@
 <body class="bg-[#f8fafc] text-slate-900 min-h-screen flex flex-col justify-between antialiased selection:bg-emerald-600 selection:text-white">
 
     <!-- 1. TOP ANNOUNCEMENT BAR (Gọn gàng: Giờ mở cửa bên trái, Tra cứu phiếu bên phải) -->
-    @if(trim((string) $storefrontSettings['notice_bar_text']) !== '')
+    @if(($storefrontSettings['notice_bar_enabled'] ?? '1') !== '0' && trim((string) ($storefrontSettings['notice_bar_text'] ?? '')) !== '')
         <div class="bg-emerald-50 text-emerald-900 text-xs text-center px-4 py-2 border-b border-emerald-100">
             {{ $storefrontSettings['notice_bar_text'] }}
         </div>
@@ -44,9 +47,13 @@
 
                 <!-- Logo & Brand Name -->
                 <a href="{{ route('storefront.index') }}" class="flex items-center space-x-2.5 group shrink-0">
-                    <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center font-black text-white text-base sm:text-xl shadow-md group-hover:scale-105 transition transform">
-                        <span>V</span>
-                    </div>
+                    @if(!empty($storefrontSettings['logo_url']))
+                        <img src="{{ $storefrontSettings['logo_url'] }}" alt="{{ $storefrontSettings['site_name'] }}" class="h-9 sm:h-11 w-auto max-w-[140px] sm:max-w-[180px] object-contain rounded-lg">
+                    @else
+                        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center font-black text-white text-base sm:text-xl shadow-md group-hover:scale-105 transition transform">
+                            <span>{{ mb_substr($storefrontSettings['site_name'] ?? 'V', 0, 1) }}</span>
+                        </div>
+                    @endif
                     <div>
                         <span class="text-base sm:text-xl font-black tracking-tight text-white block leading-tight">
                             {{ $storefrontSettings['site_name'] }}
@@ -184,8 +191,14 @@
                 <div class="text-xs text-slate-300 space-y-1">
                     <p>📍 Địa chỉ: {{ $storefrontSettings['address'] }}</p>
                     <p>📞 Hotline: {{ $storefrontSettings['hotline'] }} | Zalo: {{ $storefrontSettings['zalo'] }}</p>
+                    @if(!empty($storefrontSettings['technical_hotline']))
+                        <p>🛠️ Kỹ thuật 24/7: <a href="{{ $storefrontSettings['technical_hotline_url'] }}" class="text-emerald-400 hover:underline">{{ $storefrontSettings['technical_hotline'] }}</a></p>
+                    @endif
                     <p>Email: {{ $storefrontSettings['email'] }}</p>
                     <p>⏰ Mở cửa: {{ $storefrontSettings['opening_hours'] }}</p>
+                    @if(!empty($storefrontSettings['facebook_url']))
+                        <p>🌐 Fanpage: <a href="{{ $storefrontSettings['facebook_url'] }}" target="_blank" rel="noopener noreferrer" class="text-sky-400 hover:underline">Facebook Ánh Dương</a></p>
+                    @endif
                     <p>Miễn phí giao hàng cho đơn từ {{ $storefrontSettings['freeship_label'] }}</p>
                 </div>
             </div>
