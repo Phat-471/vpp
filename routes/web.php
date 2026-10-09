@@ -47,7 +47,12 @@ Route::match(['get', 'post'], '/dang-xuat', [StorefrontController::class, 'logou
 Route::get('/tai-khoan', [StorefrontController::class, 'profile'])->name('customer.profile');
 Route::post('/tai-khoan', [StorefrontController::class, 'updateProfile'])->name('customer.update-profile');
 
-// 3.1. Xác thực & Đăng ký 1 chạm qua mã QR Zalo (Không cần OTP)
+// 3.1. Xác thực số điện thoại qua mã OTP 6 số (Zalo ZNS / SMS)
+Route::get('/xac-thuc-otp', [\App\Http\Controllers\OtpController::class, 'showVerifyPage'])->name('otp.verify.page');
+Route::post('/api/otp/send', [\App\Http\Controllers\OtpController::class, 'sendOtp'])->middleware('throttle:10,1')->name('otp.send');
+Route::post('/api/otp/verify', [\App\Http\Controllers\OtpController::class, 'verifyOtp'])->middleware('throttle:15,1')->name('otp.verify');
+
+// 3.2. Dự phòng: Quét QR Zalo
 Route::get('/xac-thuc-zalo/{token}', [ZaloAuthController::class, 'showVerificationPage'])->name('zalo.verify.page');
 Route::prefix('zalo-auth')->name('zalo.verify.')->group(function () {
     Route::post('/init', [ZaloAuthController::class, 'init'])->name('init');

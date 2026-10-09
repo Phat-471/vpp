@@ -423,11 +423,18 @@ class StorefrontController extends Controller
             ]);
         }
 
-        // Tạo phiên quét mã QR Zalo để xác thực số điện thoại (Bắt buộc xác thực)
-        $zaloService = app(\App\Services\ZaloAuthService::class);
-        $verification = $zaloService->createSessionForCustomer($customer, $request->ip(), $request->userAgent());
+        // Phát hành mã xác thực OTP 6 số (qua Zalo ZNS / SMS)
+        $otpService = app(\App\Services\OtpService::class);
+        $otpResult = $otpService->generate(
+            phone: $cleanedPhone,
+            action: 'verify',
+            customer: $customer,
+            ip: $request->ip()
+        );
 
-        return redirect()->route('zalo.verify.page', ['token' => $verification->token]);
+        return redirect()->route('otp.verify.page', ['phone' => $cleanedPhone])
+            ->with('success', 'Đăng ký thành công! Mã xác thực OTP 6 số đã được gửi đến số ' . $cleanedPhone . ', vui lòng nhập mã để kích hoạt tài khoản.')
+            ->with('dev_otp', $otpResult['dev_otp'] ?? null);
     }
 
     public function loginForm()
@@ -458,16 +465,21 @@ class StorefrontController extends Controller
         if (auth('customer')->attempt($credentials, $request->boolean('remember'))) {
             $customer = auth('customer')->user();
 
-            // Kiểm tra trạng thái kích hoạt tài khoản qua Zalo
+            // Kiểm tra trạng thái kích hoạt tài khoản qua OTP
             if (!$customer->isActivated()) {
                 auth('customer')->logout();
 
-                // Tạo phiên quét mã QR Zalo để kích hoạt tài khoản
-                $zaloService = app(\App\Services\ZaloAuthService::class);
-                $verification = $zaloService->createSessionForCustomer($customer, $request->ip(), $request->userAgent());
+                $otpService = app(\App\Services\OtpService::class);
+                $otpResult = $otpService->generate(
+                    phone: $cleanedPhone,
+                    action: 'verify',
+                    customer: $customer,
+                    ip: $request->ip()
+                );
 
-                return redirect()->route('zalo.verify.page', ['token' => $verification->token])
-                    ->with('warning', 'Tài khoản chưa được kích hoạt! Vui lòng quét mã QR Zalo bên dưới để kích hoạt tài khoản.');
+                return redirect()->route('otp.verify.page', ['phone' => $cleanedPhone])
+                    ->with('warning', 'Tài khoản chưa được kích hoạt số điện thoại! Vui lòng nhập mã OTP vừa gửi tới Zalo / SMS để kích hoạt.')
+                    ->with('dev_otp', $otpResult['dev_otp'] ?? null);
             }
 
             $request->session()->regenerate();

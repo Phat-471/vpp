@@ -372,6 +372,70 @@ class WebsiteSettingsPage extends Page implements HasForms
                                             ]),
                                     ]),
                             ]),
+
+                        // ==========================================
+                        // TAB 7: XÁC THỰC TÀI KHOẢN OTP & ZALO ZNS / SMS
+                        // ==========================================
+                        Tabs\Tab::make('Xác thực OTP & Zalo ZNS')
+                            ->icon('heroicon-o-chat-bubble-left-right')
+                            ->schema([
+                                Grid::make(2)
+                                    ->schema([
+                                        Section::make('Cấu hình Dịch vụ gửi mã OTP')
+                                            ->description('Thiết lập kênh phát hành mã xác thực 6 số khi khách hàng đăng ký hoặc kích hoạt tài khoản.')
+                                            ->icon('heroicon-o-shield-check')
+                                            ->schema([
+                                                Select::make('otp_provider')
+                                                    ->label('Kênh phát hành mã OTP chính')
+                                                    ->options([
+                                                        'auto' => '⚡ Tự động (Ưu tiên Zalo ZNS, dự phòng SMS)',
+                                                        'zns' => '💬 Zalo Notification Service (ZNS)',
+                                                        'sms' => '📩 SMS Brandname (SpeedSMS / eSMS)',
+                                                        'mock' => '🧪 Chế độ thử nghiệm (Ghi log & hiện mã test)',
+                                                    ])
+                                                    ->default('auto')
+                                                    ->helperText('Nếu chưa có hợp đồng ZNS/SMS với nhà mạng, chọn Chế độ thử nghiệm để kiểm thử hệ thống.'),
+
+                                                TextInput::make('otp_expire_minutes')
+                                                    ->label('Thời hạn hiệu lực của mã OTP (Phút)')
+                                                    ->numeric()
+                                                    ->default(5)
+                                                    ->suffix('phút'),
+                                            ]),
+
+                                        Section::make('Kết nối Zalo Notification Service (ZNS)')
+                                            ->description('Gửi tin nhắn ZNS chính chủ qua Zalo Official Account (OA).')
+                                            ->icon('heroicon-o-chat-bubble-oval-left')
+                                            ->schema([
+                                                TextInput::make('zalo_zns_template_id')
+                                                    ->label('Mã mẫu tin nhắn ZNS (Template ID)')
+                                                    ->placeholder('VD: 345678')
+                                                    ->helperText('Mã mẫu tin nhắn OTP đã được VNG Zalo phê duyệt.'),
+
+                                                Textarea::make('zalo_zns_access_token')
+                                                    ->label('Access Token Zalo OA')
+                                                    ->rows(3)
+                                                    ->placeholder('Nhập Access Token dài hạn từ developers.zalo.me...')
+                                                    ->helperText('Token API của ứng dụng Zalo Official Account có quyền gửi ZNS.'),
+                                            ]),
+
+                                        Section::make('Kết nối SMS Brandname Gateway (Dự phòng)')
+                                            ->description('Gửi tin nhắn SMS trực tiếp đến số điện thoại khi khách không dùng Zalo.')
+                                            ->icon('heroicon-o-device-phone-mobile')
+                                            ->schema([
+                                                TextInput::make('sms_brandname')
+                                                    ->label('Tên Brandname hiển thị')
+                                                    ->placeholder('VPP_ANHDUONG')
+                                                    ->default('VPP'),
+
+                                                TextInput::make('sms_api_key')
+                                                    ->label('Khóa API Gateway (SpeedSMS / eSMS API Key)')
+                                                    ->password()
+                                                    ->placeholder('Nhập API Access Token...'),
+                                            ])
+                                            ->columnSpan(2),
+                                    ]),
+                            ]),
                     ]),
             ])
             ->statePath('data');
