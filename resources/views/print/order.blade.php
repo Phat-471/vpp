@@ -65,17 +65,17 @@
         <div class="flex items-center space-x-2.5">
             <span class="font-bold text-emerald-400">🧾 HÓA ĐƠN BÁN LẺ:</span>
             <span class="bg-slate-800 px-2 py-0.5 rounded font-mono font-bold text-white border border-slate-700">{{ $order->order_code }}</span>
-            <span class="text-xs text-slate-300">Khổ in: <b class="text-amber-400">{{ $isK80 ? 'K80 (80mm)' : ($isA4Dual ? 'A4 (2 Liên chia đôi)' : 'A5 (Mặc định)') }}</b></span>
+            <span class="text-xs text-slate-300">Khổ in: <b class="text-amber-400">{{ $isK80 ? 'Máy in nhiệt K80 (80mm)' : ($isA4Dual ? 'Máy in văn phòng A4 (2 Liên chia đôi)' : 'Máy in văn phòng A5 (Mặc định)') }}</b></span>
         </div>
         <div class="flex items-center space-x-1.5 flex-wrap">
             <a href="{{ request()->fullUrlWithQuery(['format' => null]) }}" class="px-2.5 py-1.5 rounded-lg font-bold text-xs transition {{ (!$isK80 && !$isA4Dual) ? 'bg-indigo-600 text-white shadow-xs' : 'bg-slate-800 text-slate-300 hover:bg-slate-700' }}">
-                📄 Khổ A5
+                📄 Khổ A5 (Mặc định)
             </a>
             <a href="{{ request()->fullUrlWithQuery(['format' => 'a4_dual']) }}" class="px-2.5 py-1.5 rounded-lg font-bold text-xs transition {{ $isA4Dual ? 'bg-indigo-600 text-white shadow-xs' : 'bg-slate-800 text-slate-300 hover:bg-slate-700' }}">
                 📋 Khổ A4 (2 Liên)
             </a>
             <a href="{{ request()->fullUrlWithQuery(['format' => 'k80']) }}" class="px-2.5 py-1.5 rounded-lg font-bold text-xs transition {{ $isK80 ? 'bg-indigo-600 text-white shadow-xs' : 'bg-slate-800 text-slate-300 hover:bg-slate-700' }}">
-                🧾 Khổ K80
+                🧾 Khổ K80 (Nhiệt 80mm)
             </a>
             @if($order->is_vat_invoice)
             <a href="{{ url("/print/vat-invoice/{$order->id}") }}" class="px-2.5 py-1.5 rounded-lg font-bold text-xs bg-amber-600 hover:bg-amber-500 text-white transition">
@@ -248,6 +248,21 @@
                             {{ $order->payment_status === 'paid' ? 'ĐÃ THANH TOÁN ĐỦ' : 'CHƯA THANH TOÁN' }}
                         </span>
                     </div>
+
+                    @if($order->payment_method === 'cash')
+                        @if($order->cash_received !== null)
+                            <div class="flex justify-between text-[10px]">
+                                <span>Tiền khách đưa:</span>
+                                <span class="font-mono font-semibold">{{ number_format($order->cash_received, 0, ',', '.') }} đ</span>
+                            </div>
+                            <div class="flex justify-between text-[10px]">
+                                <span>Tiền thừa trả khách:</span>
+                                <span class="font-mono font-semibold">{{ number_format($paymentSummary['change'] ?? max(0, $order->cash_received - $order->grand_total), 0, ',', '.') }} đ</span>
+                            </div>
+                        @else
+                            <p class="text-slate-500 text-[10px] italic">Đơn cũ chưa lưu thông tin tiền khách đưa và tiền thừa.</p>
+                        @endif
+                    @endif
                 </div>
 
                 <!-- VietQR & Lookup QR Section -->

@@ -41,15 +41,14 @@ class LookupController extends Controller
         $phone4 = trim($request->phone_last4);
 
         // 1. Kiểm tra bảng Đơn Hàng (Order)
-        $order = Order::where(function ($q) use ($code) {
+        $orders = Order::where(function ($q) use ($code) {
                 $q->where('order_code', $code)
                   ->orWhere('uuid', $code);
-            })
-            ->where(function ($q) use ($phone4) {
-                $q->whereRaw("RIGHT(REGEXP_REPLACE(customer_phone, '[^0-9]', ''), 4) = ?", [$phone4])
-                  ->orWhere('customer_phone', 'LIKE', "%{$phone4}");
-            })
-            ->first();
+            })->get();
+
+        $order = $orders->first(function ($ord) use ($phone4) {
+            return AppHelper::extractPhoneLast4($ord->customer_phone) === $phone4;
+        });
 
         if ($order) {
             session()->put("verified_order_{$order->uuid}", true);
