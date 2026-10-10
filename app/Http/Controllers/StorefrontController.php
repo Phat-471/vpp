@@ -211,14 +211,30 @@ class StorefrontController extends Controller
             })
             ->firstOrFail();
 
+        // 1. Sản phẩm cùng ngành hàng gợi ý (tối đa 8 sản phẩm)
         $relatedProducts = Product::with(['category', 'units'])
             ->where('is_active', true)
             ->where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
-            ->take(4)
+            ->orderBy('id', 'desc')
+            ->take(8)
             ->get();
 
-        return view('storefront.product-detail', compact('product', 'relatedProducts'));
+        // 2. Sản phẩm bán chạy & phụ kiện mua kèm gợi ý (tối đa 8 sản phẩm)
+        $crossSellProducts = Product::with(['category', 'units'])
+            ->where('is_active', true)
+            ->where('retail_price', '>', 0)
+            ->where('id', '!=', $product->id)
+            ->where(function ($q) {
+                $q->where('is_best_seller', true)
+                  ->orWhere('is_featured', true)
+                  ->orWhere('is_flash_sale', true);
+            })
+            ->orderBy('stock_quantity', 'desc')
+            ->take(8)
+            ->get();
+
+        return view('storefront.product-detail', compact('product', 'relatedProducts', 'crossSellProducts'));
     }
 
     public function checkoutPage()
