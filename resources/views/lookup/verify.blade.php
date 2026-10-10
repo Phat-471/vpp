@@ -1,7 +1,13 @@
 @extends('layouts.storefront')
 
-@section('title', 'Xác Thực Bảo Mật Tra Cứu Phiếu ' . $ticket->ticket_code . ' | ' . ($storefrontSettings['site_name'] ?? 'VPP & Dịch Vụ Máy In'))
-@section('meta_description', 'Xác thực bảo mật chống lộ thông tin cá nhân khách hàng khi tra cứu phiếu sửa chữa.')
+@php
+    $isOrder = isset($order) && !empty($order);
+    $itemCode = $isOrder ? $order->order_code : ($ticket->ticket_code ?? '');
+    $itemLabel = $isOrder ? 'Đơn Hàng' : 'Phiếu Tiếp Nhận';
+@endphp
+
+@section('title', 'Xác Thực Bảo Mật Tra Cứu ' . $itemLabel . ' ' . $itemCode . ' | ' . ($storefrontSettings['site_name'] ?? 'VPP & Dịch Vụ Máy In'))
+@section('meta_description', 'Xác thực bảo mật chống lộ thông tin cá nhân khách hàng khi tra cứu.')
 
 @section('content')
 <div class="max-w-md mx-auto px-4 py-10 sm:py-16 space-y-6">
@@ -12,9 +18,9 @@
         </div>
 
         <div>
-            <h1 class="text-lg sm:text-xl font-black text-slate-900">Xác Thực Bảo Mật Phiếu Tiếp Nhận</h1>
+            <h1 class="text-lg sm:text-xl font-black text-slate-900">Xác Thực Bảo Mật {{ $itemLabel }}</h1>
             <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
-                Để bảo vệ quyền riêng tư và thông tin thiết bị, vui lòng nhập <b class="text-slate-800">4 số cuối của số điện thoại</b> đã đăng ký cho phiếu <span class="font-mono font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-lg">{{ $ticket->ticket_code }}</span>.
+                Để bảo vệ quyền riêng tư và thông tin của Quý khách, vui lòng nhập <b class="text-slate-800">4 số cuối của số điện thoại</b> đã đăng ký cho {{ strtolower($itemLabel) }} <span class="font-mono font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-lg">{{ $itemCode }}</span>.
             </p>
         </div>
 
@@ -26,7 +32,7 @@
 
         <form action="{{ route('lookup.search') }}" method="POST" class="space-y-4 pt-1">
             @csrf
-            <input type="hidden" name="ticket_code" value="{{ $ticket->ticket_code }}" />
+            <input type="hidden" name="code" value="{{ $itemCode }}" />
 
             <div>
                 <input type="text" name="phone_last4" maxlength="4" autofocus required
@@ -41,7 +47,7 @@
 
         <div class="pt-2">
             <a href="{{ route('lookup.index') }}" class="text-xs text-slate-400 hover:text-indigo-600 font-semibold transition">
-                ← Quay lại trang tìm kiếm phiếu
+                ← Quay lại trang tìm kiếm
             </a>
         </div>
     </div>
