@@ -90,7 +90,7 @@ class WebsiteSettingsPage extends Page implements HasForms
                                                 TextInput::make('site_name')
                                                     ->label('Tên thương hiệu / Cửa hàng *')
                                                     ->required()
-                                                    ->placeholder('Ánh Dương ERP - VPP & Dịch Vụ Máy In'),
+                                                    ->placeholder('VPP & Dịch Vụ Máy In Ánh Dương'),
 
                                                 TextInput::make('site_slogan')
                                                     ->label('Khẩu hiệu Slogan')
@@ -337,9 +337,9 @@ class WebsiteSettingsPage extends Page implements HasForms
                             ]),
 
                         // ==========================================
-                        // TAB 6: VẬN HÀNH KỸ THUẬT & QUẦY THU NGÂN POS
+                        // TAB 6: VẬN HÀNH KỸ THUẬT & BÁN HÀNG TẠI QUẦY
                         // ==========================================
-                        Tabs\Tab::make('Vận hành Kỹ thuật & POS')
+                        Tabs\Tab::make('Kỹ thuật & Bán hàng')
                             ->icon('heroicon-o-wrench-screwdriver')
                             ->schema([
                                 Grid::make(2)
@@ -362,12 +362,12 @@ class WebsiteSettingsPage extends Page implements HasForms
                                                     ->helperText('Thời gian tối đa để kiểm tra và báo giá cho khách mang máy đến.'),
                                             ]),
 
-                                        Section::make('Quy chuẩn quầy thu ngân POS')
+                                        Section::make('Bán hàng tại quầy')
                                             ->icon('heroicon-o-calculator')
                                             ->schema([
                                                 Toggle::make('pos_shift_required')
-                                                    ->label('Bắt buộc mở ca làm việc trước khi bán hàng POS')
-                                                    ->helperText('Khi bật, thu ngân phải khai báo số tiền đầu ca trước khi lập đơn tại quầy.')
+                                                    ->label('Bắt buộc mở ca làm việc trước khi bán hàng tại quầy')
+                                                    ->helperText('Khi bật, nhân viên phải khai báo số tiền đầu ca trước khi lập đơn tại quầy.')
                                                     ->default(true),
                                             ]),
                                     ]),
@@ -445,7 +445,7 @@ class WebsiteSettingsPage extends Page implements HasForms
     {
         return [
             Action::make('save')
-                ->label('Lưu cài đặt website & cửa hàng')
+                ->label('Lưu thay đổi')
                 ->icon('heroicon-o-check-circle')
                 ->size('lg')
                 ->submit('save'),
@@ -466,7 +466,7 @@ class WebsiteSettingsPage extends Page implements HasForms
 
         Notification::make()
             ->title('Đã cập nhật cài đặt thành công')
-            ->body('Các thay đổi đã được áp dụng tức thì trên toàn bộ Storefront, Quầy POS, Mẫu in hóa đơn và mã VietQR.')
+            ->body('Thông tin cấu hình cửa hàng đã được lưu và áp dụng.')
             ->success()
             ->send();
     }

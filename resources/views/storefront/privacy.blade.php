@@ -1,7 +1,7 @@
 @extends('layouts.storefront')
 
 @section('title', 'Chính Sách Bảo Mật Thông Tin & Dữ Liệu Máy In | ' . ($storefrontSettings['site_name'] ?? 'VPP & Dịch Vụ Máy In'))
-@section('meta_description', 'Chính sách bảo mật thông tin cá nhân và bảo mật dữ liệu tài liệu trên máy in của khách hàng tại Cửa hàng Văn Phòng Phẩm & Dịch Vụ Máy In. Cam kết chống rò rỉ IDOR 100%.')
+@section('meta_description', 'Chính sách bảo mật thông tin cá nhân và bảo mật dữ liệu tài liệu trên máy in của khách hàng tại Cửa hàng Văn Phòng Phẩm & Dịch Vụ Máy In.')
 
 @section('schema_extra')
 <script type="application/ld+json">
@@ -70,19 +70,19 @@
             </div>
         </section>
 
-        <!-- Section 2: IDOR Prevention -->
+        <!-- Section 2: Tra Cứu Bảo Mật -->
         <section class="space-y-3 border-t border-slate-100 pt-6">
             <h2 class="text-lg sm:text-xl font-black text-slate-900 flex items-center space-x-2.5">
                 <span class="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-sm font-black flex-shrink-0">2</span>
-                <span>Cơ Chế Kỹ Thuật Chống Rò Rỉ Dữ Liệu Online (Anti-IDOR)</span>
+                <span>Bảo Mật Thông Tin Tra Cứu Trực Tuyến</span>
             </h2>
             <div class="pl-10 space-y-2 text-xs sm:text-sm">
                 <p>
-                    Hệ thống phần mềm được thiết kế với tiêu chuẩn an ninh bảo vệ 2 lớp nhằm loại bỏ hoàn toàn lỗ hổng IDOR (Insecure Direct Object Reference):
+                    Để đảm bảo quyền riêng tư và an toàn thông tin của khách hàng:
                 </p>
                 <ul class="list-disc pl-5 space-y-1.5 text-slate-600">
-                    <li><b>Xác thực kép khi tra cứu:</b> Khách hàng muốn xem tiến độ sửa chữa máy in bắt buộc phải cung cấp đúng cả 2 thông tin: <b>Mã phiếu sửa chữa + 4 số cuối số điện thoại</b> đăng ký nhận máy. Người lạ không thể dò tìm hoặc đoán số điện thoại của người khác.</li>
-                    <li><b>Định danh an toàn:</b> Đường dẫn URL công khai không bao giờ để lộ ID cơ sở dữ liệu số tự tăng (auto-increment ID), bảo vệ thông tin lịch sử mua hàng và chi phí sửa chữa của khách hàng.</li>
+                    <li><b>Xác thực người nhận máy:</b> Khi tra cứu tiến độ sửa chữa máy in, khách hàng cần nhập đúng <b>Mã phiếu tiếp nhận và 4 số cuối số điện thoại</b> đăng ký gửi máy. Người khác không thể xem lén chi tiết thiết bị hay chi phí sửa chữa.</li>
+                    <li><b>Bảo vệ thông tin cá nhân:</b> Mọi dữ liệu về tình trạng thiết bị, linh kiện thay thế và chi phí chỉ được hiển thị sau khi nhập đúng thông tin xác thực.</li>
                 </ul>
             </div>
         </section>

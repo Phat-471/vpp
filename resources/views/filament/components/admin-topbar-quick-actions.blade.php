@@ -1,8 +1,8 @@
 <div class="admin-topbar-actions">
-    <!-- Nút Mở Quầy POS Bán Hàng -->
-    <a href="{{ route('pos.index') }}" target="_blank" class="admin-topbar-btn admin-topbar-btn--pos" title="Mở giao diện Thu Ngân POS">
+    <!-- Nút Bán Hàng Tại Quầy -->
+    <a href="{{ route('pos.index') }}" target="_blank" class="admin-topbar-btn admin-topbar-btn--pos" title="Bán hàng tại quầy">
         <span class="admin-topbar-btn__icon">⚡</span>
-        <span class="admin-topbar-btn__text">Quầy POS</span>
+        <span class="admin-topbar-btn__text">Bán tại quầy</span>
     </a>
 
     <!-- Nút Xem Cửa Hàng Web -->

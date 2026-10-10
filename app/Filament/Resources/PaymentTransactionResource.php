@@ -129,15 +129,15 @@ class PaymentTransactionResource extends Resource
             ])
             ->headerActions([
                 Tables\Actions\Action::make('simulate_webhook')
-                    ->label('⚡ Gửi webhook thử (mô phỏng)')
+                    ->label('⚡ Thử nghiệm tiền vào')
                     ->icon('heroicon-o-bolt')
                     ->color('warning')
                     ->form([
                         Forms\Components\Select::make('gateway')
-                            ->label('Cổng thanh toán giả lập')
+                            ->label('Cổng thanh toán')
                             ->options([
-                                'sepay' => 'SePay Webhook',
-                                'casso' => 'Casso Webhook',
+                                'sepay' => 'Cổng SePay',
+                                'casso' => 'Cổng Casso',
                             ])
                             ->default('sepay')
                             ->required(),
@@ -176,8 +176,8 @@ class PaymentTransactionResource extends Resource
 
                         if ($matched) {
                             Notification::make()
-                                ->title('Đã đối soát webhook')
-                                ->body("Đơn/Phiếu {$data['reference_code']} đã được tự động cập nhật thanh toán +{$data['amount']} đ.")
+                                ->title('Xác nhận thanh toán thành công')
+                                ->body("Đơn/Phiếu {$data['reference_code']} đã được ghi nhận thanh toán +{$data['amount']} đ.")
                                 ->success()
                                 ->send();
                         } else {

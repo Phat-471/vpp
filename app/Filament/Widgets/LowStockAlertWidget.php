@@ -27,7 +27,7 @@ class LowStockAlertWidget extends BaseWidget
             )
             ->columns([
                 Tables\Columns\TextColumn::make('sku')
-                    ->label('Mã SKU')
+                    ->label('Mã hàng')
                     ->fontFamily('mono')
                     ->weight('bold'),
 

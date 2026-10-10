@@ -93,23 +93,14 @@
             </div>
         </div>
 
-        <!-- NÚT GIẢ LẬP TEST THỬ NGHIỆM TỨC THÌ (CHO MÔI TRƯỜNG LOCALHOST / DEV) -->
+        @if(app()->isLocal() && request()->has('test'))
+        <!-- NÚT HỖ TRỢ KIỂM THỬ KHI CÓ THAM SỐ ?test=1 -->
         <div class="pt-4 border-t border-slate-100 space-y-2.5">
-            <div class="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-left">
-                <div class="flex items-center space-x-2 text-amber-800 text-xs font-bold">
-                    <span>💡</span>
-                    <span>Đang chạy trên môi trường Local (127.0.0.1):</span>
-                </div>
-                <p class="text-[11px] text-amber-700 mt-1 leading-relaxed">
-                    Do đang chạy cục bộ trên máy tính, điện thoại thật sẽ không thể truy cập link nội bộ này. Anh có thể bấm ngay nút bên dưới để <strong>giả lập quét mã và kích hoạt tài khoản thành công</strong> ngay lập tức:
-                </p>
-            </div>
-
-            <button type="button" onclick="mockScanZalo()" class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-black text-xs shadow-md shadow-emerald-600/20 transition flex items-center justify-center space-x-2 active:scale-98">
-                <span>⚡ BẤM ĐÂY ĐỂ KÍCH HOẠT TÀI KHOẢN NGAY (TEST LOCAL)</span>
-                <span>✓</span>
+            <button type="button" onclick="mockScanZalo()" class="w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition flex items-center justify-center space-x-2">
+                <span>⚡ Kích hoạt thử nghiệm</span>
             </button>
         </div>
+        @endif
 
     </div>
 

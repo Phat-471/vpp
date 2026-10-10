@@ -19,6 +19,6 @@
     </div>
 
     <p class="text-xs text-gray-500 mt-3 italic">
-        Webhook từ SePay/Casso sẽ tự ghi nhận giao dịch và cập nhật trạng thái đơn hàng sau khi tiền vào tài khoản.
+        Hệ thống sẽ tự động cập nhật trạng thái đơn hàng sau khi nhận được tiền chuyển khoản.
     </p>
 </div>

@@ -12,7 +12,7 @@
     <div class="admin-dashboard-intro__copy">
         <p class="admin-dashboard-intro__eyebrow">
             <span class="admin-dashboard-intro__sun" aria-hidden="true">✦</span>
-            <span>TRUNG TÂM VẬN HÀNH TOÀN DIỆN</span>
+            <span>BẢNG ĐIỀU KHIỂN CỬA HÀNG</span>
             <span class="admin-dashboard-intro__date">{{ now()->locale('vi')->translatedFormat('l, d/m/Y') }}</span>
         </p>
         
@@ -21,15 +21,15 @@
         </h1>
         
         <p class="admin-dashboard-intro__description">
-            Hệ thống quản lý chuỗi Văn phòng phẩm & Dịch vụ kỹ thuật máy in. Theo dõi doanh thu thời gian thực, quản lý kho 1.000+ SKU và tiến độ sửa chữa tập trung.
+            Tổng quan doanh thu bán hàng, tồn kho và tiến độ sửa chữa máy in trong ngày.
         </p>
     </div>
 
     <nav class="admin-dashboard-intro__actions" aria-label="Thao tác nhanh">
-        <!-- Nút POS bán hàng quầy -->
+        <!-- Nút bán hàng quầy -->
         <a class="admin-dashboard-action admin-dashboard-action--pos" href="{{ route('pos.index') }}" target="_blank" rel="noopener">
             <span class="admin-dashboard-action__icon" aria-hidden="true">⚡</span>
-            <span>Mở Quầy POS</span>
+            <span>Bán Tại Quầy</span>
         </a>
 
         <!-- Nút Thêm sản phẩm nhanh -->

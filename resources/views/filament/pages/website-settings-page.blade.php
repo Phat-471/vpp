@@ -5,8 +5,8 @@
                 ⚙️
             </div>
             <div class="min-w-0">
-                <h3 style="color: #ffffff !important;" class="text-xs font-bold tracking-tight">Cấu hình hệ thống toàn diện</h3>
-                <p style="color: #e0e7ff !important;" class="text-[11px] truncate">Đồng bộ tức thì lên Cửa Hàng Web, Quầy POS, Hóa Đơn In & VietQR.</p>
+                <h3 style="color: #ffffff !important;" class="text-xs font-bold tracking-tight">Cài đặt thông tin cửa hàng</h3>
+                <p style="color: #e0e7ff !important;" class="text-[11px] truncate">Áp dụng trực tiếp cho website, hóa đơn in và thanh toán chuyển khoản.</p>
             </div>
         </div>
         <div class="flex items-center space-x-2 shrink-0">
@@ -15,7 +15,7 @@
                 <span>↗</span>
             </a>
             <a href="{{ route('pos.index') }}" target="_blank" style="background: #059669; color: #ffffff !important;" class="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-lg text-xs font-bold transition shadow-xs hover:opacity-90">
-                <span>⚡ Quầy POS</span>
+                <span>⚡ Bán tại quầy</span>
             </a>
         </div>
     </div>
@@ -25,7 +25,7 @@
 
         <div class="flex items-center justify-end gap-x-3 pt-4 border-t border-slate-200">
             <x-filament::button type="submit" size="lg" icon="heroicon-o-check" color="primary">
-                Lưu cài đặt website & cửa hàng
+                Lưu thay đổi
             </x-filament::button>
         </div>
     </form>

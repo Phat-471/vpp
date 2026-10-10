@@ -79,7 +79,7 @@ Route::post('/api/chat/send', [LiveChatController::class, 'send'])->middleware('
 Route::get('/api/chat/messages', [LiveChatController::class, 'getMessages'])->middleware('throttle:chat-messages')->name('chat.messages');
 Route::post('/api/chat/read', [LiveChatController::class, 'read'])->middleware('throttle:chat-read')->block(10, 10)->name('chat.read');
 
-// 6. Tra cứu tiến độ sửa máy in (Chống IDOR: Mã phiếu + 4 số cuối SĐT)
+// 6. Tra cứu tiến độ sửa máy in (Mã phiếu + 4 số cuối SĐT)
 Route::get('/tra-cuu', [LookupController::class, 'index'])->name('lookup.index');
 Route::post('/tra-cuu', [LookupController::class, 'search'])->name('lookup.search');
 Route::get('/tra-cuu/{code}', [LookupController::class, 'view'])->name('lookup.view');

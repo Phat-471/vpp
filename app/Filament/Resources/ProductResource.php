@@ -71,14 +71,14 @@ class ProductResource extends Resource
                                                 ->required(),
 
                                             Forms\Components\TextInput::make('sku')
-                                                ->label('Mã SKU *')
+                                                ->label('Mã sản phẩm *')
                                                 ->required()
                                                 ->unique(Product::class, 'sku', ignoreRecord: true)
                                                 ->default(fn () => 'SP-' . strtoupper(Str::random(6)))
                                                 ->suffixAction(
                                                     Forms\Components\Actions\Action::make('generate_sku')
                                                         ->icon('heroicon-m-arrow-path')
-                                                        ->tooltip('Tạo mã SKU ngẫu nhiên mới')
+                                                        ->tooltip('Tạo mã sản phẩm tự động')
                                                         ->action(fn (callable $set) => $set('sku', 'SP-' . strtoupper(Str::random(6))))
                                                 ),
                                         ]),
@@ -86,12 +86,12 @@ class ProductResource extends Resource
                                     Forms\Components\Grid::make(2)
                                         ->schema([
                                             Forms\Components\TextInput::make('barcode')
-                                                ->label('Mã vạch (Barcode)')
+                                                ->label('Mã vạch')
                                                 ->placeholder('Quét máy quét hoặc nhập mã vạch...')
                                                 ->maxLength(60),
 
                                             Forms\Components\TextInput::make('slug')
-                                                ->label('Đường dẫn SEO (Slug) *')
+                                                ->label('Đường dẫn sản phẩm *')
                                                 ->required()
                                                 ->maxLength(255)
                                                 ->unique(Product::class, 'slug', ignoreRecord: true),
@@ -269,7 +269,7 @@ class ProductResource extends Resource
                     ->sortable()
                     ->weight('bold')
                     ->wrap()
-                    ->description(fn (Product $record) => "SKU: {$record->sku}" . ($record->barcode ? " • Vạch: {$record->barcode}" : '')),
+                    ->description(fn (Product $record) => "Mã: {$record->sku}" . ($record->barcode ? " • Vạch: {$record->barcode}" : '')),
 
                 Tables\Columns\TextColumn::make('category.name')
                     ->label('Danh mục')

@@ -1,7 +1,7 @@
 @extends('layouts.storefront')
 
 @section('title', 'Tra Cứu Tiến Độ Sửa Máy In & Nạp Mực Online | ' . ($storefrontSettings['site_name'] ?? 'VPP & Dịch Vụ Máy In'))
-@section('meta_description', 'Hệ thống tra cứu, nạp mực online bảo mật 2 lớp chống rò rỉ thông tin khách hàng tại Đồng Nai.')
+@section('meta_description', 'Tra cứu tiến độ sửa chữa máy in, nạp mực trực tuyến nhanh chóng, bảo mật thông tin khách hàng.')
 
 @section('schema_extra')
     <script type="application/ld+json">
@@ -37,9 +37,9 @@
                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
             </div>
-            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">TRA CỨU</h1>
+            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">TRA CỨU TIẾN ĐỘ</h1>
             <p class="text-xs sm:text-sm text-slate-500 mt-1 max-w-md mx-auto">
-                Vui lòng nhập Mã phiếu và 4 số cuối số điện thoại gửi máy để xem chi tiết.
+                Nhập Mã phiếu và 4 số cuối số điện thoại gửi máy để xem tình trạng sửa chữa.
             </p>
         </div>
 
@@ -62,7 +62,7 @@
                     <input type="text" name="ticket_code" value="{{ old('ticket_code', request('code')) }}"
                         placeholder="VD: SC260001" required
                         class="w-full px-4 py-3 rounded-2xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 font-mono text-base sm:text-lg font-bold uppercase placeholder:font-sans placeholder:normal-case placeholder:text-slate-400 bg-slate-50" />
-                    <p class="text-[11px] text-slate-400 mt-1">In ở góc trên bên phải phiếu hẹn hoặc cuống dán máy in</p>
+                    <p class="text-[11px] text-slate-400 mt-1">In trên phiếu hẹn hoặc tem dán trên thân máy</p>
                 </div>
 
                 <div>
@@ -72,8 +72,7 @@
                     <input type="text" name="phone_last4" maxlength="4" value="{{ old('phone_last4') }}"
                         placeholder="VD: 5678" required
                         class="w-full px-4 py-3 rounded-2xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 font-mono text-xl sm:text-2xl font-black tracking-widest text-center placeholder:font-sans placeholder:tracking-normal placeholder:text-slate-400 bg-slate-50" />
-                    <p class="text-[11px] text-slate-400 mt-1">Cơ chế chống IDOR bảo mật tuyệt đối, chỉ khách hàng sở hữu
-                        mới tra cứu được</p>
+                    <p class="text-[11px] text-slate-400 mt-1">Để bảo mật thông tin, chỉ người gửi máy mới có thể tra cứu</p>
                 </div>
 
                 <button type="submit"
@@ -82,32 +81,9 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
-                    <span>KIỂM TRA</span>
+                    <span>TRA CỨU TIẾN ĐỘ</span>
                 </button>
             </form>
-        </div>
-
-        <!-- Sample Quick Tickets Box -->
-        <div
-            class="max-w-xl mx-auto mt-6 p-4 sm:p-5 bg-blue-50/80 border border-blue-100 rounded-2xl text-xs text-slate-600">
-            <span class="font-bold text-slate-900 block mb-2 text-sm">💡 Các mã phiếu mẫu để thử nghiệm nhanh:</span>
-            <ul class="space-y-1.5">
-                <li class="flex items-center justify-between bg-white p-2 rounded-xl border border-blue-100">
-                    <span>Canon 2900 (Đang sửa):</span>
-                    <span class="font-mono">Mã: <b class="text-blue-700">SC260001</b> | 4 số cuối SĐT: <b
-                            class="text-blue-700">5678</b></span>
-                </li>
-                <li class="flex items-center justify-between bg-white p-2 rounded-xl border border-blue-100">
-                    <span>Brother L2321D (Đã xong):</span>
-                    <span class="font-mono">Mã: <b class="text-blue-700">SC260002</b> | 4 số cuối SĐT: <b
-                            class="text-blue-700">5432</b></span>
-                </li>
-                <li class="flex items-center justify-between bg-white p-2 rounded-xl border border-blue-100">
-                    <span>HP LaserJet 107a (Đang kiểm tra):</span>
-                    <span class="font-mono">Mã: <b class="text-blue-700">SC260003</b> | 4 số cuối SĐT: <b
-                            class="text-blue-700">2233</b></span>
-                </li>
-            </ul>
         </div>
 
     </main>

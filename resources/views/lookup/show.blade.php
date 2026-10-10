@@ -222,7 +222,7 @@
                     </div>
 
                     <p class="text-[11px] text-slate-400 mt-3 italic">
-                        * Tự động khớp lệnh qua cổng SePay & Casso chỉ sau 3–5 giây.
+                        * Hệ thống tự động ghi nhận ngay sau khi nhận được tiền chuyển khoản.
                     </p>
                 </div>
                 @else

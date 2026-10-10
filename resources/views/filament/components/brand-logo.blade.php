@@ -5,7 +5,6 @@
     <div style="display: flex; flex-direction: column; text-align: left; line-height: 1.2;">
         <span class="brand-logo-title" style="font-size: 13px; font-weight: 850; letter-spacing: -0.02em; display: flex; align-items: center; gap: 5px;">
             {{ setting('site_name', 'VPP & MÁY IN') }}
-            <span style="font-size: 8.5px; font-weight: 900; text-transform: uppercase; padding: 1.5px 4.5px; background: #e0e7ff; color: #4338ca; border-radius: 4px; border: 1px solid #c7d2fe;">ERP</span>
         </span>
         <span class="brand-logo-slogan" style="font-size: 10.5px; font-weight: 500; letter-spacing: 0.01em;">{{ setting('site_slogan', 'Văn Phòng Phẩm & Dịch Vụ Máy In') }}</span>
     </div>
