@@ -17,9 +17,9 @@ class PaymentTransactionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
 
-    protected static ?string $navigationGroup = 'Tài chính & thuế';
+    protected static ?string $navigationGroup = 'Tài chính';
 
-    protected static ?string $navigationLabel = 'Lịch sử thanh toán SePay / Casso';
+    protected static ?string $navigationLabel = 'Giao dịch';
 
     protected static ?string $modelLabel = 'Giao dịch ngân hàng';
 

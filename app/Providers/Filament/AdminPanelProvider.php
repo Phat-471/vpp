@@ -42,13 +42,13 @@ class AdminPanelProvider extends PanelProvider
             ->spa()
             ->sidebarCollapsibleOnDesktop()
             ->navigationGroups([
-                'Bán hàng & thu ngân',
-                'Kho & sản phẩm',
-                'Dịch vụ kỹ thuật',
-                'Chăm sóc khách hàng',
-                'Tài chính & thuế',
-                'Nội dung & trang web',
-                'Hệ thống',
+                'Bán hàng',
+                'Kho hàng',
+                'Kỹ thuật',
+                'Khách hàng',
+                'Tài chính',
+                'Nội dung',
+                'Cấu hình',
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

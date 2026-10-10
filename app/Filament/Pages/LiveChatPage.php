@@ -16,11 +16,11 @@ class LiveChatPage extends Page
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
-    protected static ?string $navigationGroup = 'Chăm sóc khách hàng';
+    protected static ?string $navigationGroup = 'Khách hàng';
 
-    protected static ?string $navigationLabel = 'Hỗ trợ trực tuyến';
+    protected static ?string $navigationLabel = 'Chat online';
 
-    protected static ?string $title = 'Hỗ trợ khách hàng trực tuyến';
+    protected static ?string $title = 'Chat trực tuyến';
 
     protected static ?int $navigationSort = 1;
 

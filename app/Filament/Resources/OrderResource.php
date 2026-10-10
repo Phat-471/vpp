@@ -24,9 +24,9 @@ class OrderResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
 
-    protected static ?string $navigationGroup = 'Quản lý bán hàng';
+    protected static ?string $navigationGroup = 'Bán hàng';
 
-    protected static ?string $navigationLabel = 'Đơn hàng & Xuất kho';
+    protected static ?string $navigationLabel = 'Đơn hàng';
 
     protected static ?string $modelLabel = 'Đơn hàng';
 

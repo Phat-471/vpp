@@ -26,11 +26,11 @@ class WebsiteSettingsPage extends Page implements HasForms
 
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static ?string $navigationGroup = 'Hệ thống';
+    protected static ?string $navigationGroup = 'Cấu hình';
 
-    protected static ?string $navigationLabel = 'Cài đặt website và cửa hàng';
+    protected static ?string $navigationLabel = 'Cài đặt';
 
-    protected static ?string $title = 'Cài đặt website & cửa hàng';
+    protected static ?string $title = 'Cài đặt hệ thống';
 
     protected static ?int $navigationSort = 1;
 

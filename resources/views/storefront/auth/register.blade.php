@@ -13,7 +13,7 @@
         </div>
         <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Đăng Ký Tài Khoản</h1>
         <p class="text-xs sm:text-sm text-slate-500 max-w-sm mx-auto leading-relaxed">
-            Đăng ký nhanh chỉ 10 giây để lưu địa chỉ giao hàng, nhận ưu đãi giá sỉ và tra cứu tiến độ sửa chữa máy in.
+            Đăng ký nhanh chỉ 10 giây để lưu địa chỉ giao hàng, nhận ưu đãi giá sỉ.
         </p>
     </div>
 

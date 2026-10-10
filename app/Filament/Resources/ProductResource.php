@@ -21,9 +21,9 @@ class ProductResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-cube';
 
-    protected static ?string $navigationGroup = 'Kho & sản phẩm';
+    protected static ?string $navigationGroup = 'Kho hàng';
 
-    protected static ?string $navigationLabel = 'Sản phẩm và tồn kho';
+    protected static ?string $navigationLabel = 'Sản phẩm & Tồn';
 
     protected static ?string $modelLabel = 'Sản phẩm';
 

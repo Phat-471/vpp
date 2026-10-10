@@ -18,9 +18,9 @@ class PageResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $navigationGroup = 'Nội dung & trang web';
+    protected static ?string $navigationGroup = 'Nội dung';
 
-    protected static ?string $navigationLabel = 'Trang nội dung và chính sách';
+    protected static ?string $navigationLabel = 'Trang tĩnh';
 
     protected static ?string $modelLabel = 'Trang bài viết';
 

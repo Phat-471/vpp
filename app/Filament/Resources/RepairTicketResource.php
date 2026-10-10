@@ -25,9 +25,9 @@ class RepairTicketResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
 
-    protected static ?string $navigationGroup = 'Dịch vụ kỹ thuật';
+    protected static ?string $navigationGroup = 'Kỹ thuật';
 
-    protected static ?string $navigationLabel = 'Phiếu sửa chữa máy in';
+    protected static ?string $navigationLabel = 'Phiếu sửa máy';
 
     protected static ?string $modelLabel = 'Phiếu sửa chữa';
 

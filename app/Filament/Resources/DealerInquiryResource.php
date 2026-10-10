@@ -16,9 +16,9 @@ class DealerInquiryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-storefront';
 
-    protected static ?string $navigationGroup = 'Chăm sóc khách hàng';
+    protected static ?string $navigationGroup = 'Khách hàng';
 
-    protected static ?string $navigationLabel = 'Đại lý và khách sỉ';
+    protected static ?string $navigationLabel = 'Đại lý & Sỉ';
 
     protected static ?string $modelLabel = 'Yêu cầu mở đại lý';
 

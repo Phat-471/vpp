@@ -57,7 +57,7 @@ class PageSeeder extends Seeder
     <li>Xử lý và giao hàng đơn mua văn phòng phẩm.</li>
     <li>Xuất hóa đơn điện tử giá trị gia tăng (VAT) hợp lệ.</li>
     <li>Liên hệ điều phối kỹ thuật viên nạp mực, sửa máy in tận nơi.</li>
-    <li>Tra cứu tiến độ sửa chữa máy in trực tuyến (bảo vệ chống IDOR bằng Mã phiếu + 4 số cuối SĐT).</li>
+    <li>Tra cứu trực tuyến (bảo vệ chống IDOR bằng Mã phiếu + 4 số cuối SĐT).</li>
 </ul>
 <h3>2. Cam kết bảo mật tài liệu máy in sửa chữa</h3>
 <p><strong>Đặc biệt đối với dịch vụ kỹ thuật máy in:</strong> Kỹ thuật viên của chúng tôi ký cam kết tuyệt đối không sao chép, không đọc trộm, không lưu trữ bất kỳ văn bản, tài liệu nội bộ hoặc hình ảnh nào còn lưu trong bộ nhớ máy in hoặc khay giấy của khách hàng.</p>

@@ -19,9 +19,9 @@ class CategoryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
-    protected static ?string $navigationGroup = 'Kho & sản phẩm';
+    protected static ?string $navigationGroup = 'Kho hàng';
 
-    protected static ?string $navigationLabel = 'Danh mục ngành hàng';
+    protected static ?string $navigationLabel = 'Danh mục';
 
     protected static ?string $modelLabel = 'Danh mục';
 
