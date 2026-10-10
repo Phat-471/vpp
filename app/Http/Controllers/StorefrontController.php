@@ -340,6 +340,12 @@ class StorefrontController extends Controller
                     }
                 }
 
+                if (!$unitId) {
+                    if ($product->is_flash_sale && $product->flash_sale_price && $product->flash_sale_price > 0 && $product->flash_sale_price < $product->retail_price) {
+                        $unitPrice = (float) $product->flash_sale_price;
+                    }
+                }
+
                 $qty = (int) $cartItem['quantity'];
                 $subtotal = $qty * $unitPrice;
                 $total += $subtotal;
@@ -397,6 +403,7 @@ class StorefrontController extends Controller
                 return response()->json([
                     'success' => true,
                     'message' => 'Đặt hàng thành công!',
+                    'order_id' => $order->id,
                     'order_code' => $order->order_code,
                     'grand_total' => $order->grand_total,
                     'grand_total_formatted' => AppHelper::formatMoney($order->grand_total),
@@ -428,6 +435,29 @@ class StorefrontController extends Controller
 
             return back()->withInput()->withErrors(['checkout' => $e->getMessage()]);
         }
+    }
+
+    public function checkPaymentStatus($orderCode)
+    {
+        $order = Order::where('order_code', strtoupper(trim($orderCode)))->first();
+        if (!$order) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy đơn hàng',
+            ], 404);
+        }
+
+        $isPaid = $order->payment_status === 'paid' || ($order->paid_amount >= $order->grand_total && $order->grand_total > 0);
+
+        return response()->json([
+            'success' => true,
+            'order_code' => $order->order_code,
+            'payment_status' => $order->payment_status,
+            'payment_method' => $order->payment_method,
+            'paid_amount' => (float) $order->paid_amount,
+            'grand_total' => (float) $order->grand_total,
+            'is_paid' => $isPaid,
+        ]);
     }
 
     public function wholesale()

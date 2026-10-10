@@ -258,9 +258,23 @@
 
             <!-- VietQR Container (If chosen) -->
             <div id="succ-vietqr-box" class="hidden p-4 bg-gradient-to-br from-indigo-50/80 via-slate-50 to-emerald-50/80 rounded-3xl border border-indigo-200 text-center space-y-3 shadow-xs">
-                <div class="inline-flex items-center space-x-1.5 px-3 py-1 bg-indigo-600 text-white rounded-full text-[10px] font-black uppercase tracking-wider shadow-xs">
-                    <span>⚡ QUÉT MÃ VIETQR ĐỂ HOÀN TẤT</span>
+                
+                <!-- Thanh trạng thái thanh toán thời gian thực -->
+                <div id="succ-status-waiting" class="flex items-center justify-center space-x-2 p-2.5 bg-amber-50 border border-amber-300 rounded-2xl text-amber-950 text-xs shadow-2xs">
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping shrink-0"></span>
+                    <span class="font-bold">Đang chờ bạn quét mã thanh toán... (Tự động nhận diện)</span>
                 </div>
+
+                <div id="succ-status-paid" class="hidden p-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-2xl text-center space-y-1 shadow-md">
+                    <span class="text-3xl block">🎉</span>
+                    <span class="font-black text-sm block uppercase tracking-wide">ĐÃ NHẬN THANH TOÁN VIETQR THÀNH CÔNG!</span>
+                    <p class="text-[11px] text-emerald-100 font-medium">Hệ thống đã khớp đúng số tiền và tự động chuyển đơn sang trạng thái Đang chuẩn bị giao hàng.</p>
+                </div>
+
+                <div id="succ-qr-media-container" class="space-y-3">
+                    <div class="inline-flex items-center space-x-1.5 px-3 py-1 bg-indigo-600 text-white rounded-full text-[10px] font-black uppercase tracking-wider shadow-xs">
+                        <span>⚡ QUÉT MÃ VIETQR ĐỂ HOÀN TẤT</span>
+                    </div>
 
                 <div class="bg-white p-3 rounded-2xl inline-block shadow-md border border-slate-200">
                     <img id="succ-vietqr-img" src="" alt="VietQR Thanh Toán" class="w-52 h-52 mx-auto object-contain rounded-lg" />
@@ -319,13 +333,18 @@
                 <p class="text-[10px] text-slate-500 leading-tight">
                     💡 Quý khách giữ nguyên nội dung chuyển khoản để hệ thống xác nhận thanh toán tự động trong 3 giây.
                 </p>
+                </div>
             </div>
 
             <div class="pt-2 flex flex-col sm:flex-row gap-2">
-                <a href="{{ route('storefront.products') }}" class="flex-1 py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">
+                <a id="succ-print-btn" href="#" target="_blank" class="hidden flex-1 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition text-center flex items-center justify-center space-x-1.5">
+                    <span>🖨️</span>
+                    <span>In Hóa Đơn</span>
+                </a>
+                <a href="{{ route('storefront.products') }}" class="flex-1 py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition text-center">
                     Tiếp Tục Mua Sắm
                 </a>
-                <a href="{{ route('storefront.index') }}" class="flex-1 py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-xs transition">
+                <a href="{{ route('storefront.index') }}" class="flex-1 py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-xs transition text-center">
                     Về Trang Chủ
                 </a>
             </div>
@@ -536,6 +555,58 @@
         document.body.removeChild(a);
     }
 
+    let _paymentPollingTimer = null;
+    let _paymentPollingCount = 0;
+
+    function stopPaymentPolling() {
+        if (_paymentPollingTimer) {
+            clearInterval(_paymentPollingTimer);
+            _paymentPollingTimer = null;
+        }
+    }
+
+    function startPaymentPolling(orderCode) {
+        stopPaymentPolling();
+        _paymentPollingCount = 0;
+        const maxPolls = 100; // Kiểm tra mỗi 3s trong 5 phút
+
+        _paymentPollingTimer = setInterval(async () => {
+            _paymentPollingCount++;
+            if (_paymentPollingCount > maxPolls) {
+                stopPaymentPolling();
+                return;
+            }
+
+            try {
+                const res = await fetch(`/don-hang/kiem-tra-thanh-toan/${encodeURIComponent(orderCode)}`, {
+                    headers: { 'Accept': 'application/json' }
+                });
+                if (!res.ok) return;
+                const resData = await res.json();
+                if (resData.is_paid) {
+                    stopPaymentPolling();
+                    onPaymentSuccess(resData);
+                }
+            } catch (e) {
+                console.error('Lỗi kiểm tra trạng thái thanh toán:', e);
+            }
+        }, 3000);
+    }
+
+    function onPaymentSuccess(data) {
+        const waitingBox = document.getElementById('succ-status-waiting');
+        const paidBox = document.getElementById('succ-status-paid');
+        const qrMedia = document.getElementById('succ-qr-media-container');
+
+        if (waitingBox) waitingBox.classList.add('hidden');
+        if (paidBox) paidBox.classList.remove('hidden');
+        if (qrMedia) qrMedia.classList.add('hidden');
+
+        if (typeof showToast === 'function') {
+            showToast('🎉 Đã nhận thanh toán VietQR thành công! Đơn hàng đang được chuẩn bị.', 'success');
+        }
+    }
+
     async function submitCheckoutPage(e) {
         e.preventDefault();
         const checkoutForm = document.getElementById('main-checkout-form');
@@ -601,8 +672,23 @@
             document.getElementById('succ-order-code').textContent = data.order_code;
             document.getElementById('succ-order-total').textContent = data.grand_total_formatted;
 
+            // In / Xem Hóa Đơn Button
+            const printBtn = document.getElementById('succ-print-btn');
+            if (printBtn) {
+                if (data.order_id) {
+                    printBtn.href = `/print/order/${data.order_id}`;
+                    printBtn.classList.remove('hidden');
+                } else {
+                    printBtn.classList.add('hidden');
+                }
+            }
+
             const qrBox = document.getElementById('succ-vietqr-box');
             const qrImg = document.getElementById('succ-vietqr-img');
+            const waitingBox = document.getElementById('succ-status-waiting');
+            const paidBox = document.getElementById('succ-status-paid');
+            const qrMedia = document.getElementById('succ-qr-media-container');
+
             if (data.viet_qr_url && paymentMethod === 'vietqr') {
                 qrImg.src = data.viet_qr_url;
                 if (data.bank_name) document.getElementById('succ-bank-name').textContent = data.bank_name;
@@ -611,8 +697,16 @@
                 if (data.grand_total_formatted) document.getElementById('succ-transfer-amount').textContent = data.grand_total_formatted;
                 if (data.transfer_content) document.getElementById('succ-transfer-content').textContent = data.transfer_content;
 
+                if (waitingBox) waitingBox.classList.remove('hidden');
+                if (paidBox) paidBox.classList.add('hidden');
+                if (qrMedia) qrMedia.classList.remove('hidden');
+
                 qrBox.classList.remove('hidden');
+
+                // Bắt đầu kiểm tra thanh toán thời gian thực
+                startPaymentPolling(data.order_code);
             } else {
+                stopPaymentPolling();
                 qrBox.classList.add('hidden');
             }
 

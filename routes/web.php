@@ -33,6 +33,7 @@ Route::get('/san-pham/{slug}', [StorefrontController::class, 'productDetail'])->
 Route::get('/gio-hang', [StorefrontController::class, 'checkoutPage'])->name('storefront.cart');
 Route::get('/thanh-toan', [StorefrontController::class, 'checkoutPage'])->name('storefront.checkout-page');
 Route::post('/dat-hang-online', [StorefrontController::class, 'checkout'])->middleware('throttle:online-checkout')->name('storefront.checkout');
+Route::get('/don-hang/kiem-tra-thanh-toan/{orderCode}', [StorefrontController::class, 'checkPaymentStatus'])->name('storefront.order.check-payment');
 Route::post('/tra-cuu-doanh-nghiep', BusinessTaxLookupController::class)->middleware('throttle:30,1')->name('business.lookup');
 
 // 2. Đăng ký đại lý & Mua sỉ số lượng lớn
