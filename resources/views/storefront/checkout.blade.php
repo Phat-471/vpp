@@ -129,14 +129,31 @@
                         </label>
 
                         <!-- VietQR -->
-                        <label class="flex items-start space-x-3 p-3.5 rounded-2xl border-2 border-slate-200 hover:border-indigo-400 bg-white cursor-pointer transition payment-radio-label">
-                            <input type="radio" name="payment_method" value="vietqr" onchange="onPaymentChange(this)" class="mt-1 accent-indigo-600" />
-                            <div class="flex-1">
-                                <span class="font-bold text-xs text-slate-900 block">Chuyển khoản VietQR Tự Động (Napas 24/7)</span>
-                                <span class="text-[11px] text-slate-500">Quét mã QR từ mọi App ngân hàng, hệ thống tự động nhận diện tiền về sau 3 giây.</span>
+                        <div class="space-y-2">
+                            <label class="flex items-start space-x-3 p-3.5 rounded-2xl border-2 border-slate-200 hover:border-indigo-400 bg-white cursor-pointer transition payment-radio-label">
+                                <input type="radio" name="payment_method" value="vietqr" onchange="onPaymentChange(this)" class="mt-1 accent-indigo-600" />
+                                <div class="flex-1">
+                                    <span class="font-bold text-xs text-slate-900 block">Chuyển khoản VietQR Tự Động (Napas 24/7)</span>
+                                    <span class="text-[11px] text-slate-500">Quét mã QR từ mọi App ngân hàng, hệ thống tự động nhận diện tiền về sau 3 giây.</span>
+                                </div>
+                                <span class="text-lg">📱</span>
+                            </label>
+
+                            <!-- VietQR Bank Info Hint (Hiện khi chọn VietQR) -->
+                            <div id="vietqr-bank-hint" class="hidden p-3 rounded-2xl bg-indigo-50/70 border border-indigo-200 text-[11px] text-slate-700 space-y-1.5 animate-in fade-in">
+                                <div class="flex items-center space-x-1.5 font-bold text-indigo-950">
+                                    <span>🏦</span>
+                                    <span>{{ $bankName }} ({{ $bankCode }})</span>
+                                </div>
+                                <div class="flex flex-wrap items-center justify-between gap-1 text-[11px]">
+                                    <span class="text-slate-600">STK: <b class="font-mono text-slate-900">{{ $accountNumber }}</b></span>
+                                    <span class="text-slate-600">Chủ TK: <b class="uppercase text-slate-900">{{ $accountName }}</b></span>
+                                </div>
+                                <p class="text-[10px] text-emerald-700 font-semibold pt-0.5">
+                                    ✓ Mã QR tự động điền sẵn số tiền chính xác và nội dung đơn hàng ngay sau khi bấm Xác nhận.
+                                </p>
                             </div>
-                            <span class="text-lg">📱</span>
-                        </label>
+                        </div>
                     </div>
                 </div>
 
@@ -162,6 +179,16 @@
                     <span id="checkout-total-items-badge" class="text-xs text-indigo-600 font-bold">0 món</span>
                 </div>
 
+                <!-- Dynamic Freeship Progress Banner -->
+                <div id="chk-freeship-banner" class="hidden p-3 rounded-2xl border text-xs space-y-1.5 transition">
+                    <div class="flex items-center justify-between" id="chk-freeship-text">
+                        <!-- Populated via JS -->
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                        <div id="chk-freeship-bar" class="h-1.5 rounded-full bg-emerald-500 transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+
                 <!-- Items list -->
                 <div id="checkout-items-list" class="space-y-3 divide-y divide-slate-100 max-h-96 overflow-y-auto no-scrollbar">
                     <!-- Populated via JS -->
@@ -176,6 +203,10 @@
                     <div class="flex justify-between text-slate-500">
                         <span>Phí vận chuyển:</span>
                         <span id="chk-shipping-val" class="font-bold text-emerald-600">Miễn phí giao hàng</span>
+                    </div>
+                    <div id="chk-vat-row" class="hidden flex justify-between text-slate-500">
+                        <span>Thuế VAT (<span id="chk-vat-rate-text">{{ $defaultVatRate }}%</span>):</span>
+                        <span id="chk-vat-val" class="font-mono font-bold text-slate-800">0₫</span>
                     </div>
                     <div class="flex justify-between text-base font-black text-slate-900 pt-2 border-t border-slate-200">
                         <span>Tổng Thanh Toán:</span>
@@ -226,13 +257,67 @@
             </div>
 
             <!-- VietQR Container (If chosen) -->
-            <div id="succ-vietqr-box" class="hidden p-4 bg-amber-50 rounded-2xl border border-amber-200 text-center space-y-3">
-                <span class="text-xs font-black text-amber-900 block">QUÉT MÃ VIETQR ĐỂ HOÀN TẤT THANH TOÁN:</span>
-                <div class="bg-white p-2 rounded-xl inline-block shadow-xs border border-slate-200">
-                    <img id="succ-vietqr-img" src="" alt="VietQR Thanh Toán" class="w-48 h-48 mx-auto object-contain" />
+            <div id="succ-vietqr-box" class="hidden p-4 bg-gradient-to-br from-indigo-50/80 via-slate-50 to-emerald-50/80 rounded-3xl border border-indigo-200 text-center space-y-3 shadow-xs">
+                <div class="inline-flex items-center space-x-1.5 px-3 py-1 bg-indigo-600 text-white rounded-full text-[10px] font-black uppercase tracking-wider shadow-xs">
+                    <span>⚡ QUÉT MÃ VIETQR ĐỂ HOÀN TẤT</span>
                 </div>
-                <p class="text-[11px] text-amber-800">
-                    Hệ thống sẽ tự động ghi nhận trạng thái thanh toán ngay khi tiền vào tài khoản.
+
+                <div class="bg-white p-3 rounded-2xl inline-block shadow-md border border-slate-200">
+                    <img id="succ-vietqr-img" src="" alt="VietQR Thanh Toán" class="w-52 h-52 mx-auto object-contain rounded-lg" />
+                    <p class="text-[10px] text-slate-400 mt-1">Mở App ngân hàng bất kỳ để quét mã QR</p>
+                </div>
+
+                <!-- Chi tiết chuyển khoản & Nút sao chép -->
+                <div class="p-3.5 bg-white rounded-2xl border border-slate-200 text-left text-xs space-y-2">
+                    <div class="flex items-center justify-between pb-1.5 border-b border-slate-100">
+                        <span class="text-slate-500">Ngân hàng:</span>
+                        <span class="font-bold text-slate-900" id="succ-bank-name">{{ $bankName }}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between pb-1.5 border-b border-slate-100">
+                        <span class="text-slate-500">Số tài khoản:</span>
+                        <div class="flex items-center space-x-1.5">
+                            <span class="font-mono font-black text-indigo-700 text-sm" id="succ-account-number">{{ $accountNumber }}</span>
+                            <button type="button" onclick="copyText(document.getElementById('succ-account-number').textContent, 'Đã sao chép số tài khoản!')" class="px-2 py-0.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-md text-[10px] font-bold border border-indigo-200 transition">
+                                Sao chép
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between pb-1.5 border-b border-slate-100">
+                        <span class="text-slate-500">Chủ tài khoản:</span>
+                        <span class="font-bold text-slate-900 uppercase text-[11px]" id="succ-account-name">{{ $accountName }}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between pb-1.5 border-b border-slate-100">
+                        <span class="text-slate-500">Số tiền:</span>
+                        <div class="flex items-center space-x-1.5">
+                            <span class="font-mono font-black text-rose-600 text-sm" id="succ-transfer-amount">0₫</span>
+                            <button type="button" onclick="copyRawAmount()" class="px-2 py-0.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-md text-[10px] font-bold border border-rose-200 transition">
+                                Sao chép
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500">Nội dung chuyển:</span>
+                        <div class="flex items-center space-x-1.5">
+                            <span class="font-mono font-black text-emerald-700 text-sm" id="succ-transfer-content">ORD-XXXX</span>
+                            <button type="button" onclick="copyText(document.getElementById('succ-transfer-content').textContent, 'Đã sao chép nội dung chuyển khoản!')" class="px-2 py-0.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-md text-[10px] font-bold border border-emerald-200 transition">
+                                Sao chép
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Button: Download QR Image -->
+                <button type="button" onclick="downloadQrImage()" class="w-full py-2.5 px-4 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5">
+                    <span>📥</span>
+                    <span>Tải ảnh mã QR về máy để quét trong App</span>
+                </button>
+
+                <p class="text-[10px] text-slate-500 leading-tight">
+                    💡 Quý khách giữ nguyên nội dung chuyển khoản để hệ thống xác nhận thanh toán tự động trong 3 giây.
                 </p>
             </div>
 
@@ -252,6 +337,18 @@
 
 @push('scripts')
 <script>
+    const CHECKOUT_CONFIG = {
+        freeshipLimit: {{ (int) $freeshipThreshold }},
+        shippingFeeDefault: {{ (int) $shippingFeeDefault }},
+        vatRate: {{ (float) $defaultVatRate }},
+        bankCode: @json($bankCode),
+        bankName: @json($bankName),
+        accountNumber: @json($accountNumber),
+        accountName: @json($accountName),
+    };
+
+    window._currentOrderGrandTotal = 0;
+
     function renderCheckoutItems() {
         const cart = getCart();
         const emptyState = document.getElementById('checkout-empty-cart-state');
@@ -301,9 +398,53 @@
         });
 
         container.innerHTML = html;
-        const freeshipLimit = 500000;
-        const shippingFee = (subtotal >= freeshipLimit || subtotal === 0) ? 0 : 30000;
-        const grandTotal = subtotal + shippingFee;
+
+        // Dynamic Shipping Fee based on Setting
+        const freeshipLimit = CHECKOUT_CONFIG.freeshipLimit;
+        const shippingFee = (subtotal >= freeshipLimit || subtotal === 0) ? 0 : CHECKOUT_CONFIG.shippingFeeDefault;
+
+        // Freeship Progress Banner
+        const freeshipBanner = document.getElementById('chk-freeship-banner');
+        const freeshipText = document.getElementById('chk-freeship-text');
+        const freeshipBar = document.getElementById('chk-freeship-bar');
+
+        if (freeshipBanner && freeshipText && freeshipBar) {
+            if (subtotal > 0) {
+                freeshipBanner.classList.remove('hidden');
+                if (subtotal >= freeshipLimit) {
+                    freeshipBanner.className = 'p-3 rounded-2xl border text-xs space-y-1.5 transition bg-emerald-50 border-emerald-200 text-emerald-800';
+                    freeshipText.innerHTML = '<span class="font-bold flex items-center space-x-1"><span>🎉</span><span>Chúc mừng! Bạn được MIỄN PHÍ VẬN CHUYỂN</span></span>';
+                    freeshipBar.style.width = '100%';
+                    freeshipBar.className = 'h-1.5 rounded-full bg-emerald-500 transition-all duration-300';
+                } else {
+                    const diff = freeshipLimit - subtotal;
+                    const percent = Math.min(100, Math.round((subtotal / freeshipLimit) * 100));
+                    freeshipBanner.className = 'p-3 rounded-2xl border text-xs space-y-1.5 transition bg-indigo-50/70 border-indigo-200 text-slate-700';
+                    freeshipText.innerHTML = `<span>Mua thêm <b class="text-indigo-700 font-mono">${formatMoney(diff)}</b> để được <b>Freeship</b></span><span class="font-mono font-bold text-slate-400 text-[10px]">${percent}%</span>`;
+                    freeshipBar.style.width = percent + '%';
+                    freeshipBar.className = 'h-1.5 rounded-full bg-indigo-600 transition-all duration-300';
+                }
+            } else {
+                freeshipBanner.classList.add('hidden');
+            }
+        }
+
+        // Dynamic VAT Real-Time Calculation
+        const invoiceCheckbox = document.querySelector('[data-invoice-enabled]');
+        const isVat = invoiceCheckbox && invoiceCheckbox.checked;
+        let vatAmount = 0;
+        const vatRow = document.getElementById('chk-vat-row');
+        const vatVal = document.getElementById('chk-vat-val');
+
+        if (isVat && subtotal > 0) {
+            vatAmount = Math.round(subtotal * (CHECKOUT_CONFIG.vatRate / 100));
+            if (vatRow) vatRow.classList.remove('hidden');
+            if (vatVal) vatVal.textContent = formatMoney(vatAmount);
+        } else {
+            if (vatRow) vatRow.classList.add('hidden');
+        }
+
+        const grandTotal = subtotal + shippingFee + vatAmount;
 
         document.getElementById('checkout-total-items-badge').textContent = count + ' món';
         document.getElementById('chk-subtotal-val').textContent = formatMoney(subtotal);
@@ -345,6 +486,54 @@
                 l.classList.add('border-slate-200', 'bg-white');
             }
         });
+
+        const isVietQr = document.querySelector('input[name="payment_method"]:checked')?.value === 'vietqr';
+        const hint = document.getElementById('vietqr-bank-hint');
+        if (hint) {
+            if (isVietQr) hint.classList.remove('hidden');
+            else hint.classList.add('hidden');
+        }
+    }
+
+    async function copyText(text, successMsg = 'Đã sao chép vào bộ nhớ tạm!') {
+        try {
+            await navigator.clipboard.writeText(text.trim());
+            if (typeof showToast === 'function') {
+                showToast(successMsg, 'success');
+            } else {
+                alert(successMsg);
+            }
+        } catch (e) {
+            const temp = document.createElement('textarea');
+            temp.value = text.trim();
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+            if (typeof showToast === 'function') {
+                showToast(successMsg, 'success');
+            } else {
+                alert(successMsg);
+            }
+        }
+    }
+
+    function copyRawAmount() {
+        const raw = window._currentOrderGrandTotal || 0;
+        copyText(raw.toString(), 'Đã sao chép số tiền cần chuyển!');
+    }
+
+    function downloadQrImage() {
+        const img = document.getElementById('succ-vietqr-img');
+        const orderCode = document.getElementById('succ-order-code').textContent.trim() || 'don-hang';
+        if (!img || !img.src) return;
+        const a = document.createElement('a');
+        a.href = img.src;
+        a.download = `vietqr-${orderCode}.png`;
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     }
 
     async function submitCheckoutPage(e) {
@@ -404,7 +593,8 @@
                 throw new Error(validationMessage || data.message || 'Không thể tạo đơn hàng, vui lòng kiểm tra lại thông tin.');
             }
 
-            // Success! Clear cart
+            // Success! Save grand total and clear cart
+            window._currentOrderGrandTotal = data.grand_total || 0;
             saveCart([]);
 
             // Populate Success Modal
@@ -415,6 +605,12 @@
             const qrImg = document.getElementById('succ-vietqr-img');
             if (data.viet_qr_url && paymentMethod === 'vietqr') {
                 qrImg.src = data.viet_qr_url;
+                if (data.bank_name) document.getElementById('succ-bank-name').textContent = data.bank_name;
+                if (data.account_number) document.getElementById('succ-account-number').textContent = data.account_number;
+                if (data.account_name) document.getElementById('succ-account-name').textContent = data.account_name;
+                if (data.grand_total_formatted) document.getElementById('succ-transfer-amount').textContent = data.grand_total_formatted;
+                if (data.transfer_content) document.getElementById('succ-transfer-content').textContent = data.transfer_content;
+
                 qrBox.classList.remove('hidden');
             } else {
                 qrBox.classList.add('hidden');
@@ -431,10 +627,22 @@
         }
     }
 
+    // Gắn sự kiện tính lại thuế khi bật/tắt checkbox hóa đơn VAT
+    function setupInvoiceListener() {
+        const invoiceCheckbox = document.querySelector('[data-invoice-enabled]');
+        if (invoiceCheckbox) {
+            invoiceCheckbox.addEventListener('change', renderCheckoutItems);
+        }
+    }
+
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', renderCheckoutItems);
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCheckoutItems();
+            setupInvoiceListener();
+        });
     } else {
         renderCheckoutItems();
+        setupInvoiceListener();
     }
 </script>
 @endpush

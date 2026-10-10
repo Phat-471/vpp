@@ -149,7 +149,23 @@ class StorefrontController extends Controller
 
     public function checkoutPage()
     {
-        return view('storefront.checkout');
+        $shippingFeeDefault = (float) setting('shipping_fee_default', 25000);
+        $freeshipThreshold = (float) setting('freeship_threshold', 500000);
+        $defaultVatRate = (float) setting('default_vat_rate', 8);
+        $bankCode = setting('vietqr_bank_code', 'MB');
+        $bankName = setting('vietqr_bank_name', 'MB Bank');
+        $accountNumber = setting('vietqr_account_number', '190333888999');
+        $accountName = setting('vietqr_account_name', 'CONG TY TNHH VPP');
+
+        return view('storefront.checkout', compact(
+            'shippingFeeDefault',
+            'freeshipThreshold',
+            'defaultVatRate',
+            'bankCode',
+            'bankName',
+            'accountNumber',
+            'accountName'
+        ));
     }
 
     public function checkout(\App\Http\Requests\CheckoutRequest $request)
@@ -260,7 +276,7 @@ class StorefrontController extends Controller
 
             $shippingFee = 0;
             $freeshipThreshold = (float) setting('freeship_threshold', 500000);
-            $defaultShippingFee = (float) setting('shipping_fee_default', 30000);
+            $defaultShippingFee = (float) setting('shipping_fee_default', 25000);
             if ($total < $freeshipThreshold && $total > 0) {
                 $shippingFee = $defaultShippingFee;
             }
@@ -296,6 +312,11 @@ class StorefrontController extends Controller
                     'grand_total_formatted' => AppHelper::formatMoney($order->grand_total),
                     'payment_method' => $order->payment_method,
                     'viet_qr_url' => $vietQrUrl,
+                    'bank_code' => setting('vietqr_bank_code', 'MB'),
+                    'bank_name' => setting('vietqr_bank_name', 'MB Bank'),
+                    'account_number' => setting('vietqr_account_number', '190333888999'),
+                    'account_name' => setting('vietqr_account_name', 'CONG TY TNHH VPP'),
+                    'transfer_content' => strtoupper($order->order_code),
                 ]);
             }
 
