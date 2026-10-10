@@ -46,6 +46,76 @@ class StorefrontController extends Controller
             $productsQuery->whereHas('compatiblePrinters', fn ($q) => $q->where('printer_models.id', $selectedPrinter));
         }
 
+        $isFiltering = !empty($searchKeyword) || !empty($selectedCategory) || !empty($selectedPrinter);
+
+        // 1. FLASH SALE: Ưu tiên sản phẩm admin bật cờ is_flash_sale, bổ sung cho đủ đúng 16 sản phẩm
+        $flaggedFlashSales = Product::with(['category', 'units'])
+            ->where('is_active', true)
+            ->where('retail_price', '>', 0)
+            ->where('is_flash_sale', true)
+            ->orderBy('id', 'desc')
+            ->take(16)
+            ->get();
+
+        if ($flaggedFlashSales->count() < 16) {
+            $existingFlashIds = $flaggedFlashSales->pluck('id')->all();
+            $fillersFlash = Product::with(['category', 'units'])
+                ->where('is_active', true)
+                ->where('retail_price', '>', 0)
+                ->whereNotIn('id', $existingFlashIds)
+                ->orderBy('id', 'asc')
+                ->take(16 - $flaggedFlashSales->count())
+                ->get();
+            $flashSaleProducts = $flaggedFlashSales->concat($fillersFlash);
+        } else {
+            $flashSaleProducts = $flaggedFlashSales;
+        }
+
+        // 2. SẢN PHẨM BÁN CHẠY: Ưu tiên sản phẩm admin bật cờ is_best_seller, bổ sung cho đủ 8 sản phẩm
+        $flaggedBestSellers = Product::with(['category', 'units'])
+            ->where('is_active', true)
+            ->where('retail_price', '>', 0)
+            ->where('is_best_seller', true)
+            ->orderBy('id', 'desc')
+            ->take(8)
+            ->get();
+
+        if ($flaggedBestSellers->count() < 8) {
+            $existingBestIds = $flaggedBestSellers->pluck('id')->all();
+            $fillersBest = Product::with(['category', 'units'])
+                ->where('is_active', true)
+                ->where('retail_price', '>', 0)
+                ->whereNotIn('id', $existingBestIds)
+                ->orderBy('stock_quantity', 'desc')
+                ->take(8 - $flaggedBestSellers->count())
+                ->get();
+            $bestSellerProducts = $flaggedBestSellers->concat($fillersBest);
+        } else {
+            $bestSellerProducts = $flaggedBestSellers;
+        }
+
+        // 3. SẢN PHẨM THEO DANH MỤC: 5 danh mục chủ lực của ngành VPP & Thiết bị máy in
+        $targetCategorySlugs = [
+            'giay-in-photo',
+            'hop-muc-may-in',
+            'but-viet-muc-viet',
+            'bia-ho-so-luu-tru',
+            'dung-cu-van-phong'
+        ];
+        $categorySections = Category::where('is_active', true)
+            ->whereIn('slug', $targetCategorySlugs)
+            ->with(['products' => function ($q) {
+                $q->where('is_active', true)
+                  ->with(['units', 'category'])
+                  ->orderBy('id', 'asc')
+                  ->take(8);
+            }])
+            ->get()
+            ->sortBy(function ($cat) use ($targetCategorySlugs) {
+                return array_search($cat->slug, $targetCategorySlugs);
+            })
+            ->values();
+
         $products = $productsQuery->orderBy('id', 'desc')->take(40)->get();
 
         // Quick stats for desktop credibility bar
@@ -59,6 +129,10 @@ class StorefrontController extends Controller
             'categories',
             'printerModels',
             'products',
+            'flashSaleProducts',
+            'bestSellerProducts',
+            'categorySections',
+            'isFiltering',
             'selectedCategory',
             'selectedPrinter',
             'searchKeyword',

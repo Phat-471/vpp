@@ -47,137 +47,233 @@
 @endsection
 
 @section('content')
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8 w-full">
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 space-y-6 sm:space-y-8 w-full">
 
-    <!-- 1. HERO BANNER FULL WIDTH (Hình ảnh siêu thị văn phòng phẩm sắc nét kết hợp gradient sang trọng) -->
-    <div class="relative overflow-hidden rounded-3xl text-white p-6 sm:p-10 lg:p-12 shadow-2xl border border-slate-700/60 group">
+    <!-- 1. HERO SECTION TỶ LỆ VÀNG 1 + 2 (1 BANNER LỚN CHÍNH + 2 CARD KHUYẾN MÃI NỔI BẬT) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch">
 
-        <!-- Background Image with Vibrant Store View & Readability Overlay -->
-        <div class="absolute inset-0 z-0">
-            <img src="{{ asset('images/banners/stationery_store_bright.jpg') }}" alt="Siêu Thị Văn Phòng Phẩm & Hộp Mực Máy In" class="w-full h-full object-cover object-center transform group-hover:scale-105 transition duration-700 opacity-65" />
-            <div class="absolute inset-0 bg-gradient-to-r from-[#060c20]/95 via-[#0a1433]/85 to-[#0b173d]/50"></div>
-            <!-- Background Ambient Glow & Shapes -->
-            <div class="absolute -top-24 -right-24 w-96 h-96 bg-emerald-500/25 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-blue-500/25 rounded-full blur-3xl pointer-events-none"></div>
-        </div>
+        <!-- Main Banner Lớn (lg:col-span-8) -->
+        <div class="lg:col-span-8 relative overflow-hidden rounded-3xl text-white p-6 sm:p-9 shadow-xl border border-slate-700/60 group flex flex-col justify-between min-h-[380px]">
+            <!-- Background Image & Gradient Overlays -->
+            <div class="absolute inset-0 z-0">
+                <img src="{{ asset('images/banners/stationery_store_bright.jpg') }}" alt="Siêu Thị Văn Phòng Phẩm & Hộp Mực Máy In" class="w-full h-full object-cover object-center transform group-hover:scale-105 transition duration-700 opacity-60" />
+                <div class="absolute inset-0 bg-gradient-to-r from-[#060c20]/95 via-[#0b173d]/90 to-[#0e2158]/60"></div>
+                <!-- Ambient Glow -->
+                <div class="absolute -top-20 -right-20 w-80 h-80 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-20 -left-20 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            </div>
 
-        <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-
-            <!-- Left Info Content (7 cols) -->
-            <div class="lg:col-span-7 space-y-5 text-left">
+            <!-- Content -->
+            <div class="relative z-10 space-y-4 max-w-2xl">
                 <!-- Badges Row -->
                 <div class="flex flex-wrap items-center gap-2">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-black bg-amber-400 text-slate-950 shadow-xs uppercase tracking-wider">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-black bg-amber-400 text-slate-950 shadow-xs uppercase tracking-wider">
                         ⭐ TỔNG KHO SỈ & LẺ CHÍNH HÃNG
                     </span>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                        ⚡ Giao Siêu Tốc Tại Đồng Nai
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        ⚡ Giao Siêu Tốc 2 Giờ
                     </span>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-slate-200 border border-white/10">
-                        🏢 Hóa Đơn VAT Điện Tử
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-white/10 text-slate-200 border border-white/10">
+                        🧾 Hóa Đơn VAT Điện Tử
                     </span>
                 </div>
 
                 <!-- Main Headline -->
                 <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight">
-                    Văn Phòng Phẩm & Hộp Mực Máy In <br class="hidden sm:inline" />
+                    Văn Phòng Phẩm & Hộp Mực Máy In <br />
                     <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200">
                         Giá Sỉ Tận Gốc - Giao Siêu Tốc
                     </span>
                 </h1>
 
-                <!-- Subheadline -->
-                <p class="text-xs sm:text-sm lg:text-base text-slate-300 leading-relaxed max-w-2xl">
-                    Hơn 1.000+ sản phẩm sẵn kho: Giấy in photo Double A, PaperOne, bút Thiên Long, hộp mực Canon 2900, Brother TN-2385, linh kiện thay thế chính hãng. Chiết khấu tới 25% cho doanh nghiệp, cơ quan & trường học.
+                <!-- Subtitle -->
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl">
+                    Hơn 1.000+ sản phẩm sẵn kho: Giấy Double A, PaperOne, bút Thiên Long, mực Canon 2900, Brother. Chiết khấu tới 25% cho cơ quan, trường học & doanh nghiệp tại Đồng Nai.
                 </p>
 
-                <!-- Action CTA Buttons (Đã bỏ nút hotline trùng lặp theo yêu cầu) -->
+                <!-- Action CTA Buttons -->
                 <div class="pt-2 flex flex-wrap gap-3 items-center">
                     <a href="{{ route('storefront.products') }}" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-extrabold text-xs sm:text-sm shadow-lg shadow-emerald-900/30 transition transform hover:-translate-y-0.5 flex items-center space-x-2">
                         <span>Khám Phá Sản Phẩm Ngay</span>
                         <span>→</span>
                     </a>
-                    <a href="{{ route('storefront.wholesale') }}" class="px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm border border-white/20 backdrop-blur-xs transition flex items-center space-x-2">
-                        <span>⭐ Nhận Báo Giá Sỉ Doanh Nghiệp</span>
+                    <a href="{{ route('storefront.wholesale') }}" class="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm border border-white/20 backdrop-blur-xs transition flex items-center space-x-1.5">
+                        <span>⭐ Nhận Báo Giá Sỉ B2B</span>
                     </a>
-                </div>
-
-                <!-- Trust Guarantee Micro-tags -->
-                <div class="pt-3 flex flex-wrap items-center gap-4 text-[11px] text-slate-300 font-semibold border-t border-slate-700/60">
-                    <span class="flex items-center space-x-1 text-emerald-400">
-                        <span>✓</span> <span>100% Chính hãng</span>
-                    </span>
-                    <span class="flex items-center space-x-1 text-emerald-400">
-                        <span>✓</span> <span>Đổi trả 1-đổi-1 trong 7 ngày</span>
-                    </span>
-                    <span class="flex items-center space-x-1 text-emerald-400">
-                        <span>✓</span> <span>Hỗ trợ công nợ doanh nghiệp</span>
-                    </span>
-                    <span class="flex items-center space-x-1 text-emerald-400">
-                        <span>✓</span> <span>Kỹ thuật viên nạp mực tận nơi</span>
-                    </span>
                 </div>
             </div>
 
-            <!-- Right Showcase Visual (5 cols) -->
-            <div class="lg:col-span-5 relative flex items-center justify-center">
-                <div class="relative w-full max-w-md bg-white/5 backdrop-blur-md rounded-3xl p-5 border border-white/10 shadow-2xl">
-                    <!-- Float Tag -->
-                    <div class="absolute -top-3 -right-3 bg-rose-500 text-white font-black text-xs px-3 py-1 rounded-full shadow-md uppercase tracking-wider animate-bounce">
-                        🔥 Bán chạy nhất
+            <!-- Trust Guarantee Micro-tags -->
+            <div class="relative z-10 pt-4 mt-4 border-t border-slate-700/60 flex flex-wrap items-center gap-4 text-[11px] text-slate-300 font-semibold">
+                <span class="flex items-center space-x-1 text-emerald-400">
+                    <span>✓</span> <span>100% Hàng chính hãng</span>
+                </span>
+                <span class="flex items-center space-x-1 text-emerald-400">
+                    <span>✓</span> <span>Đổi mới trong 7 ngày</span>
+                </span>
+                <span class="flex items-center space-x-1 text-emerald-400">
+                    <span>✓</span> <span>Hỗ trợ công nợ doanh nghiệp</span>
+                </span>
+                <span class="flex items-center space-x-1 text-emerald-400">
+                    <span>✓</span> <span>Thợ nạp mực 30 phút</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- 2 Side Promo Cards (lg:col-span-4) -->
+        <div class="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-4 justify-between">
+            
+            <!-- Side Card 1: Giấy in photo giá sỉ theo thùng -->
+            <div class="flex-1 bg-gradient-to-br from-emerald-900/40 via-slate-900 to-slate-900 rounded-3xl p-5 border border-emerald-500/30 shadow-lg relative overflow-hidden group flex flex-col justify-between">
+                <div class="space-y-2 relative z-10">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-0.5 bg-emerald-500 text-white font-black text-[10px] rounded-full uppercase tracking-wider">
+                            🔥 Bán Chạy Nhất
+                        </span>
+                        <span class="text-emerald-300 font-bold text-xs">Tiết kiệm sỉ</span>
                     </div>
+                    <h3 class="text-base font-black text-white group-hover:text-emerald-300 transition">
+                        Giấy In Photo Văn Phòng
+                    </h3>
+                    <p class="text-xs text-slate-300 leading-snug">
+                        Double A, PaperOne, IK Plus 70/80gsm trắng mịn, không kẹt giấy. Mua theo thùng 5 Ram chiết khấu cao.
+                    </p>
+                </div>
 
-                    <div class="grid grid-cols-2 gap-3">
-                        <!-- Item 1: Giấy Double A -->
-                        <div class="bg-white rounded-2xl p-3 shadow-md flex flex-col items-center text-center group hover:scale-105 transition transform">
-                            <div class="w-24 h-24 flex items-center justify-center p-1 mb-1">
-                                <img src="{{ asset('images/products/giay-double-a-a4.jpg') }}" alt="Giấy Double A" class="max-h-full max-w-full object-contain" />
-                            </div>
-                            <span class="text-xs font-extrabold text-slate-900 line-clamp-1">Giấy Double A A4 70gsm</span>
-                            <span class="text-[11px] font-bold text-rose-600 font-mono mt-0.5">85.000 VNĐ / Ram</span>
-                        </div>
-
-                        <!-- Item 2: Hộp Mực 12A -->
-                        <div class="bg-white rounded-2xl p-3 shadow-md flex flex-col items-center text-center group hover:scale-105 transition transform">
-                            <div class="w-24 h-24 flex items-center justify-center p-1 mb-1">
-                                <img src="{{ asset('images/products/muc-cartridge-12a.jpg') }}" alt="Hộp Mực 12A" class="max-h-full max-w-full object-contain" />
-                            </div>
-                            <span class="text-xs font-extrabold text-slate-900 line-clamp-1">Hộp Mực 12A Canon 2900</span>
-                            <span class="text-[11px] font-bold text-rose-600 font-mono mt-0.5">250.000 VNĐ / Hộp</span>
-                        </div>
-
-                        <!-- Item 3: Bút Thiên Long -->
-                        <div class="bg-white rounded-2xl p-3 shadow-md flex flex-col items-center text-center group hover:scale-105 transition transform">
-                            <div class="w-24 h-24 flex items-center justify-center p-1 mb-1">
-                                <img src="{{ asset('images/products/but-thien-long.jpg') }}" alt="Bút Thiên Long" class="max-h-full max-w-full object-contain" />
-                            </div>
-                            <span class="text-xs font-extrabold text-slate-900 line-clamp-1">Bút Bi Thiên Long TL-027</span>
-                            <span class="text-[11px] font-bold text-rose-600 font-mono mt-0.5">5.000 VNĐ / Cây</span>
-                        </div>
-
-                        <!-- Item 4: Mực Brother TN-2385 -->
-                        <div class="bg-white rounded-2xl p-3 shadow-md flex flex-col items-center text-center group hover:scale-105 transition transform">
-                            <div class="w-24 h-24 flex items-center justify-center p-1 mb-1">
-                                <img src="{{ asset('images/products/muc-brother-tn2385.jpg') }}" alt="Mực Brother TN2385" class="max-h-full max-w-full object-contain" />
-                            </div>
-                            <span class="text-xs font-extrabold text-slate-900 line-clamp-1">Mực Brother TN-2385</span>
-                            <span class="text-[11px] font-bold text-rose-600 font-mono mt-0.5">280.000 VNĐ / Hộp</span>
-                        </div>
+                <div class="pt-4 flex items-center justify-between relative z-10 border-t border-slate-800 mt-3">
+                    <div>
+                        <span class="text-[10px] text-slate-400 block">Giá từ</span>
+                        <span class="text-sm font-black text-emerald-400 font-mono">68.000₫ / Ram</span>
                     </div>
+                    <a href="{{ route('storefront.products', ['category' => 'giay-in-photo']) }}" class="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1 shadow-sm">
+                        <span>Xem Ngay</span>
+                        <span>→</span>
+                    </a>
+                </div>
+            </div>
 
-                    <div class="mt-3 text-center">
-                        <a href="{{ route('storefront.products') }}" class="text-[11px] text-amber-300 font-bold hover:underline inline-flex items-center space-x-1">
-                            <span>Xem toàn bộ 1.000+ sản phẩm sẵn có tại kho</span>
-                            <span>→</span>
-                        </a>
+            <!-- Side Card 2: Dịch vụ máy in 30P -->
+            <div class="flex-1 bg-gradient-to-br from-blue-950/50 via-slate-900 to-slate-900 rounded-3xl p-5 border border-blue-500/30 shadow-lg relative overflow-hidden group flex flex-col justify-between">
+                <div class="space-y-2 relative z-10">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-0.5 bg-amber-400 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
+                            ⚡ Kỹ Thuật Tận Nơi
+                        </span>
+                        <span class="text-amber-300 font-bold text-xs">Có mặt 30P</span>
                     </div>
+                    <h3 class="text-base font-black text-white group-hover:text-amber-300 transition">
+                        Nạp Mực & Sửa Máy In 24/7
+                    </h3>
+                    <p class="text-xs text-slate-300 leading-snug">
+                        Canon 2900, HP, Brother tận nơi tại Đồng Nai. Mực siêu mịn, hút mực thải, bảo hành đến giọt cuối cùng.
+                    </p>
+                </div>
+
+                <div class="pt-4 flex items-center justify-between relative z-10 border-t border-slate-800 mt-3">
+                    <div>
+                        <span class="text-[10px] text-slate-400 block">Trọn gói chỉ</span>
+                        <span class="text-sm font-black text-amber-400 font-mono">80.000₫ / Lần</span>
+                    </div>
+                    <a href="{{ route('storefront.index') }}#dich-vu-may-in" class="px-3.5 py-2 bg-[#1e3a8a] hover:bg-blue-800 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1 shadow-sm">
+                        <span>Báo Giá Sửa</span>
+                        <span>→</span>
+                    </a>
                 </div>
             </div>
 
         </div>
     </div>
 
-    <!-- 2. FOUR CORE COMMITMENTS BAR -->
+    <!-- 2. CATEGORY ICON CHIPS (DẢI PHÂN LOẠI SIÊU TỐC - 1 CHẠM TRUY CẬP NGAY) -->
+    <section aria-label="Danh mục ngành hàng nổi bật" class="bg-white rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-slate-200/90 shadow-xs">
+        <div class="flex items-center justify-between mb-3 px-1">
+            <div class="flex items-center space-x-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-wider">Danh Mục Ngành Hàng Nhanh</span>
+            </div>
+            <a href="{{ route('storefront.products') }}" class="text-[11px] sm:text-xs font-bold text-[#1e3a8a] hover:underline flex items-center space-x-1">
+                <span>Tất cả danh mục</span>
+                <span>→</span>
+            </a>
+        </div>
+
+        <!-- Chips Carousel / Flex Grid -->
+        <div class="flex items-center gap-2.5 sm:gap-4 overflow-x-auto no-scrollbar scroll-smooth pb-1 pt-0.5">
+            <!-- Chip 1: Giấy in photo -->
+            <a href="{{ route('storefront.products', ['category' => 'giay-in-photo']) }}" class="flex-shrink-0 flex items-center space-x-2 px-3.5 py-2.5 rounded-2xl bg-emerald-50/80 hover:bg-emerald-100/90 border border-emerald-200/80 text-emerald-950 transition duration-200 group transform hover:-translate-y-0.5">
+                <span class="w-8 h-8 rounded-xl bg-white shadow-xs flex items-center justify-center text-base group-hover:scale-110 transition">📄</span>
+                <div class="text-left">
+                    <span class="block text-xs font-black text-emerald-900 whitespace-nowrap">Giấy In Photo</span>
+                    <span class="block text-[10px] text-emerald-700 whitespace-nowrap">Double A, PaperOne</span>
+                </div>
+            </a>
+
+            <!-- Chip 2: Hộp mực máy in -->
+            <a href="{{ route('storefront.products', ['category' => 'hop-muc-may-in']) }}" class="flex-shrink-0 flex items-center space-x-2 px-3.5 py-2.5 rounded-2xl bg-blue-50/80 hover:bg-blue-100/90 border border-blue-200/80 text-blue-950 transition duration-200 group transform hover:-translate-y-0.5">
+                <span class="w-8 h-8 rounded-xl bg-white shadow-xs flex items-center justify-center text-base group-hover:scale-110 transition">🖨️</span>
+                <div class="text-left">
+                    <span class="block text-xs font-black text-blue-900 whitespace-nowrap">Hộp Mực Máy In</span>
+                    <span class="block text-[10px] text-blue-700 whitespace-nowrap">Canon, Brother, HP</span>
+                </div>
+            </a>
+
+            <!-- Chip 3: Bút viết & dụng cụ -->
+            <a href="{{ route('storefront.products', ['category' => 'but-viet-muc-viet']) }}" class="flex-shrink-0 flex items-center space-x-2 px-3.5 py-2.5 rounded-2xl bg-amber-50/80 hover:bg-amber-100/90 border border-amber-200/80 text-amber-950 transition duration-200 group transform hover:-translate-y-0.5">
+                <span class="w-8 h-8 rounded-xl bg-white shadow-xs flex items-center justify-center text-base group-hover:scale-110 transition">🖊️</span>
+                <div class="text-left">
+                    <span class="block text-xs font-black text-amber-950 whitespace-nowrap">Bút Viết & Bút Bi</span>
+                    <span class="block text-[10px] text-amber-800 whitespace-nowrap">Thiên Long, Bút Gel</span>
+                </div>
+            </a>
+
+            <!-- Chip 4: Bìa còng & file hồ sơ -->
+            <a href="{{ route('storefront.products', ['category' => 'bia-file-ho-so']) }}" class="flex-shrink-0 flex items-center space-x-2 px-3.5 py-2.5 rounded-2xl bg-purple-50/80 hover:bg-purple-100/90 border border-purple-200/80 text-purple-950 transition duration-200 group transform hover:-translate-y-0.5">
+                <span class="w-8 h-8 rounded-xl bg-white shadow-xs flex items-center justify-center text-base group-hover:scale-110 transition">📁</span>
+                <div class="text-left">
+                    <span class="block text-xs font-black text-purple-950 whitespace-nowrap">Bìa Còng & File</span>
+                    <span class="block text-[10px] text-purple-700 whitespace-nowrap">Kokuyo, Bìa Lỗ, Nút</span>
+                </div>
+            </a>
+
+            <!-- Chip 5: Linh kiện máy in -->
+            <a href="{{ route('storefront.products', ['category' => 'linh-kien-may-in']) }}" class="flex-shrink-0 flex items-center space-x-2 px-3.5 py-2.5 rounded-2xl bg-sky-50/80 hover:bg-sky-100/90 border border-sky-200/80 text-sky-950 transition duration-200 group transform hover:-translate-y-0.5">
+                <span class="w-8 h-8 rounded-xl bg-white shadow-xs flex items-center justify-center text-base group-hover:scale-110 transition">⚙️</span>
+                <div class="text-left">
+                    <span class="block text-xs font-black text-sky-950 whitespace-nowrap">Trống Drum Linh Kiện</span>
+                    <span class="block text-[10px] text-sky-700 whitespace-nowrap">Gạt từ, trục sấy</span>
+                </div>
+            </a>
+
+            <!-- Chip 6: Thợ sửa máy in 30P -->
+            <a href="{{ route('storefront.index') }}#dich-vu-may-in" class="flex-shrink-0 flex items-center space-x-2 px-3.5 py-2.5 rounded-2xl bg-rose-50/80 hover:bg-rose-100/90 border border-rose-200/80 text-rose-950 transition duration-200 group transform hover:-translate-y-0.5">
+                <span class="w-8 h-8 rounded-xl bg-white shadow-xs flex items-center justify-center text-base group-hover:scale-110 transition">🛠️</span>
+                <div class="text-left">
+                    <span class="block text-xs font-black text-rose-950 whitespace-nowrap">Sửa Máy In 30P</span>
+                    <span class="block text-[10px] text-rose-700 whitespace-nowrap">Nạp mực tận nơi ĐN</span>
+                </div>
+            </a>
+
+            <!-- Chip 7: Dụng cụ văn phòng & Băng keo -->
+            <a href="{{ route('storefront.products', ['category' => 'dung-cu-van-phong']) }}" class="flex-shrink-0 flex items-center space-x-2 px-3.5 py-2.5 rounded-2xl bg-orange-50/80 hover:bg-orange-100/90 border border-orange-200/80 text-orange-950 transition duration-200 group transform hover:-translate-y-0.5">
+                <span class="w-8 h-8 rounded-xl bg-white shadow-xs flex items-center justify-center text-base group-hover:scale-110 transition">📦</span>
+                <div class="text-left">
+                    <span class="block text-xs font-black text-orange-950 whitespace-nowrap">Băng Keo - Dụng Cụ</span>
+                    <span class="block text-[10px] text-orange-700 whitespace-nowrap">Bấm kim, kéo, dao</span>
+                </div>
+            </a>
+
+            <!-- Chip 8: Báo giá sỉ doanh nghiệp -->
+            <a href="{{ route('storefront.wholesale') }}" class="flex-shrink-0 flex items-center space-x-2 px-3.5 py-2.5 rounded-2xl bg-amber-400 hover:bg-amber-300 border border-amber-500 text-slate-950 transition duration-200 group transform hover:-translate-y-0.5 shadow-xs font-black">
+                <span class="w-8 h-8 rounded-xl bg-white shadow-xs flex items-center justify-center text-base group-hover:scale-110 transition">⭐</span>
+                <div class="text-left">
+                    <span class="block text-xs font-black text-slate-950 whitespace-nowrap">Báo Giá Sỉ B2B</span>
+                    <span class="block text-[10px] text-slate-800 whitespace-nowrap">Chiết khấu tới 25%</span>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- 3. FOUR CORE COMMITMENTS BAR -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/90 flex items-center space-x-3.5 hover:border-emerald-500 hover:shadow-md transition">
             <div class="w-11 h-11 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl shrink-0">
@@ -220,203 +316,318 @@
         </div>
     </div>
 
-    <!-- 3. FOUR FEATURED CATEGORIES SHOWCASE -->
-    <div>
-        <div class="flex items-center justify-between mb-4">
+    @if(!empty($isFiltering))
+    <!-- KẾT QUẢ TÌM KIẾM / LỌC SẢN PHẨM -->
+    <section class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
-                <h2 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight">
-                    Danh Mục Sản Phẩm Nổi Bật
+                <h2 class="text-base sm:text-xl font-black text-slate-900">
+                    Kết Quả Tìm Kiếm
+                    @if(!empty($searchKeyword)) cho từ khóa: <span class="text-emerald-700">"{{ $searchKeyword }}"</span> @endif
                 </h2>
-                <p class="text-xs text-slate-500 mt-0.5">Các mặt hàng thiết yếu cho văn phòng công ty và trường học</p>
+                <p class="text-xs text-slate-500 mt-0.5">Tìm thấy {{ $products->count() }} sản phẩm phù hợp</p>
             </div>
-            <a href="{{ route('storefront.products') }}" class="text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline flex items-center space-x-1">
-                <span>Xem tất cả</span>
-                <span>→</span>
-            </a>
+            <a href="{{ route('storefront.index') }}" class="text-xs font-bold text-rose-600 hover:underline">Xóa bộ lọc ✕</a>
         </div>
-
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <!-- Category 1: Giấy in photo -->
-            <a href="{{ route('storefront.products', ['category' => 'giay-in-photo']) }}" class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 hover:shadow-lg hover:border-emerald-500 transition duration-200 text-center flex flex-col items-center justify-between group">
-                <div class="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center p-2 mb-2 bg-slate-50 rounded-xl group-hover:bg-emerald-50/50 transition">
-                    <img src="{{ asset('images/products/giay-double-a-a4.jpg') }}" alt="Giấy In Photo" class="max-h-full max-w-full object-contain group-hover:scale-105 transition transform duration-200" />
-                </div>
-                <div class="space-y-0.5">
-                    <span class="text-sm sm:text-base font-bold text-slate-900 group-hover:text-emerald-700 transition block">
-                        Giấy In & Photocopy
-                    </span>
-                    <span class="text-[11px] text-slate-500 block">Double A, PaperOne, IK Plus</span>
-                </div>
-            </a>
-
-            <!-- Category 2: Bút & Dụng cụ văn phòng -->
-            <a href="{{ route('storefront.products', ['category' => 'but-viet-muc-viet']) }}" class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 hover:shadow-lg hover:border-emerald-500 transition duration-200 text-center flex flex-col items-center justify-between group">
-                <div class="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center p-2 mb-2 bg-slate-50 rounded-xl group-hover:bg-emerald-50/50 transition">
-                    <img src="{{ asset('images/products/but-thien-long.jpg') }}" alt="Bút Viết & Bìa File" class="max-h-full max-w-full object-contain group-hover:scale-105 transition transform duration-200" />
-                </div>
-                <div class="space-y-0.5">
-                    <span class="text-sm sm:text-base font-bold text-slate-900 group-hover:text-emerald-700 transition block">
-                        Bút Viết & File Hồ Sơ
-                    </span>
-                    <span class="text-[11px] text-slate-500 block">Thiên Long, Kokuyo, Bìa còng</span>
-                </div>
-            </a>
-
-            <!-- Category 3: Hộp mực & Phụ kiện -->
-            <a href="{{ route('storefront.products', ['category' => 'hop-muc-may-in']) }}" class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 hover:shadow-lg hover:border-emerald-500 transition duration-200 text-center flex flex-col items-center justify-between group">
-                <div class="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center p-2 mb-2 bg-slate-50 rounded-xl group-hover:bg-emerald-50/50 transition">
-                    <img src="{{ asset('images/products/muc-cartridge-12a.jpg') }}" alt="Hộp Mực Máy In" class="max-h-full max-w-full object-contain group-hover:scale-105 transition transform duration-200" />
-                </div>
-                <div class="space-y-0.5">
-                    <span class="text-sm sm:text-base font-bold text-slate-900 group-hover:text-emerald-700 transition block">
-                        Hộp Mực Máy In
-                    </span>
-                    <span class="text-[11px] text-slate-500 block">Canon 2900, Brother, HP, Epson</span>
-                </div>
-            </a>
-
-            <!-- Category 4: Linh kiện & Dịch vụ máy in -->
-            <a href="{{ route('storefront.products', ['category' => 'linh-kien-may-in']) }}" class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 hover:shadow-lg hover:border-emerald-500 transition duration-200 text-center flex flex-col items-center justify-between group">
-                <div class="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center p-2 mb-2 bg-slate-50 rounded-xl group-hover:bg-emerald-50/50 transition">
-                    <img src="{{ asset('images/products/muc-brother-tn2385.jpg') }}" alt="Linh Kiện Máy In" class="max-h-full max-w-full object-contain group-hover:scale-105 transition transform duration-200" />
-                </div>
-                <div class="space-y-0.5">
-                    <span class="text-sm sm:text-base font-bold text-slate-900 group-hover:text-emerald-700 transition block">
-                        Trống Drum & Linh Kiện
-                    </span>
-                    <span class="text-[11px] text-slate-500 block">Trống gạt, trục từ, dịch vụ nạp mực</span>
-                </div>
-            </a>
-        </div>
-    </div>
-
-    <!-- 4. PRODUCT CATALOG SHOWCASE (ĐÃ SỬA: SẢN PHẨM BẤM XEM ĐƯỢC CHI TIẾT 100%) -->
-    <div class="space-y-4">
-
-        <!-- Section Title with Flash Sale Badges -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-200 pb-3">
-            <div class="flex items-center space-x-3">
-                <span class="text-base sm:text-xl font-black text-slate-900 flex items-center space-x-2">
-                    <span class="text-rose-600">⚡ Flash Sale</span>
-                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-rose-500 text-white animate-pulse">Giảm tới 30%</span>
-                </span>
-                <span class="text-slate-300">|</span>
-                <span class="text-xs sm:text-sm font-bold text-slate-600 hidden sm:inline">Sản Phẩm Bán Chạy Nhất Tại Kho</span>
-            </div>
-
-            <div class="flex items-center space-x-2">
-                <span class="text-xs text-emerald-700 font-bold bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-                    🚚 Miễn phí giao hàng từ 300.000đ
-                </span>
-            </div>
-        </div>
-
-        <!-- Product Grid (Responsive: 2 cols on mobile, 4 on desktop) -->
         <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             @forelse($products as $p)
-            <div
-                onclick="window.location.href='{{ route('storefront.product-detail', $p->slug) }}'"
-                class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/90 flex flex-col justify-between hover:shadow-xl hover:border-emerald-500 transition duration-200 group relative cursor-pointer"
-            >
-
-                <div>
-                    <!-- Badges Header -->
-                    <div class="flex items-center justify-between gap-1 text-[10px] mb-2">
-                        <span class="bg-rose-500 text-white font-black px-2 py-0.5 rounded-md">Hot Deal</span>
-                        <span class="bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded-md border border-emerald-200">● Còn hàng</span>
-                    </div>
-
-                    <!-- Product Thumbnail Packshot -->
-                    <div class="block w-full h-36 sm:h-40 bg-slate-50/70 rounded-xl mb-3 flex items-center justify-center overflow-hidden p-2 group-hover:bg-emerald-50/30 transition">
-                        <img src="{{ $p->image_url }}" alt="{{ $p->name }}" class="max-h-full max-w-full object-contain group-hover:scale-105 transition transform duration-200" />
-                    </div>
-
-                    <!-- Ma & Category -->
-                    <div class="flex items-center justify-between text-[10px] text-slate-400 font-mono mb-1">
-                        <span>Mã: {{ $p->sku }}</span>
-                        @if($p->category)
-                        <span class="text-slate-500 font-sans truncate max-w-[100px]">{{ $p->category->name }}</span>
-                        @endif
-                    </div>
-
-                    <!-- Product Name -->
-                    <h3 class="text-xs sm:text-sm font-bold text-slate-900 leading-snug line-clamp-2 mb-2 group-hover:text-emerald-700 transition">
-                        {{ $p->name }}
-                    </h3>
-
-                    <!-- Star Rating -->
-                    <div class="flex items-center space-x-1 text-[11px] text-amber-400 mb-2">
-                        <span>★★★★★</span>
-                        <span class="text-[10px] text-slate-400 font-semibold">(5.0)</span>
-                    </div>
-
-                    <!-- Price Section (VND Formatted) -->
-                    <div class="space-y-1 mb-3">
-                        <div class="flex items-baseline space-x-2">
-                            <span class="text-sm sm:text-base font-black text-rose-600 font-mono">
-                                {{ number_format($p->retail_price, 0, ',', '.') }} VNĐ
-                            </span>
-                            <span class="text-[11px] text-slate-400 line-through font-mono">
-                                {{ number_format($p->retail_price * 1.15, 0, ',', '.') }} VNĐ
-                            </span>
-                        </div>
-
-                        <!-- Multi-unit pricing pills if exists -->
-                        @if($p->units->count() > 0)
-                        <div class="pt-1 space-y-0.5">
-                            @foreach($p->units as $u)
-                            <div class="bg-slate-50 text-slate-600 px-2 py-0.5 rounded text-[10px] flex justify-between">
-                                <span>{{ $u->unit_name }}:</span>
-                                <span class="font-bold text-slate-900 font-mono">{{ number_format($u->price, 0, ',', '.') }} VNĐ</span>
-                            </div>
-                            @endforeach
-                        </div>
-                        @endif
-                    </div>
-                </div>
-
-                <!-- Two Actions: Xem Chi Tiết + Thêm Vào Giỏ Hàng -->
-                <div class="pt-3 border-t border-slate-100 grid grid-cols-2 gap-2">
-                    <!-- Nút 1: Xem chi tiết -->
-                    <span
-                        class="w-full py-2 bg-slate-100 group-hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition flex items-center justify-center text-center"
-                    >
-                        Chi Tiết →
-                    </span>
-
-                    <!-- Nút 2: Thêm giỏ hàng -->
-                    <button
-                        type="button"
-                        onclick="event.stopPropagation(); addToCart({{ $p->id }}, null, '{{ addslashes($p->name) }}', '{{ $p->base_unit }}', {{ (float) $p->retail_price }}, '{{ $p->image_url }}')"
-                        class="w-full py-2 bg-[#059669] hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs rounded-xl transition flex items-center justify-center space-x-1 shadow-sm"
-                    >
-                        <span>+ Giỏ hàng</span>
-                    </button>
-                </div>
-
-            </div>
+                @include('storefront.components.product-card', ['p' => $p])
             @empty
-            <div class="col-span-full text-center py-12 bg-white rounded-3xl border border-slate-200">
-                <span class="text-4xl block mb-2">🔍</span>
-                <h4 class="text-base font-bold text-slate-700">Không tìm thấy sản phẩm phù hợp</h4>
-                <p class="text-xs text-slate-400 mt-1">Quý khách vui lòng thử tìm với từ khóa khác.</p>
-                <a href="{{ route('storefront.products') }}" class="inline-block mt-3 px-5 py-2.5 bg-[#059669] text-white rounded-xl text-xs font-bold shadow">
-                    Xem tất cả sản phẩm
-                </a>
-            </div>
+                <div class="col-span-full text-center py-12">
+                    <span class="text-4xl block mb-2">🔍</span>
+                    <h4 class="text-base font-bold text-slate-700">Không tìm thấy sản phẩm phù hợp</h4>
+                    <p class="text-xs text-slate-400 mt-1">Quý khách vui lòng thử tìm với từ khóa khác.</p>
+                    <a href="{{ route('storefront.products') }}" class="inline-block mt-3 px-5 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-bold shadow">
+                        Xem tất cả sản phẩm
+                    </a>
+                </div>
             @endforelse
         </div>
+    </section>
+    @endif
 
-        <!-- View All Products Button -->
-        <div class="pt-4 text-center">
-            <a href="{{ route('storefront.products') }}" class="inline-flex items-center space-x-2 px-8 py-3 bg-white hover:bg-slate-50 text-slate-900 border-2 border-slate-300 hover:border-emerald-600 rounded-2xl font-black text-xs sm:text-sm shadow-sm transition">
-                <span>Xem Thêm Hơn 1.000+ Sản Phẩm Khác</span>
+    <!-- 4. ⚡ FLASH SALE (SLIDER CỐ ĐỊNH 16 SẢN PHẨM - ĐẾM NGƯỢC THỜI GIAN) -->
+    <section aria-label="Flash Sale Khuyến Mãi" class="space-y-4">
+        <!-- Flash Sale Header với Countdown Timer & Nút điều khiển Slider -->
+        <div class="bg-gradient-to-r from-rose-600 via-rose-500 to-orange-500 rounded-3xl p-4 sm:p-6 shadow-xl relative overflow-hidden">
+            <!-- Ambient glow -->
+            <div class="absolute -top-10 -right-10 w-44 h-44 bg-yellow-400/20 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute -bottom-10 -left-10 w-44 h-44 bg-rose-700/30 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <!-- Left: Title + Badges -->
+                <div class="space-y-1.5">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-3xl animate-bounce">⚡</span>
+                        <h2 class="text-xl sm:text-3xl font-black text-white tracking-tight leading-none uppercase">
+                            FLASH SALE GIÁ SỐC
+                        </h2>
+                        <span class="hidden sm:inline-flex items-center px-3 py-1 rounded-full text-[11px] font-black bg-yellow-400 text-slate-950 shadow-sm animate-pulse uppercase tracking-wider">
+                            🔥 Giảm tới 35%
+                        </span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-rose-100 font-semibold pl-1">
+                        Cố định 16 sản phẩm giá ưu đãi sốc hôm nay – Giao siêu tốc 2H tại Đồng Nai
+                    </p>
+                </div>
+
+                <!-- Right: Countdown Timer & Nút trượt slider -->
+                <div class="flex items-center justify-between sm:justify-end gap-3 flex-wrap">
+                    <!-- Countdown Timer -->
+                    <div class="flex items-center space-x-2 bg-black/25 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-white/20">
+                        <span class="text-[11px] text-rose-100 font-black uppercase tracking-wider hidden sm:inline">Kết thúc trong:</span>
+                        <div id="flashSaleCountdown" class="flex items-center space-x-1">
+                            <div class="bg-white/20 rounded-lg px-2 py-1 min-w-[34px] text-center">
+                                <span id="countdown-hours" class="text-sm sm:text-base font-black text-white font-mono block leading-none">00</span>
+                                <span class="text-[8px] text-rose-100 font-semibold uppercase">Giờ</span>
+                            </div>
+                            <span class="text-white font-black text-sm">:</span>
+                            <div class="bg-white/20 rounded-lg px-2 py-1 min-w-[34px] text-center">
+                                <span id="countdown-minutes" class="text-sm sm:text-base font-black text-white font-mono block leading-none">00</span>
+                                <span class="text-[8px] text-rose-100 font-semibold uppercase">Phút</span>
+                            </div>
+                            <span class="text-white font-black text-sm">:</span>
+                            <div class="bg-white/20 rounded-lg px-2 py-1 min-w-[34px] text-center">
+                                <span id="countdown-seconds" class="text-sm sm:text-base font-black text-white font-mono block leading-none">00</span>
+                                <span class="text-[8px] text-rose-100 font-semibold uppercase">Giây</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slider Arrow Controls (Prev / Next) -->
+                    <div class="flex items-center space-x-2">
+                        <button
+                            type="button"
+                            onclick="slideFlashSale(-1)"
+                            aria-label="Xem sản phẩm trước"
+                            class="w-10 h-10 rounded-2xl bg-white/20 hover:bg-white text-white hover:text-slate-900 border border-white/25 flex items-center justify-center text-lg font-black transition duration-200 active:scale-95 shadow-sm"
+                            title="Trượt sang trái"
+                        >
+                            ❮
+                        </button>
+                        <button
+                            type="button"
+                            onclick="slideFlashSale(1)"
+                            aria-label="Xem sản phẩm tiếp theo"
+                            class="w-10 h-10 rounded-2xl bg-white/20 hover:bg-white text-white hover:text-slate-900 border border-white/25 flex items-center justify-center text-lg font-black transition duration-200 active:scale-95 shadow-sm"
+                            title="Trượt sang phải"
+                        >
+                            ❯
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Freeship notice -->
+            <div class="relative z-10 mt-3 pt-3 border-t border-white/15 flex items-center space-x-2">
+                <span class="inline-flex items-center text-[11px] text-white/95 font-bold bg-white/15 px-3 py-1 rounded-full border border-white/20 backdrop-blur-sm">
+                    🚚 Miễn phí giao hàng từ 500.000đ
+                </span>
+                <span class="inline-flex items-center text-[11px] text-white/95 font-bold bg-white/15 px-3 py-1 rounded-full border border-white/20 backdrop-blur-sm hidden sm:inline-flex">
+                    🛡️ 100% chính hãng – Đổi trả 7 ngày
+                </span>
+                <span class="text-rose-100 text-xs font-semibold ml-auto hidden md:inline">
+                    Vuốt hoặc bấm nút mũi tên để xem đủ 16 sản phẩm →
+                </span>
+            </div>
+        </div>
+
+        <!-- Flash Sale Slider Track (Cố định 16 sản phẩm dạng slide trượt ngang) -->
+        <div class="relative">
+            <div
+                id="flashSaleTrack"
+                class="flex gap-4 overflow-x-auto scroll-smooth no-scrollbar pb-3 pt-1 snap-x snap-mandatory"
+            >
+                @foreach($flashSaleProducts as $p)
+                    @include('storefront.components.product-card', [
+                        'p' => $p,
+                        'isSlide' => true,
+                        'topBadge' => '⚡ Flash Deal',
+                        'topBadgeClass' => 'bg-gradient-to-r from-rose-600 to-orange-500 text-white',
+                        'showProgress' => true,
+                    ])
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. 🏆 SẢN PHẨM BÁN CHẠY NHẤT (TOP BEST SELLERS) -->
+    <section aria-label="Sản phẩm bán chạy nhất" class="space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-slate-200/90 pb-3">
+            <div>
+                <div class="flex items-center space-x-2">
+                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-amber-100 text-amber-900 uppercase tracking-wider border border-amber-300">
+                        🏆 TOP BÁN CHẠY
+                    </span>
+                    <span class="text-xs text-slate-500 font-medium hidden sm:inline">• Hơn 500+ doanh nghiệp & trường học tin dùng</span>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-1">
+                    Sản Phẩm Bán Chạy Nhất Tại Kho
+                </h2>
+            </div>
+            <a href="{{ route('storefront.products', ['sort' => 'popular']) }}" class="text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline flex items-center space-x-1">
+                <span>Xem tất cả sản phẩm bán chạy</span>
                 <span>→</span>
             </a>
         </div>
-    </div>
 
-    <!-- 5. CORPORATE WHOLESALE CALL TO ACTION BANNER (B2B SỈ DOANH NGHIỆP) -->
+        <!-- Grid 8 sản phẩm bán chạy nhất -->
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            @foreach($bestSellerProducts as $p)
+                @php
+                    $rank = $loop->iteration;
+                    $rankBadge = match($rank) {
+                        1 => '🥇 TOP 1 BÁN CHẠY',
+                        2 => '🥈 TOP 2 BÁN CHẠY',
+                        3 => '🥉 TOP 3 BÁN CHẠY',
+                        default => '🎖️ TOP BÁN CHẠY',
+                    };
+                    $rankClass = match($rank) {
+                        1 => 'bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-black',
+                        2 => 'bg-gradient-to-r from-slate-400 to-slate-300 text-slate-900 font-black',
+                        3 => 'bg-gradient-to-r from-amber-700 to-amber-600 text-white font-black',
+                        default => 'bg-slate-800 text-white font-bold',
+                    };
+                @endphp
+                @include('storefront.components.product-card', [
+                    'p' => $p,
+                    'topBadge' => $rankBadge,
+                    'topBadgeClass' => $rankClass,
+                    'showProgress' => false,
+                ])
+            @endforeach
+        </div>
+    </section>
+
+    <!-- 6. 📦 SẢN PHẨM THEO DANH MỤC CHỦ LỰC -->
+    <section aria-label="Sản phẩm theo từng ngành hàng" class="space-y-8">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200/90 pb-3">
+            <div>
+                <div class="flex items-center space-x-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-xs font-black text-slate-900 uppercase tracking-wider">Danh Mục Ngành Hàng Trọng Điểm</span>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-1">
+                    Sản Phẩm Theo Danh Mục
+                </h2>
+            </div>
+            <a href="{{ route('storefront.products') }}" class="text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline flex items-center space-x-1">
+                <span>Xem tất cả hơn {{ number_format($stats['total_products'] ?? 1000) }}+ sản phẩm</span>
+                <span>→</span>
+            </a>
+        </div>
+
+        @foreach($categorySections as $cat)
+        @if($cat->products && $cat->products->count() > 0)
+        @php
+            $catIcon = match($cat->slug) {
+                'giay-in-photo' => '📄',
+                'hop-muc-may-in' => '🖨️',
+                'but-viet-muc-viet' => '🖊️',
+                'bia-ho-so-luu-tru', 'bia-file-ho-so' => '📁',
+                'dung-cu-van-phong' => '✂️',
+                default => '📦',
+            };
+        @endphp
+        <div class="bg-white rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-xs space-y-4">
+            <!-- Category Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                <div class="flex items-center space-x-3">
+                    <span class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-800 flex items-center justify-center text-xl shadow-xs border border-emerald-100">
+                        {{ $catIcon }}
+                    </span>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <h3 class="text-base sm:text-xl font-black text-slate-900 tracking-tight">
+                                {{ $cat->name }}
+                            </h3>
+                            <span class="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded-full border border-emerald-200">
+                                Sẵn kho giá sỉ
+                            </span>
+                        </div>
+                        <p class="text-[11px] text-slate-500">
+                            {{ $cat->description ?: 'Các sản phẩm thiết yếu cho văn phòng công ty và trường học tại Đồng Nai' }}
+                        </p>
+                    </div>
+                </div>
+
+                <a
+                    href="{{ route('storefront.products', ['category' => $cat->slug]) }}"
+                    class="text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline flex items-center space-x-1 shrink-0 self-start sm:self-auto"
+                >
+                    <span>Xem tất cả danh mục này</span>
+                    <span>→</span>
+                </a>
+            </div>
+
+            <!-- Category Products Grid (8 sản phẩm) -->
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                @foreach($cat->products as $p)
+                    @include('storefront.components.product-card', [
+                        'p' => $p,
+                        'showProgress' => false,
+                    ])
+                @endforeach
+            </div>
+
+            <!-- View More Button -->
+            <div class="pt-2 text-center">
+                <a
+                    href="{{ route('storefront.products', ['category' => $cat->slug]) }}"
+                    class="inline-flex items-center space-x-2 px-6 py-2.5 bg-slate-50 hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border border-slate-200 hover:border-emerald-300 rounded-xl font-bold text-xs transition shadow-2xs group"
+                >
+                    <span>Xem thêm toàn bộ sản phẩm {{ $cat->name }}</span>
+                    <span class="group-hover:translate-x-1 transition-transform">→</span>
+                </a>
+            </div>
+        </div>
+        @endif
+        @endforeach
+    </section>
+
+    <!-- Countdown Timer & Slider JavaScript -->
+    @push('scripts')
+    <script>
+    (function() {
+        // Countdown Timer
+        function updateCountdown() {
+            const now = new Date();
+            const endOfDay = new Date(now);
+            endOfDay.setHours(23, 59, 59, 999);
+            const diff = endOfDay - now;
+            if (diff <= 0) { location.reload(); return; }
+
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            const hEl = document.getElementById('countdown-hours');
+            const mEl = document.getElementById('countdown-minutes');
+            const sEl = document.getElementById('countdown-seconds');
+            if (hEl) hEl.textContent = String(hours).padStart(2, '0');
+            if (mEl) mEl.textContent = String(minutes).padStart(2, '0');
+            if (sEl) sEl.textContent = String(seconds).padStart(2, '0');
+        }
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+        // Flash Sale Slider Controller
+        window.slideFlashSale = function(direction) {
+            const track = document.getElementById('flashSaleTrack');
+            if (track) {
+                const card = track.querySelector('div');
+                const scrollStep = card ? (card.offsetWidth + 16) * 2 : 540;
+                track.scrollBy({
+                    left: direction * scrollStep,
+                    behavior: 'smooth'
+                });
+            }
+        };
+    })();
+    </script>
+    @endpush
+
+    <!-- 7. CORPORATE WHOLESALE CALL TO ACTION BANNER (B2B SỈ DOANH NGHIỆP) -->
     <div class="relative overflow-hidden rounded-3xl text-white p-6 sm:p-10 border border-slate-700/60 shadow-xl group">
         <!-- Background Image with Dark Gradient Tint Overlay -->
         <div class="absolute inset-0 z-0">
@@ -468,7 +679,7 @@
         </div>
     </div>
 
-    <!-- 6. DỊCH VỤ NẠP MỰC & SỬA MÁY IN TẬN NƠI TẠI ĐỒNG NAI (LOCAL SEO & BẢNG GIÁ MINH BẠCH) -->
+    <!-- 8. DỊCH VỤ NẠP MỰC & SỬA MÁY IN TẬN NƠI TẠI ĐỒNG NAI (LOCAL SEO & BẢNG GIÁ MINH BẠCH) -->
     <div class="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 rounded-3xl p-6 sm:p-10 text-white shadow-xl border border-slate-800 space-y-8">
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-800 pb-6">
             <div class="space-y-2">

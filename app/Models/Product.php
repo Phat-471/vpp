@@ -27,6 +27,10 @@ class Product extends Model
         'has_custom_image',
         'is_service_part',
         'is_active',
+        'is_flash_sale',
+        'flash_sale_price',
+        'is_best_seller',
+        'is_featured',
         'description',
     ];
 
@@ -35,11 +39,15 @@ class Product extends Model
         return [
             'cost_price' => 'decimal:2',
             'retail_price' => 'decimal:2',
+            'flash_sale_price' => 'decimal:2',
             'stock_quantity' => 'integer',
             'low_stock_threshold' => 'integer',
             'has_custom_image' => 'boolean',
             'is_service_part' => 'boolean',
             'is_active' => 'boolean',
+            'is_flash_sale' => 'boolean',
+            'is_best_seller' => 'boolean',
+            'is_featured' => 'boolean',
         ];
     }
 

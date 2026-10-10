@@ -157,59 +157,65 @@
                 </div>
             </div>
 
-            <!-- Price Box -->
-            <div class="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+            <!-- Price Box (Tối ưu giao diện sắc nét, nổi bật) -->
+            <div class="p-4 sm:p-5 rounded-2xl bg-slate-50/80 border border-slate-200/90 space-y-2">
                 <div class="flex items-baseline space-x-3">
-                    <span class="text-2xl sm:text-3xl font-black text-indigo-700 font-mono" id="current-display-price">
+                    <span class="text-2xl sm:text-3xl font-black text-rose-600 font-mono" id="current-display-price">
                         {{ number_format($product->retail_price, 0, ',', '.') }}₫
                     </span>
-                    <span class="text-xs text-slate-500 font-medium" id="current-display-unit">
-                        / 1 {{ $product->base_unit }} (Đơn vị cơ sở)
+                    <span class="text-xs sm:text-sm text-slate-600 font-bold" id="current-display-unit">
+                        / 1 {{ $product->base_unit }}
                     </span>
                 </div>
-                <p class="text-[11px] text-slate-500">
-                    Đã bao gồm thuế giá trị gia tăng (VAT). Khách hàng có thể chọn mua theo đơn vị quy đổi bên dưới để được hưởng giá sỉ.
-                </p>
+                <div class="flex flex-wrap items-center gap-2 pt-0.5 text-[11px] text-slate-500">
+                    <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">✓ Đã gồm thuế VAT</span>
+                    <span>•</span>
+                    <span class="text-slate-600">Mua số lượng lớn nhận thêm chiết khấu B2B</span>
+                </div>
             </div>
 
-            <!-- Unit Selection (Dual Units: Bán lẻ vs Bán Thùng) -->
-            <div class="space-y-2">
-                <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider">
-                    Chọn Quy Cách Đóng Gói:
-                </label>
+            <!-- Unit Selection (Dual Units: Mua Lẻ vs Mua Sỉ Thùng) -->
+            <div class="space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <label class="block text-xs font-black text-slate-900 uppercase tracking-wider">
+                        Quy Cách & Bảng Giá Đơn Vị:
+                    </label>
+                    <span class="text-[11px] text-slate-500 font-medium">Bấm chọn quy cách mua</span>
+                </div>
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="unit-selection-container">
                     
                     <!-- Base unit -->
-                    <label class="relative flex items-center justify-between p-3.5 rounded-2xl border-2 border-indigo-600 bg-indigo-50/40 cursor-pointer transition">
+                    <label class="relative flex items-center justify-between p-3.5 rounded-2xl border-2 border-[#1e3a8a] bg-blue-50/40 cursor-pointer transition shadow-2xs hover:shadow-xs">
                         <input type="radio" name="selected_unit" value="" checked 
                                data-unit-id="" 
                                data-unit-name="{{ $product->base_unit }}" 
                                data-price="{{ (float) $product->retail_price }}"
                                onchange="onUnitChanged(this)"
-                               class="accent-indigo-600 w-4 h-4 mr-2" />
+                               class="accent-[#1e3a8a] w-4 h-4 mr-3" />
                         <div class="flex-1">
-                            <span class="block text-xs font-bold text-slate-900">Bán Lẻ: 1 {{ $product->base_unit }}</span>
-                            <span class="text-[11px] text-slate-500">Quy cách tiêu chuẩn</span>
+                            <span class="block text-xs font-black text-slate-900">Mua Lẻ: 1 {{ $product->base_unit }}</span>
+                            <span class="text-[11px] text-slate-500">Đơn vị tiêu chuẩn</span>
                         </div>
-                        <span class="font-mono font-bold text-indigo-700 text-xs sm:text-sm">
+                        <span class="font-mono font-black text-rose-600 text-xs sm:text-sm">
                             {{ number_format($product->retail_price, 0, ',', '.') }}₫
                         </span>
                     </label>
 
                     <!-- Dual Unit (if available) -->
                     @foreach($product->units as $u)
-                    <label class="relative flex items-center justify-between p-3.5 rounded-2xl border-2 border-slate-200 hover:border-indigo-400 bg-white cursor-pointer transition">
+                    <label class="relative flex items-center justify-between p-3.5 rounded-2xl border-2 border-slate-200 hover:border-emerald-500 bg-white cursor-pointer transition shadow-2xs hover:shadow-xs">
                         <input type="radio" name="selected_unit" value="{{ $u->id }}" 
                                data-unit-id="{{ $u->id }}" 
                                data-unit-name="{{ $u->unit_name }}" 
                                data-price="{{ (float) $u->price }}"
                                onchange="onUnitChanged(this)"
-                               class="accent-indigo-600 w-4 h-4 mr-2" />
+                               class="accent-emerald-600 w-4 h-4 mr-3" />
                         <div class="flex-1">
-                            <span class="block text-xs font-bold text-slate-900">Bán Sỉ: 1 {{ $u->unit_name }} (x{{ $u->conversion_rate }})</span>
-                            <span class="text-[11px] text-emerald-600 font-semibold">Tiết kiệm giá sỉ</span>
+                            <span class="block text-xs font-black text-slate-900">Mua Sỉ: 1 {{ $u->unit_name }}</span>
+                            <span class="text-[11px] text-emerald-600 font-bold">Quy đổi x{{ $u->conversion_rate }} {{ $product->base_unit }} (Tiết kiệm sỉ)</span>
                         </div>
-                        <span class="font-mono font-bold text-indigo-700 text-xs sm:text-sm">
+                        <span class="font-mono font-black text-emerald-700 text-xs sm:text-sm">
                             {{ number_format($u->price, 0, ',', '.') }}₫
                         </span>
                     </label>
@@ -223,9 +229,9 @@
                 <div class="flex items-center space-x-4">
                     <label class="text-xs font-bold text-slate-700 uppercase">Số Lượng:</label>
                     <div class="flex items-center space-x-1 bg-slate-100 rounded-xl p-1 border border-slate-200">
-                        <button type="button" onclick="changeDetailQty(-1)" class="w-8 h-8 rounded-lg bg-white hover:bg-slate-200 text-slate-700 font-black text-sm flex items-center justify-center transition">-</button>
+                        <button type="button" onclick="changeDetailQty(-1)" class="w-8 h-8 rounded-lg bg-white hover:bg-slate-200 text-slate-700 font-black text-sm flex items-center justify-center transition shadow-2xs">-</button>
                         <input type="number" id="detail-qty-input" value="1" min="1" max="999" class="w-12 text-center bg-transparent text-sm font-bold font-mono focus:outline-none" />
-                        <button type="button" onclick="changeDetailQty(1)" class="w-8 h-8 rounded-lg bg-white hover:bg-slate-200 text-slate-700 font-black text-sm flex items-center justify-center transition">+</button>
+                        <button type="button" onclick="changeDetailQty(1)" class="w-8 h-8 rounded-lg bg-white hover:bg-slate-200 text-slate-700 font-black text-sm flex items-center justify-center transition shadow-2xs">+</button>
                     </div>
                 </div>
 
@@ -233,7 +239,7 @@
                     <button
                         type="button"
                         onclick="submitAddToCart()"
-                        class="flex-1 py-3.5 px-6 rounded-2xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border-2 border-indigo-600 font-black text-xs sm:text-sm shadow-xs transition flex items-center justify-center space-x-2"
+                        class="flex-1 py-3.5 px-6 rounded-2xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-2 border-emerald-600 font-black text-xs sm:text-sm shadow-xs transition flex items-center justify-center space-x-2"
                     >
                         <span>🛒</span>
                         <span>THÊM VÀO GIỎ HÀNG</span>
@@ -242,12 +248,23 @@
                     <button
                         type="button"
                         onclick="submitBuyNow()"
-                        class="flex-1 py-3.5 px-6 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs sm:text-sm shadow-md transition transform hover:-translate-y-0.5 flex items-center justify-center space-x-2"
+                        class="flex-1 py-3.5 px-6 rounded-2xl bg-[#1e3a8a] hover:bg-blue-900 text-white font-black text-xs sm:text-sm shadow-md transition transform hover:-translate-y-0.5 flex items-center justify-center space-x-2"
                     >
                         <span>⚡</span>
                         <span>MUA NGAY (THANH TOÁN)</span>
                     </button>
                 </div>
+            </div>
+
+            <!-- Hotline tư vấn nhanh -->
+            <div class="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-3 flex items-center justify-between text-xs text-amber-950">
+                <div class="flex items-center space-x-2">
+                    <span class="text-base">📞</span>
+                    <span>Cần tư vấn báo giá hợp đồng doanh nghiệp?</span>
+                </div>
+                <a href="{{ $storefrontSettings['hotline_url'] }}" class="font-black text-amber-900 hover:underline">
+                    Gọi: {{ $storefrontSettings['hotline'] }}
+                </a>
             </div>
 
             <!-- Compatible Printers (If toner cartridge or parts) -->
@@ -286,11 +303,63 @@
             </p>
             @endif
 
+            <!-- Bảng Thông Số Kỹ Thuật Chi Tiết -->
+            <div class="my-6">
+                <h3 class="font-black text-slate-900 text-sm mb-3 uppercase tracking-wider flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-[#1e3a8a]"></span>
+                    <span>Bảng Thông Số Kỹ Thuật Sản Phẩm:</span>
+                </h3>
+                <div class="overflow-hidden rounded-2xl border border-slate-200 shadow-2xs">
+                    <table class="w-full text-xs text-left">
+                        <tbody class="divide-y divide-slate-100">
+                            <tr class="bg-slate-50/70">
+                                <td class="px-4 py-2.5 font-bold text-slate-600 w-1/3">Tên sản phẩm</td>
+                                <td class="px-4 py-2.5 font-bold text-slate-900">{{ $product->name }}</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-2.5 font-bold text-slate-600">Mã sản phẩm (SKU)</td>
+                                <td class="px-4 py-2.5 font-mono text-slate-800">{{ $product->sku }}</td>
+                            </tr>
+                            @if($product->barcode)
+                            <tr class="bg-slate-50/70">
+                                <td class="px-4 py-2.5 font-bold text-slate-600">Mã vạch (Barcode)</td>
+                                <td class="px-4 py-2.5 font-mono text-slate-800">{{ $product->barcode }}</td>
+                            </tr>
+                            @endif
+                            <tr class="{{ $product->barcode ? '' : 'bg-slate-50/70' }}">
+                                <td class="px-4 py-2.5 font-bold text-slate-600">Ngành hàng</td>
+                                <td class="px-4 py-2.5 font-semibold text-slate-900">{{ $product->category?->name ?? 'Văn Phòng Phẩm' }}</td>
+                            </tr>
+                            <tr class="{{ $product->barcode ? 'bg-slate-50/70' : '' }}">
+                                <td class="px-4 py-2.5 font-bold text-slate-600">Đơn vị cơ sở</td>
+                                <td class="px-4 py-2.5 font-semibold text-slate-900">{{ $product->base_unit }}</td>
+                            </tr>
+                            @if($product->units->count() > 0)
+                            <tr class="{{ $product->barcode ? '' : 'bg-slate-50/70' }}">
+                                <td class="px-4 py-2.5 font-bold text-slate-600">Quy cách đóng gói sỉ</td>
+                                <td class="px-4 py-2.5 font-semibold text-emerald-700">
+                                    {{ $product->units->map(fn($u) => $u->unit_name . ' (' . $u->conversion_rate . ' ' . $product->base_unit . ')')->join(', ') }}
+                                </td>
+                            </tr>
+                            @endif
+                            <tr class="{{ ($product->barcode xor $product->units->count() > 0) ? 'bg-slate-50/70' : '' }}">
+                                <td class="px-4 py-2.5 font-bold text-slate-600">Hóa đơn VAT</td>
+                                <td class="px-4 py-2.5 font-bold text-slate-900">Đã bao gồm VAT 100% điện tử</td>
+                            </tr>
+                            <tr class="{{ ($product->barcode xor $product->units->count() > 0) ? '' : 'bg-slate-50/70' }}">
+                                <td class="px-4 py-2.5 font-bold text-slate-600">Chính sách bảo hành</td>
+                                <td class="px-4 py-2.5 text-slate-800">1 đổi 1 trong 7 ngày đối với lỗi kỹ thuật</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <div class="bg-slate-50 p-4 sm:p-6 rounded-2xl border border-slate-200/80 space-y-2">
                 <h3 class="font-bold text-slate-900 text-sm">Chính Sách Bán Hàng & Hậu Mãi:</h3>
                 <ul class="list-disc pl-5 space-y-1.5 text-xs text-slate-600">
                     <li><b>Đồng kiểm khi nhận hàng:</b> Quý khách được quyền mở kiện hàng kiểm tra đúng chủng loại và số lượng trước khi thanh toán.</li>
-                    <li><b>Giao hàng hỏa tốc:</b> Đơn hàng tại khu vực Đồng Nai được xử lý giao trong 2 giờ. Miễn phí ship cho đơn từ 500.000₫.</li>
+                    <li><b>Giao hàng hỏa tốc:</b> Đơn hàng tại khu vực Đồng Nai được xử lý giao trong 2 giờ. Miễn phí ship cho đơn từ {{ $storefrontSettings['freeship_label'] ?? '500.000₫' }}.</li>
                     <li><b>Hóa đơn điện tử VAT:</b> Cửa hàng hỗ trợ xuất hóa đơn GTGT đầy đủ cho công ty, doanh nghiệp trong ngày.</li>
                     <li><b>Đổi trả 1-đổi-1:</b> Trong vòng 7 ngày nếu phát hiện lỗi kỹ thuật từ nhà sản xuất.</li>
                 </ul>
@@ -303,7 +372,7 @@
     <div class="space-y-4">
         <div class="flex items-center justify-between">
             <h3 class="text-base sm:text-lg font-black text-slate-900">Sản Phẩm Cùng Ngành Hàng Gợi Ý</h3>
-            <a href="{{ route('storefront.products', ['category' => $product->category?->slug]) }}" class="text-xs text-indigo-600 font-bold hover:underline">Xem thêm →</a>
+            <a href="{{ route('storefront.products', ['category' => $product->category?->slug]) }}" class="text-xs text-[#1e3a8a] font-bold hover:underline">Xem thêm →</a>
         </div>
 
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -351,10 +420,10 @@
         labels.forEach(l => {
             const r = l.querySelector('input');
             if (r.checked) {
-                l.classList.add('border-indigo-600', 'bg-indigo-50/40');
+                l.classList.add('border-[#1e3a8a]', 'bg-blue-50/40');
                 l.classList.remove('border-slate-200', 'bg-white');
             } else {
-                l.classList.remove('border-indigo-600', 'bg-indigo-50/40');
+                l.classList.remove('border-[#1e3a8a]', 'bg-blue-50/40');
                 l.classList.add('border-slate-200', 'bg-white');
             }
         });

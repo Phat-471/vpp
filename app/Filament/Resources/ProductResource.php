@@ -235,6 +235,31 @@ class ProductResource extends Resource
                                         ->default(false),
                                 ]),
 
+                            Forms\Components\Section::make('Tiếp thị & Vị trí nổi bật (Trang chủ)')
+                                ->icon('heroicon-o-sparkles')
+                                ->description('Cấu hình xuất hiện ưu tiên trong các khối khuyến mãi và trang chủ')
+                                ->schema([
+                                    Forms\Components\Toggle::make('is_flash_sale')
+                                        ->label('⚡ Tham gia Flash Sale')
+                                        ->helperText('Hiển thị trên Slider Flash Sale 16 sản phẩm')
+                                        ->live(),
+
+                                    Forms\Components\TextInput::make('flash_sale_price')
+                                        ->label('Giá bán Flash Sale (₫)')
+                                        ->numeric()
+                                        ->prefix('₫')
+                                        ->helperText('Nhập giá ưu đãi giờ vàng. Bỏ trống sẽ tự tính theo chiết khấu mặc định.')
+                                        ->visible(fn ($get) => (bool) $get('is_flash_sale')),
+
+                                    Forms\Components\Toggle::make('is_best_seller')
+                                        ->label('🏆 Sản phẩm Bán chạy')
+                                        ->helperText('Ưu tiên xuất hiện trong mục Top Bán Chạy Nhất Tại Kho'),
+
+                                    Forms\Components\Toggle::make('is_featured')
+                                        ->label('⭐ Sản phẩm Nổi bật')
+                                        ->helperText('Gắn huy hiệu Nổi bật và ưu tiên giới thiệu khách hàng'),
+                                ]),
+
                             Forms\Components\Section::make('Xem nhanh ngoài cửa hàng')
                                 ->icon('heroicon-o-arrow-top-right-on-square')
                                 ->visible(fn ($record) => !empty($record) && !empty($record->slug))
@@ -296,6 +321,19 @@ class ProductResource extends Resource
                     ->label('Đang bán')
                     ->sortable(),
 
+                Tables\Columns\ToggleColumn::make('is_flash_sale')
+                    ->label('⚡ Flash Sale')
+                    ->sortable(),
+
+                Tables\Columns\ToggleColumn::make('is_best_seller')
+                    ->label('🏆 Bán chạy')
+                    ->sortable(),
+
+                Tables\Columns\ToggleColumn::make('is_featured')
+                    ->label('⭐ Nổi bật')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\IconColumn::make('is_service_part')
                     ->label('Linh kiện')
                     ->boolean()
@@ -305,6 +343,18 @@ class ProductResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                Tables\Filters\Filter::make('is_flash_sale')
+                    ->label('⚡ Đang Flash Sale')
+                    ->query(fn (Builder $query) => $query->where('is_flash_sale', true)),
+
+                Tables\Filters\Filter::make('is_best_seller')
+                    ->label('🏆 Sản phẩm Bán chạy')
+                    ->query(fn (Builder $query) => $query->where('is_best_seller', true)),
+
+                Tables\Filters\Filter::make('is_featured')
+                    ->label('⭐ Sản phẩm Nổi bật')
+                    ->query(fn (Builder $query) => $query->where('is_featured', true)),
+
                 Tables\Filters\Filter::make('missing_image')
                     ->label('📷 Chưa có ảnh sản phẩm')
                     ->query(fn (Builder $query) => $query->where('has_custom_image', false)),
@@ -380,6 +430,61 @@ class ProductResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('set_flash_sale')
+                        ->label('⚡ Bật Flash Sale đã chọn')
+                        ->icon('heroicon-o-bolt')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->action(function ($records) {
+                            $records->each->update(['is_flash_sale' => true]);
+                            Notification::make()->title('Đã bật Flash Sale cho các sản phẩm đã chọn')->success()->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
+
+                    Tables\Actions\BulkAction::make('unset_flash_sale')
+                        ->label('Tắt Flash Sale đã chọn')
+                        ->icon('heroicon-o-x-mark')
+                        ->color('gray')
+                        ->requiresConfirmation()
+                        ->action(function ($records) {
+                            $records->each->update(['is_flash_sale' => false]);
+                            Notification::make()->title('Đã tắt Flash Sale cho các sản phẩm đã chọn')->info()->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
+
+                    Tables\Actions\BulkAction::make('set_best_seller')
+                        ->label('🏆 Đánh dấu Bán chạy đã chọn')
+                        ->icon('heroicon-o-trophy')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->action(function ($records) {
+                            $records->each->update(['is_best_seller' => true]);
+                            Notification::make()->title('Đã đánh dấu Sản phẩm Bán chạy')->success()->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
+
+                    Tables\Actions\BulkAction::make('unset_best_seller')
+                        ->label('Bỏ đánh dấu Bán chạy')
+                        ->icon('heroicon-o-x-mark')
+                        ->color('gray')
+                        ->requiresConfirmation()
+                        ->action(function ($records) {
+                            $records->each->update(['is_best_seller' => false]);
+                            Notification::make()->title('Đã bỏ đánh dấu Bán chạy')->info()->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
+
+                    Tables\Actions\BulkAction::make('set_featured')
+                        ->label('⭐ Đánh dấu Nổi bật đã chọn')
+                        ->icon('heroicon-o-star')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->action(function ($records) {
+                            $records->each->update(['is_featured' => true]);
+                            Notification::make()->title('Đã đánh dấu Sản phẩm Nổi bật')->success()->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
+
                     Tables\Actions\DeleteBulkAction::make()
                         ->modalHeading('Xóa các sản phẩm đã chọn')
                         ->modalDescription('Bạn có chắc chắn muốn xóa tất cả các sản phẩm đã chọn?')

@@ -74,6 +74,22 @@
         </div>
     </div>
 
+    <!-- Quick Category Horizontal Chips Bar (1 chạm đổi danh mục nhanh) -->
+    <div class="bg-white rounded-2xl p-2.5 sm:p-3 border border-slate-200/90 shadow-2xs">
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-0.5">
+            <a href="{{ route('storefront.products', array_merge(request()->except(['category', 'page']))) }}" 
+               class="flex-shrink-0 px-3.5 py-2 rounded-xl text-xs font-black transition {{ !request('category') ? 'bg-[#1e3a8a] text-white shadow-xs' : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200/80' }}">
+                <span>Tất Cả Hàng Hoá</span>
+            </a>
+            @foreach($categories as $cat)
+            <a href="{{ route('storefront.products', array_merge(request()->except(['category', 'page']), ['category' => $cat->slug])) }}" 
+               class="flex-shrink-0 px-3.5 py-2 rounded-xl text-xs font-bold transition {{ request('category') == $cat->slug ? 'bg-[#1e3a8a] text-white shadow-xs' : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200/80' }}">
+                <span>{{ $cat->name }}</span>
+            </a>
+            @endforeach
+        </div>
+    </div>
+
     <!-- Main Grid: Sidebar Filters (3 Cols) + Product List (9 Cols) -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
