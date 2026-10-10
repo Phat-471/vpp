@@ -14,6 +14,7 @@ use App\Models\ProductUnit;
 use App\Models\RepairTicket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class StorefrontController extends Controller
 {
@@ -467,6 +468,48 @@ class StorefrontController extends Controller
         return back()->withInput()->with('error', 'Số điện thoại hoặc mật khẩu không chính xác.');
     }
 
+    public function forgotPasswordForm()
+    {
+        if (auth('customer')->check()) {
+            return redirect()->route('customer.profile');
+        }
+        return view('storefront.auth.forgot-password');
+    }
+
+    public function postForgotPassword(Request $request)
+    {
+        if ($request->filled('website_url')) {
+            return back()->with('error', 'Yêu cầu không hợp lệ.');
+        }
+
+        $request->validate([
+            'phone' => 'required|string',
+            'new_password' => 'required|string|min:6|confirmed',
+        ], [
+            'phone.required' => 'Vui lòng nhập số điện thoại đã đăng ký.',
+            'new_password.required' => 'Vui lòng nhập mật khẩu mới.',
+            'new_password.min' => 'Mật khẩu mới phải có tối thiểu 6 ký tự.',
+            'new_password.confirmed' => 'Xác nhận mật khẩu mới không trùng khớp.',
+        ]);
+
+        $cleanedPhone = AppHelper::cleanPhone($request->phone);
+        $customer = Customer::where('phone', $cleanedPhone)->first();
+
+        if (!$customer) {
+            return back()->withInput()->with('error', 'Số điện thoại này chưa được đăng ký trong hệ thống. Quý khách vui lòng kiểm tra lại hoặc tạo tài khoản mới.');
+        }
+
+        $customer->update([
+            'password' => $request->new_password,
+            'phone_verified_at' => $customer->phone_verified_at ?: now(),
+        ]);
+
+        auth('customer')->login($customer);
+        $request->session()->regenerate();
+
+        return redirect()->route('customer.profile')->with('success', 'Đặt lại mật khẩu thành công! Chào mừng ' . $customer->name);
+    }
+
     public function logout(Request $request)
     {
         auth('customer')->logout();
@@ -483,8 +526,8 @@ class StorefrontController extends Controller
         }
 
         $customer = auth('customer')->user();
-        $orders = Order::with('items')->where('customer_id', $customer->id)->orderBy('id', 'desc')->get();
-        $repairTickets = RepairTicket::where('customer_id', $customer->id)->orderBy('id', 'desc')->get();
+        $orders = Order::with('items.product')->where('customer_id', $customer->id)->orderBy('id', 'desc')->get();
+        $repairTickets = RepairTicket::with('repairItems')->where('customer_id', $customer->id)->orderBy('id', 'desc')->get();
 
         return view('storefront.auth.profile', compact('customer', 'orders', 'repairTickets'));
     }
@@ -499,26 +542,49 @@ class StorefrontController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:100',
-            'phone' => 'required|string|max:20',
             'email' => 'nullable|email|max:150',
             'address' => 'nullable|string|max:255',
-            'password' => 'nullable|string|min:6',
+        ], [
+            'name.required' => 'Vui lòng nhập họ và tên.',
+            'email.email' => 'Địa chỉ email không đúng định dạng.',
         ]);
 
-        $updateData = [
+        $customer->update([
             'name' => $request->name,
-            'phone' => AppHelper::cleanPhone($request->phone),
             'email' => $request->email,
             'address' => $request->address,
-        ];
+        ]);
 
-        if ($request->filled('password')) {
-            $updateData['password'] = $request->password;
+        return back()->with('success', 'Cập nhật thông tin hồ sơ thành công!')->with('active_tab', 'profile');
+    }
+
+    public function changePassword(Request $request)
+    {
+        if (!auth('customer')->check()) {
+            return redirect()->route('customer.login');
         }
 
-        $customer->update($updateData);
+        $customer = auth('customer')->user();
 
-        return back()->with('success', 'Cập nhật thông tin tài khoản thành công!');
+        $request->validate([
+            'current_password' => 'required|string',
+            'new_password' => 'required|string|min:6|confirmed',
+        ], [
+            'current_password.required' => 'Vui lòng nhập mật khẩu hiện tại.',
+            'new_password.required' => 'Vui lòng nhập mật khẩu mới.',
+            'new_password.min' => 'Mật khẩu mới phải có tối thiểu 6 ký tự.',
+            'new_password.confirmed' => 'Xác nhận mật khẩu mới không trùng khớp.',
+        ]);
+
+        if (!Hash::check($request->current_password, $customer->password)) {
+            return back()->with('error', 'Mật khẩu hiện tại không chính xác.')->with('active_tab', 'password');
+        }
+
+        $customer->update([
+            'password' => $request->new_password,
+        ]);
+
+        return back()->with('success', 'Đổi mật khẩu thành công!')->with('active_tab', 'password');
     }
 
     public function bookRepair(Request $request)

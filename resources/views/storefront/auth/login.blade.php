@@ -74,7 +74,7 @@
                     <label for="loginPassword" class="block text-xs font-bold text-slate-700">
                         Mật khẩu <span class="text-rose-500">*</span>
                     </label>
-                    <a href="{{ route('lookup.index') }}" class="text-[11px] font-bold text-indigo-700 hover:underline">
+                    <a href="{{ route('customer.forgot-password') }}" class="text-[11px] font-bold text-indigo-700 hover:underline">
                         Quên mật khẩu?
                     </a>
                 </div>
@@ -85,8 +85,8 @@
             <!-- Ghi nhớ đăng nhập -->
             <div class="flex items-center justify-between text-xs">
                 <label class="flex items-center space-x-2 text-slate-600 cursor-pointer">
-                    <input type="checkbox" name="remember" class="w-4 h-4 accent-indigo-600 rounded" />
-                    <span class="font-medium">Duy trì đăng nhập</span>
+                    <input type="checkbox" name="remember" value="1" checked class="w-4 h-4 accent-indigo-600 rounded" />
+                    <span class="font-medium">Duy trì đăng nhập (Ghi nhớ tài khoản trên thiết bị này)</span>
                 </label>
             </div>
 

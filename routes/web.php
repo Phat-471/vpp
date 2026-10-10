@@ -44,9 +44,12 @@ Route::get('/dang-ky', [StorefrontController::class, 'registerForm'])->name('cus
 Route::post('/dang-ky', [StorefrontController::class, 'postRegister'])->middleware('throttle:10,1')->name('customer.post-register');
 Route::get('/dang-nhap', [StorefrontController::class, 'loginForm'])->name('customer.login');
 Route::post('/dang-nhap', [StorefrontController::class, 'postLogin'])->middleware('throttle:customer-login')->name('customer.post-login');
+Route::get('/quen-mat-khau', [StorefrontController::class, 'forgotPasswordForm'])->name('customer.forgot-password');
+Route::post('/quen-mat-khau', [StorefrontController::class, 'postForgotPassword'])->middleware('throttle:10,1')->name('customer.post-forgot-password');
 Route::match(['get', 'post'], '/dang-xuat', [StorefrontController::class, 'logout'])->name('customer.logout');
 Route::get('/tai-khoan', [StorefrontController::class, 'profile'])->name('customer.profile');
 Route::post('/tai-khoan', [StorefrontController::class, 'updateProfile'])->name('customer.update-profile');
+Route::post('/tai-khoan/doi-mat-khau', [StorefrontController::class, 'changePassword'])->name('customer.change-password');
 
 // 3.1. Xác thực số điện thoại qua mã OTP 6 số (Zalo ZNS / SMS)
 Route::get('/xac-thuc-otp', [\App\Http\Controllers\OtpController::class, 'showVerifyPage'])->name('otp.verify.page');
