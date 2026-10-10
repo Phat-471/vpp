@@ -54,10 +54,25 @@ body.fi-body {
     padding: 0.35rem 0.5rem !important;
 }
 
-/* Triệt tiêu khoảng cách quá lớn giữa các nhóm (Khắc phục Hình 2) */
+/* Triệt tiêu khoảng cách quá lớn giữa các nhóm (Bỏ gap-y-7 / row-gap: 1.75rem) */
+.gap-y-7 {
+    row-gap: 0.15rem !important;
+}
+
+.fi-sidebar-nav,
+.fi-sidebar-nav-groups,
+.fi-sidebar-nav.gap-y-7,
+.fi-sidebar-nav-groups.gap-y-7,
+.fi-page-sub-navigation-sidebar.gap-y-7 {
+    row-gap: 0.15rem !important;
+    gap: 0.15rem !important;
+    padding-top: 0.35rem !important;
+    padding-bottom: 0.35rem !important;
+}
+
 .fi-sidebar-group {
-    margin-top: 0.2rem !important;
-    margin-bottom: 0.2rem !important;
+    margin-top: 0.15rem !important;
+    margin-bottom: 0.15rem !important;
     padding: 0 !important;
 }
 
