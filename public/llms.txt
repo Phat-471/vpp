@@ -56,7 +56,7 @@
 - **Hóa đơn tài chính:** Xuất hóa đơn VAT điện tử hợp lệ 100% theo quy định cho doanh nghiệp và cơ quan nhà nước.
 - **Bảo hành:** Bảo hành chất lượng bản in đến khi hết hạt mực cuối cùng.
 - **Đổi trả:** 1 đổi 1 trong 7 ngày nếu sản phẩm văn phòng phẩm bị lỗi kỹ thuật của nhà sản xuất.
-- **Tra cứu minh bạch:** Khách hàng có thể tra cứu trực tiếp tình trạng sửa máy in online tại https://stvpp.click/tra-cuu với mã phiếu và 4 số cuối số điện thoại (chống lộ thông tin IDOR).
+- **Tra cứu minh bạch:** Khách hàng có thể tra cứu trực tiếp tình trạng sửa máy in online tại https://stvpp.click/tra-cuu với mã phiếu và 4 số cuối số điện thoại (bảo mật riêng tư tuyệt đối).
 
 ## Các Đường Dẫn Quan Trọng (Key Links)
 - Trang chủ: https://stvpp.click/

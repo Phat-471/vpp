@@ -1,7 +1,7 @@
 @extends('layouts.storefront')
 
 @section('title', $product->name . ' chính hãng giá sỉ | ' . ($storefrontSettings['site_name'] ?? 'VPP & Dịch Vụ Máy In'))
-@section('meta_description', 'Mua ' . $product->name . ' chính hãng giá sỉ tốt nhất tại Đồng Nai. SKU: ' . $product->sku . '. Giao hỏa tốc, xuất hóa đơn VAT điện tử.')
+@section('meta_description', 'Mua ' . $product->name . ' chính hãng giá sỉ tốt nhất tại Đồng Nai. Mã: ' . $product->sku . '. Giao hỏa tốc, xuất hóa đơn VAT điện tử.')
 
 @section('schema_extra')
 <script type="application/ld+json">
@@ -137,7 +137,7 @@
                         {{ $product->category?->name ?? 'Văn Phòng Phẩm' }}
                     </span>
                     <span class="text-slate-400">|</span>
-                    <span class="font-mono text-slate-500 font-semibold">SKU: {{ $product->sku }}</span>
+                    <span class="font-mono text-slate-500 font-semibold">Mã: {{ $product->sku }}</span>
                     @if($product->barcode)
                     <span class="text-slate-400">|</span>
                     <span class="font-mono text-slate-500">Mã vạch: {{ $product->barcode }}</span>
@@ -282,7 +282,7 @@
             <p>{{ $product->description }}</p>
             @else
             <p>
-                Sản phẩm <b>{{ $product->name }}</b> (Mã SKU: <b>{{ $product->sku }}</b>) thuộc danh mục <b>{{ $product->category?->name ?? 'Văn Phòng Phẩm' }}</b> chính hãng, được phân phối và bảo hành trực tiếp bởi Cửa hàng Văn Phòng Phẩm & Dịch Vụ Máy In.
+                Sản phẩm <b>{{ $product->name }}</b> (Mã sản phẩm: <b>{{ $product->sku }}</b>) thuộc danh mục <b>{{ $product->category?->name ?? 'Văn Phòng Phẩm' }}</b> chính hãng, được phân phối và bảo hành trực tiếp bởi Cửa hàng Văn Phòng Phẩm & Dịch Vụ Máy In.
             </p>
             @endif
 

@@ -58,7 +58,7 @@
 
         <div class="relative z-10 space-y-1.5 max-w-2xl">
             <span class="px-2.5 py-0.5 bg-amber-400 text-slate-950 rounded-full text-[10px] font-black uppercase tracking-wider">
-                KHO HÀNG 1.000+ SKU CHÍNH HÃNG
+                KHO HÀNG 1.000+ MẶT HÀNG CHÍNH HÃNG
             </span>
             <h1 class="text-xl sm:text-3xl font-black text-white">
                 {{ $currentCategory ? $currentCategory->name : 'Tất Cả Sản Phẩm Văn Phòng Phẩm' }}
@@ -87,7 +87,7 @@
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Tìm kiếm từ khóa</label>
                     <div class="relative">
-                        <input type="text" name="q" value="{{ request('q') }}" placeholder="Tên hàng, mã SKU..." class="w-full text-xs pl-8 pr-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 bg-slate-50" />
+                        <input type="text" name="q" value="{{ request('q') }}" placeholder="Tên hàng, mã sản phẩm..." class="w-full text-xs pl-8 pr-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 bg-slate-50" />
                         <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
                 </div>

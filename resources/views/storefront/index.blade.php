@@ -331,9 +331,9 @@
                         <img src="{{ $p->image_url }}" alt="{{ $p->name }}" class="max-h-full max-w-full object-contain group-hover:scale-105 transition transform duration-200" />
                     </div>
 
-                    <!-- SKU & Category -->
+                    <!-- Ma & Category -->
                     <div class="flex items-center justify-between text-[10px] text-slate-400 font-mono mb-1">
-                        <span>SKU: {{ $p->sku }}</span>
+                        <span>Mã: {{ $p->sku }}</span>
                         @if($p->category)
                         <span class="text-slate-500 font-sans truncate max-w-[100px]">{{ $p->category->name }}</span>
                         @endif

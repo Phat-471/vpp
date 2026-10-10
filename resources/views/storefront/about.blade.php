@@ -1,7 +1,7 @@
 @extends('layouts.storefront')
 
 @section('title', 'Giới Thiệu Về Cửa Hàng & Trung Tâm Kỹ Thuật | ' . ($storefrontSettings['site_name'] ?? 'VPP & Thiết Bị Máy In'))
-@section('meta_description', 'Khám phá năng lực cung ứng hơn 1.000 SKU văn phòng phẩm giá sỉ và dịch vụ nạp mực, sửa chữa máy in tận nơi chuyên nghiệp tại Bình Hòa, Đồng Nai.')
+@section('meta_description', 'Khám phá năng lực cung ứng hơn 1.000 mặt hàng văn phòng phẩm giá sỉ và dịch vụ nạp mực, sửa chữa máy in tận nơi chuyên nghiệp tại Bình Hòa, Đồng Nai.')
 
 @section('schema_extra')
 <script type="application/ld+json">
@@ -52,7 +52,7 @@
                 Giải Pháp Toàn Diện Cho Văn Phòng & Dịch Vụ Máy In Doanh Nghiệp
             </h1>
             <p class="text-xs sm:text-base text-slate-300 leading-relaxed font-normal">
-                Đồng hành cùng hàng nghìn doanh nghiệp, cơ quan nhà nước, trường học và hộ kinh doanh tại <b>Đồng Nai & khu vực lân cận</b>. Chúng tôi kết hợp hoàn hảo giữa <b>kho văn phòng phẩm hơn 1.000 SKU</b> giá sỉ và <b>trung tâm kỹ thuật sửa chữa máy in tận nơi</b> trong 30 phút.
+                Đồng hành cùng hàng nghìn doanh nghiệp, cơ quan nhà nước, trường học và hộ kinh doanh tại <b>Đồng Nai & khu vực lân cận</b>. Chúng tôi kết hợp hoàn hảo giữa <b>kho văn phòng phẩm hơn 1.000 mặt hàng</b> giá sỉ và <b>trung tâm kỹ thuật sửa chữa máy in tận nơi</b> trong 30 phút.
             </p>
             <div class="pt-2 flex flex-wrap gap-4 text-xs font-bold">
                 <span class="flex items-center space-x-1.5 text-emerald-400">
@@ -75,7 +75,7 @@
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 text-center">
             <span class="block text-2xl sm:text-3xl font-black text-indigo-700 font-mono">1.000+</span>
-            <span class="text-xs text-slate-500 font-semibold mt-1 block">SKU Văn Phòng Phẩm</span>
+            <span class="text-xs text-slate-500 font-semibold mt-1 block">Mặt Hàng Sẵn Kho</span>
         </div>
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 text-center">
             <span class="block text-2xl sm:text-3xl font-black text-emerald-600 font-mono">10.000+</span>
