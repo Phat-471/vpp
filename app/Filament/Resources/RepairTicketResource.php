@@ -342,7 +342,13 @@ class RepairTicketResource extends Resource
                                         ->schema([
                                             Forms\Components\Select::make('product_id')
                                                 ->label('Chọn từ kho linh kiện/VPP')
-                                                ->options(fn () => Product::where('is_service_part', true)->orWhere('is_active', true)->pluck('name', 'id'))
+                                                ->options(fn () => Product::where('is_service_part', true)
+                                                    ->orWhere('is_active', true)
+                                                    ->get()
+                                                    ->mapWithKeys(fn (Product $p) => [
+                                                        $p->id => "{$p->name} [Kho: {$p->stock_quantity} {$p->base_unit}]"
+                                                    ])
+                                                )
                                                 ->searchable()
                                                 ->live()
                                                 ->afterStateUpdated(function ($state, callable $set, callable $get) {
@@ -421,7 +427,7 @@ class RepairTicketResource extends Resource
                                             'in_progress' => '4. ⚙️ Đang sửa chữa',
                                             'completed' => '5. ✅ Đã sửa xong',
                                             'delivered' => '6. 📦 Đã bàn giao cho khách',
-                                            'cancelled' => '7. ❌ Đã hủy',
+                                            'cancelled' => '7. ❌ Đã hủy & Hoàn trả linh kiện',
                                         ])
                                         ->required()
                                         ->default('received'),
@@ -637,7 +643,7 @@ class RepairTicketResource extends Resource
                                 'in_progress' => '4. ⚙️ Đang sửa chữa',
                                 'completed' => '5. ✅ Đã sửa xong',
                                 'delivered' => '6. 📦 Đã bàn giao cho khách',
-                                'cancelled' => '7. ❌ Đã hủy',
+                                'cancelled' => '7. ❌ Đã hủy & Hoàn trả linh kiện',
                             ])
                             ->required(),
                         Forms\Components\Select::make('payment_status')
@@ -657,13 +663,14 @@ class RepairTicketResource extends Resource
                         'technician_diagnosis' => $record->technician_diagnosis,
                     ])
                     ->action(function (RepairTicket $record, array $data): void {
-                        DB::transaction(function () use ($record, $data) {
-                            $record->update([
-                                'status' => $data['status'],
+                        app(\App\Services\InventoryService::class)->updateTicketStatus(
+                            $record,
+                            $data['status'],
+                            [
                                 'payment_status' => $data['payment_status'] ?? $record->payment_status,
                                 'technician_diagnosis' => $data['technician_diagnosis'] ?? $record->technician_diagnosis,
-                            ]);
-                        });
+                            ]
+                        );
 
                         Notification::make()
                             ->title('Cập nhật trạng thái thành công')

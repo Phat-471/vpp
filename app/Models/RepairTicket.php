@@ -74,6 +74,28 @@ class RepairTicket extends Model
                 $ticket->phone_last4 = substr($cleaned, -4);
             }
         });
+
+        static::updating(function ($ticket) {
+            if ($ticket->isDirty('status')) {
+                $oldStatus = $ticket->getOriginal('status');
+                $newStatus = $ticket->status;
+                if ($newStatus === 'cancelled' && $oldStatus !== 'cancelled') {
+                    $ticket->refundStock();
+                } elseif ($oldStatus === 'cancelled' && $newStatus !== 'cancelled') {
+                    $ticket->deductStock();
+                }
+            }
+        });
+    }
+
+    public function refundStock(): void
+    {
+        app(\App\Services\InventoryService::class)->refundTicketStock($this);
+    }
+
+    public function deductStock(bool $strict = false): void
+    {
+        app(\App\Services\InventoryService::class)->deductTicketStock($this, $strict);
     }
 
     public function customer(): BelongsTo

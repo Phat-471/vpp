@@ -52,14 +52,15 @@ stateDiagram-v2
 ┌──────────────┬──────────────┬──────────────┬──────────────┬──────────────┬──────────────┬──────────────┐
 │   BACKLOG    │   RESEARCH   │    BUILD     │    REVIEW    │     TEST     │  INTEGRATE   │     DONE     │
 ├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┼──────────────┼──────────────┤
-│ [CARD-010]   │              │ [CARD-009]   │              │              │              │ [CARD-001]   │
-│ [CARD-011]   │              │              │              │              │              │ [CARD-002]   │
+│ [CARD-011]   │              │ [CARD-010]   │              │              │              │ [CARD-001]   │
+│              │              │              │              │              │              │ [CARD-002]   │
 │              │              │              │              │              │              │ [CARD-003]   │
 │              │              │              │              │              │              │ [CARD-004]   │
 │              │              │              │              │              │              │ [CARD-005]   │
 │              │              │              │              │              │              │ [CARD-006]   │
 │              │              │              │              │              │              │ [CARD-007]   │
 │              │              │              │              │              │              │ [CARD-008]   │
+│              │              │              │              │              │              │ [CARD-009]   │
 └──────────────┴──────────────┴──────────────┴──────────────┴──────────────┴──────────────┴──────────────┘
 ```
 
@@ -114,31 +115,37 @@ stateDiagram-v2
   - Tự động chuyển đơn hàng `pending` sang `processing` khi nhận đủ tiền.
   - 6 bài test trong `WebhookReconciliationTest` đạt 100% pass (toàn bộ 128/128 tests passed).
 
+#### `[CARD-009]` Xuất kho tự động linh kiện sửa chữa máy in (`repair_items` <-> `products`)
+* **Phân hệ:** Repair Service & Inventory Sync
+* **Trạng thái:** `DONE`
+* **Kiểm định:**
+  - Liên kết các linh kiện thay thế với kho sản phẩm chung `products.id`, hiển thị trực quan số lượng tồn kho `[Kho: ...]` trên dropdown Filament.
+  - Tự động trừ kho khi tạo mới hoặc tăng số lượng linh kiện (`RepairItem::created`, `RepairItem::updating`).
+  - Tự động hoàn kho khi xóa linh kiện hoặc giảm số lượng (`RepairItem::deleted`, `RepairItem::updating`).
+  - Cơ chế Idempotency chống hoàn kho kép hoặc trừ kho sai khi thao tác trên phiếu sửa chữa đã hủy (`cancelled`).
+  - Tự động hoàn kho toàn bộ khi hủy phiếu và tự động trừ kho lại khi tái kích hoạt phiếu sửa chữa thông qua `InventoryService::updateTicketStatus` trong `DB::transaction()`.
+  - Cung cấp các phương thức `refundTicketStock`, `deductTicketStock`, `checkTicketStockAvailability` trong `InventoryService`.
+  - 11/11 tests trong `RepairInventorySyncTest` đạt 100% pass (toàn bộ 139/139 tests passed).
+
 ---
 
 ### 4.2. NHIỆM VỤ ĐANG THỰC THI (ACTIVE SPRINT)
 
-#### `[CARD-009]` Xuất kho tự động linh kiện sửa chữa máy in (`repair_items` <-> `products`)
-* **Phân hệ:** Repair Service & Inventory Sync
+#### `[CARD-010]` Quản lý ca làm việc POS (PosShift) & Đối soát tiền mặt/VietQR cuối ca
+* **Phân hệ:** POS Cash Management & Shift Reconcile
 * **Vị trí hiện tại:** `BUILD`
-* **Độ ưu tiên:** `P1`
+* **Độ ưu tiên:** `P2`
 * **Worker phụ trách:** Slot T2 (Builder)
 * **Mục tiêu kỹ thuật:**
-  1. Liên kết các linh kiện thay thế trên phiếu sửa máy in với kho sản phẩm chung (`products.id`).
-  2. Tự động trừ kho khi phiếu sửa chữa chuyển sang `in_progress` hoặc `completed`.
-  3. Tự động hoàn kho khi phiếu sửa chữa bị hủy (`cancelled`).
-  4. Khóa không cho xuất kho âm hoặc cảnh báo linh kiện không đủ.
-* **Deterministic Gate:** Viết `RepairInventorySyncTest` kiểm tra biến động tồn kho linh kiện.
+  1. Mở ca bán hàng: Nhập tiền mặt đầu ca, nhân viên phụ trách ca.
+  2. Trong ca: Ghi nhận đơn hàng POS gắn với ca, thống kê tổng doanh thu tiền mặt, chuyển khoản VietQR trong ca.
+  3. Đóng ca: Kiểm đếm thực tế tiền mặt cuối ca, tự động tính chênh lệch thừa/thiếu, tạo báo cáo kết ca.
+  4. In phiếu kết ca chuẩn máy in nhiệt K80.
+* **Deterministic Gate:** Viết `PosShiftReconciliationTest` kiểm tra toàn bộ luồng mở ca, tính toán doanh thu và đóng ca.
 
 ---
 
 ### 4.3. HÀNG ĐỢI CÔNG VIỆC CHỜ TRIỂN KHAI (BACKLOG)
-
-#### `[CARD-010]` Quản lý ca làm việc POS (PosShift) & Đối soát tiền mặt/VietQR cuối ca
-* **Phân hệ:** POS Cash Management & Shift Reconcile
-* **Vị trí hiện tại:** `BACKLOG`
-* **Độ ưu tiên:** `P2`
-* **Mục tiêu:** Mở ca nhập số dư đầu ca, đóng ca kiểm đếm thực tế, tính chênh lệch thừa/thiếu và in báo cáo kết ca K80.
 
 #### `[CARD-011]` VPS Production Hardening, Queue Worker Supervisor & Sao lưu định kỳ
 * **Phân hệ:** Infrastructure & Production Ops
