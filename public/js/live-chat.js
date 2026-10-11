@@ -30,6 +30,10 @@ export function mountLiveChat(root) {
     const retry = find('chat-connect-retry');
     const history = find('chat-history');
     const send = find('chat-send-btn');
+    const soundBtn = find('chat-sound-toggle');
+    const scrollBottomBtn = find('chat-scroll-bottom');
+    const charCounter = find('chat-char-counter');
+
     let messages = [];
     let cursor = 0;
     let oldest = null;
@@ -51,7 +55,49 @@ export function mountLiveChat(root) {
         } catch { /* Chat still works when browser storage is unavailable. */ }
         return null;
     };
-    // Legacy bearer tokens are deliberately not imported into the server-owned session.
+
+    // Sound toggle state
+    let soundMuted = storage('vpp_chat_sound_muted') === '1';
+
+    const updateSoundUI = () => {
+        if (soundBtn) {
+            soundBtn.textContent = soundMuted ? '🔕' : '🔔';
+            soundBtn.title = soundMuted ? 'Bật chuông âm thanh' : 'Tắt chuông âm thanh';
+            soundBtn.setAttribute('aria-label', soundMuted ? 'Bật chuông âm thanh' : 'Tắt chuông âm thanh');
+        }
+    };
+
+    const playChime = () => {
+        if (soundMuted) return;
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            if (ctx.state === 'suspended') ctx.resume();
+            const now = ctx.currentTime;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(587.33, now); // D5
+            osc.frequency.exponentialRampToValueAtTime(880, now + 0.12); // A5
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+            osc.start(now);
+            osc.stop(now + 0.3);
+        } catch (e) { /* Audio context gesture blocked or unsupported */ }
+    };
+
+    if (soundBtn) {
+        updateSoundUI();
+        soundBtn.addEventListener('click', () => {
+            soundMuted = !soundMuted;
+            storage('vpp_chat_sound_muted', soundMuted ? '1' : '0');
+            updateSoundUI();
+            if (!soundMuted) playChime();
+        });
+    }
+
+    // Legacy cleanup
     try { localStorage.removeItem('vpp_chat_token'); } catch { /* optional cleanup */ }
 
     async function api(url, payload = null) {
@@ -90,7 +136,7 @@ export function mountLiveChat(root) {
         status = value || status;
         find('chat-session-status').textContent = status === 'closed'
             ? 'Hội thoại đã đóng. Gửi tin mới để tiếp tục hỗ trợ.'
-            : 'Để lại câu hỏi, nhân viên sẽ phản hồi tại đây.';
+            : 'Phản hồi thường trong 1-3 phút';
     }
 
     function nearBottom() { return list.scrollHeight - list.scrollTop - list.clientHeight < 80; }
@@ -121,6 +167,16 @@ export function mountLiveChat(root) {
             }
             fragment.append(row);
         }
+
+        // Typing indicator when pending or busy
+        if (busySend) {
+            const typing = document.createElement('div');
+            typing.className = 'lc-typing';
+            typing.setAttribute('aria-label', 'Đang gửi tin nhắn…');
+            typing.innerHTML = '<span class="lc-typing-dot"></span><span class="lc-typing-dot"></span><span class="lc-typing-dot"></span>';
+            fragment.append(typing);
+        }
+
         list.replaceChildren(fragment);
         list.scrollTop = forceBottom || bottom ? list.scrollHeight : top;
     }
@@ -156,7 +212,7 @@ export function mountLiveChat(root) {
             initialized = true;
             updateUnread(data.unread_count);
             updateStatus(data.status);
-            find('chat-connection').textContent = 'Đã kết nối hệ thống hỗ trợ';
+            find('chat-connection').textContent = 'Đã kết nối hệ thống hỗ trợ 24/7';
             retry.hidden = true;
             render(true);
             await acknowledge();
@@ -173,14 +229,22 @@ export function mountLiveChat(root) {
                 initialized = false;
                 throw new Error('Phiên hỗ trợ đã hết hạn. Hãy tải lại trang để kết nối lại.');
             }
+
+            // Check if there are new admin messages to play audio chime
+            if (data.messages && data.messages.length > 0) {
+                const hasNewAdminMsg = data.messages.some(m => m.sender_type === 'admin' && !messages.some(old => old.id === m.id));
+                if (hasNewAdminMsg) {
+                    playChime();
+                }
+            }
+
             messages = mergeMessages(messages, data.messages);
-            // Only the poll cursor advances; send responses must not skip intervening replies.
             if (data.messages.length) cursor = data.messages.at(-1).id;
             updateStatus(data.status);
             updateUnread(data.unread_count);
             if (data.messages.length) render();
             await acknowledge();
-            find('chat-connection').textContent = 'Đã kết nối hệ thống hỗ trợ';
+            find('chat-connection').textContent = 'Đã kết nối hệ thống hỗ trợ 24/7';
             retry.hidden = true;
             if (data.has_more) queueMicrotask(() => poll());
         } catch (failure) {
@@ -234,21 +298,43 @@ export function mountLiveChat(root) {
         }
         pending = { request_id: crypto.randomUUID(), message: text, sender_type: 'customer', created_at: new Date().toISOString() };
         input.value = '';
+        if (charCounter) charCounter.textContent = '0/2000';
         submitPending();
     });
+
+    // Enter to submit, Shift+Enter for newline
+    input.addEventListener('keydown', event => {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            find('live-chat-form').requestSubmit();
+        }
+    });
+
+    // Character counter
+    input.addEventListener('input', () => {
+        if (charCounter) {
+            charCounter.textContent = `${input.value.length}/2000`;
+        }
+    });
+
     toggle.addEventListener('click', () => setOpen(box.hidden));
     find('chat-close').addEventListener('click', () => setOpen(false));
     box.addEventListener('keydown', event => { if (event.key === 'Escape') { event.preventDefault(); setOpen(false); } });
+
+    // Suggestion chips fill composer and focus
     root.querySelectorAll('[data-chat-suggestion]').forEach(button => button.addEventListener('click', () => {
         input.value = button.dataset.chatSuggestion;
-        input.focus(); // Suggestions fill the composer, never send without confirmation.
+        if (charCounter) charCounter.textContent = `${input.value.length}/2000`;
+        input.focus();
     }));
+
     retry.addEventListener('click', async () => {
         retry.disabled = true;
         try { await initialize(); await poll(); }
         catch (failure) { find('chat-connection').textContent = failure.message; }
         finally { retry.disabled = false; }
     });
+
     history.addEventListener('click', async () => {
         if (!oldest || busyHistory) return;
         busyHistory = true;
@@ -266,13 +352,28 @@ export function mountLiveChat(root) {
         } catch (failure) { showError(failure.message); }
         finally { busyHistory = false; history.disabled = false; }
     });
+
     document.addEventListener('visibilitychange', () => { if (!document.hidden) { poll(); schedule(); } });
+
     list.addEventListener('scroll', () => {
         clearTimeout(scrollTimer);
         scrollTimer = setTimeout(() => acknowledge().catch(() => {}), 500);
+
+        if (scrollBottomBtn) {
+            scrollBottomBtn.hidden = nearBottom();
+        }
     });
+
+    if (scrollBottomBtn) {
+        scrollBottomBtn.addEventListener('click', () => {
+            list.scrollTo({ top: list.scrollHeight, behavior: 'smooth' });
+            scrollBottomBtn.hidden = true;
+        });
+    }
+
     window.addEventListener('pagehide', () => { clearTimeout(timer); clearTimeout(scrollTimer); });
     window.addEventListener('pageshow', () => schedule());
+
     if (storage('vpp_chat_open') === '1') {
         setOpen(true);
     } else {

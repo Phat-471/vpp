@@ -124,6 +124,10 @@
                 <img
                     src="{{ $product->image_url }}"
                     alt="{{ $product->name }}"
+                    width="500"
+                    height="500"
+                    fetchpriority="high"
+                    decoding="async"
                     class="max-w-full max-h-full object-contain group-hover:scale-105 transition transform duration-300"
                     id="main-product-img"
                 />
@@ -580,35 +584,38 @@
     <div class="flex items-center justify-between gap-2 max-w-lg mx-auto">
         
         <!-- Nút Chat Zalo & Hotline -->
-        <a href="{{ $storefrontSettings['zalo_url'] }}" target="_blank" class="flex flex-col items-center justify-center w-12 h-11 text-slate-700 hover:text-blue-600 rounded-xl transition">
-            <span class="w-5 h-5 rounded-full bg-[#0068ff] text-white font-black text-[10px] flex items-center justify-center leading-none">Z</span>
+        <a href="{{ $storefrontSettings['zalo_url'] ?? '#' }}" target="_blank" rel="noopener noreferrer" aria-label="Chat Zalo tư vấn kỹ thuật" class="flex flex-col items-center justify-center w-12 h-11 text-slate-700 hover:text-blue-600 rounded-xl transition focus-visible:ring-2 focus-visible:ring-blue-500">
+            <span class="w-5 h-5 rounded-full bg-[#0068ff] text-white font-black text-[10px] flex items-center justify-center leading-none" aria-hidden="true">Z</span>
             <span class="text-[9px] font-bold mt-0.5">Zalo</span>
         </a>
 
         <!-- Nút Giỏ Hàng xem nhanh -->
-        <a href="{{ route('storefront.cart') }}" class="flex flex-col items-center justify-center w-12 h-11 text-slate-700 hover:text-indigo-600 rounded-xl relative transition">
-            <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+        <a href="{{ route('storefront.cart') }}" aria-label="Xem giỏ hàng" class="flex flex-col items-center justify-center w-12 h-11 text-slate-700 hover:text-indigo-600 rounded-xl relative transition focus-visible:ring-2 focus-visible:ring-indigo-500">
+            <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
             <span class="text-[9px] font-bold mt-0.5">Giỏ hàng</span>
-            <span id="mobile-sticky-cart-badge" class="absolute top-0 right-1 px-1.5 py-0.2 bg-rose-500 text-white rounded-full text-[9px] font-black hidden">0</span>
+            <span id="mobile-sticky-cart-badge" class="absolute top-0 right-1 px-1.5 py-0.2 bg-rose-500 text-white rounded-full text-[9px] font-black hidden tabular-nums">0</span>
         </a>
 
         <!-- Nút Thêm Vào Giỏ -->
         <button
             type="button"
             onclick="submitAddToCart()"
-            class="flex-1 min-h-[44px] py-2 px-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 active:scale-95 text-emerald-800 border border-emerald-500 font-bold text-xs flex flex-col items-center justify-center transition shadow-2xs leading-tight"
+            aria-label="Thêm sản phẩm vào giỏ hàng"
+            class="flex-1 min-h-[44px] py-2 px-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 active:scale-95 text-emerald-800 border border-emerald-500 font-bold text-xs flex flex-col items-center justify-center transition shadow-2xs leading-tight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer"
         >
             <span class="text-xs">🛒 Thêm Giỏ</span>
-            <span class="text-[10px] font-mono font-bold text-emerald-700" id="mobile-btn-price">{{ number_format($initialPrice, 0, ',', '.') }}₫</span>
+            <span class="text-[10px] font-mono font-bold text-emerald-700 tabular-nums" id="mobile-btn-price">{{ number_format($initialPrice, 0, ',', '.') }}&nbsp;₫</span>
         </button>
 
         <!-- Nút Mua Ngay -->
         <button
             type="button"
             onclick="submitBuyNow()"
-            class="flex-1 min-h-[44px] py-2 px-3 rounded-xl bg-[#1e3a8a] hover:bg-blue-900 active:scale-95 text-white font-black text-xs flex items-center justify-center space-x-1 transition shadow-md leading-tight"
+            aria-label="Mua ngay và chuyển đến trang thanh toán"
+            class="flex-1 min-h-[44px] py-2 px-3 rounded-xl bg-[#1e3a8a] hover:bg-blue-900 active:scale-95 text-white font-black text-xs flex items-center justify-center space-x-1 transition shadow-md leading-tight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 cursor-pointer"
         >
-            <span>⚡ MUA NGAY</span>
+            <span aria-hidden="true">⚡</span>
+            <span>MUA NGAY</span>
         </button>
 
     </div>

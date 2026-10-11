@@ -209,7 +209,7 @@
                     </p>
 
                     <div class="inline-block bg-white p-3 rounded-2xl shadow-xl my-1 border border-white">
-                        <img src="{{ $vietQrUrl }}" alt="VietQR" class="w-52 h-52 object-contain mx-auto" />
+                        <img src="{{ $vietQrUrl }}" alt="Mã VietQR thanh toán" width="208" height="208" class="w-52 h-52 object-contain mx-auto" />
                     </div>
 
                     <div class="mt-3 text-xs sm:text-sm">

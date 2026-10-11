@@ -4,14 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Phiếu Kết Ca POS #{{ $shift->id }} - {{ $shift->cashier?->name }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ asset('css/print-engine.css') }}?v={{ filemtime(public_path('css/print-engine.css')) }}">
     <style>
-        @media print {
-            .no-print { display: none !important; }
-            body { margin: 0; padding: 0; background: #fff; }
-            .print-page { box-shadow: none !important; border: none !important; margin: 0 auto !important; width: 100% !important; padding: 2mm !important; }
-            .avoid-break { page-break-inside: avoid !important; }
-        }
         @page {
             size: 80mm auto;
             margin: 2mm;

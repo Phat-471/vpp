@@ -115,11 +115,14 @@ class LiveChatPage extends Page
     public function getQuickRepliesProperty(): array
     {
         return [
-            'Xin chào anh/chị! Anh/chị cần tư vấn sản phẩm hay hỗ trợ máy in ạ?',
+            'Xin chào anh/chị! Em có thể tư vấn sản phẩm hay hỗ trợ máy in giúp mình ạ?',
             'Anh/chị cho em xin tên sản phẩm và số lượng cần mua để em kiểm tra giá và tồn kho nhé.',
-            'Anh/chị cho em xin dòng máy in và mô tả lỗi để em chuyển thông tin cho kỹ thuật viên nhé.',
-            'Anh/chị có thể cung cấp mã đơn hàng để em kiểm tra tình trạng giao hàng.',
-            'Bên em đã ghi nhận yêu cầu. Nhân viên sẽ kiểm tra và phản hồi tại đây.',
+            'Anh/chị cho em xin dòng máy in và mô tả lỗi (kẹt giấy, in mờ, kêu to...) để kỹ thuật tư vấn ạ.',
+            'Dạ bên em có dịch vụ nạp mực & sửa máy in tận nơi. Anh/chị cho em xin địa chỉ và SĐT để kỹ thuật viên liên hệ nhé.',
+            'Dạ anh/chị có thể cung cấp mã đơn hàng hoặc SĐT đặt hàng để em kiểm tra tình trạng giao hàng ngay ạ.',
+            'Dạ công ty mình cần xuất hóa đơn VAT xin gửi giúp em: Tên công ty, Mã số thuế và Địa chỉ đăng ký thuế ạ.',
+            'Bên em đã ghi nhận yêu cầu và chuyển bộ phận xử lý. Nhân viên sẽ kiểm tra và phản hồi tại đây ngay ạ.',
+            'Dạ cảm ơn anh/chị đã liên hệ. Nếu cần hỗ trợ thêm, anh/chị cứ nhắn lại cho em nhé. Chúc anh/chị một ngày tốt lành!',
         ];
     }
 
@@ -203,5 +206,39 @@ class LiveChatPage extends Page
         }
 
         return null;
+    }
+
+    public function getCustomerOrdersProperty()
+    {
+        if (! $this->currentSession) {
+            return collect();
+        }
+
+        if ($customer = $this->customerDetails) {
+            return $customer->orders()->latest('id')->limit(3)->get();
+        }
+
+        if (! empty($this->currentSession->customer_phone)) {
+            return \App\Models\Order::query()->where('customer_phone', $this->currentSession->customer_phone)->latest('id')->limit(3)->get();
+        }
+
+        return collect();
+    }
+
+    public function getCustomerRepairTicketsProperty()
+    {
+        if (! $this->currentSession) {
+            return collect();
+        }
+
+        if ($customer = $this->customerDetails) {
+            return $customer->repairTickets()->latest('id')->limit(3)->get();
+        }
+
+        if (! empty($this->currentSession->customer_phone)) {
+            return \App\Models\RepairTicket::query()->where('customer_phone', $this->currentSession->customer_phone)->latest('id')->limit(3)->get();
+        }
+
+        return collect();
     }
 }

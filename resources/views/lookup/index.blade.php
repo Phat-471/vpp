@@ -55,14 +55,15 @@
                 @csrf
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
-                        <label class="block text-xs font-black text-slate-700 uppercase tracking-wider">
+                        <label for="inp-lookup-code" class="block text-xs font-black text-slate-700 uppercase tracking-wider">
                             1. Mã tra cứu *
                         </label>
                         <span class="text-[10px] text-indigo-600 font-bold bg-indigo-50 px-2 py-0.5 rounded-full">Đơn hàng hoặc Phiếu sửa</span>
                     </div>
-                    <input type="text" name="code" value="{{ old('code', old('ticket_code', request('code'))) }}"
-                        placeholder="VD: HD260001 hoặc SC260001" required autofocus
-                        class="w-full px-4 py-3 rounded-2xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 font-mono text-base sm:text-lg font-bold uppercase placeholder:font-sans placeholder:normal-case placeholder:text-slate-400 bg-slate-50 focus:bg-white transition" />
+                    <input type="text" id="inp-lookup-code" name="code" value="{{ old('code', old('ticket_code', request('code'))) }}"
+                        autocomplete="off" spellcheck="false"
+                        placeholder="VD: HD260001 hoặc SC260001…" required autofocus
+                        class="w-full px-4 py-3 rounded-2xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 focus-visible:outline-none font-mono text-base sm:text-lg font-bold uppercase placeholder:font-sans placeholder:normal-case placeholder:text-slate-400 bg-slate-50 focus:bg-white transition" />
                     
                     <div class="flex flex-wrap gap-2 mt-2">
                         <span class="inline-flex items-center text-[10px] bg-slate-100 text-slate-600 font-semibold px-2 py-0.5 rounded-lg border border-slate-200">
@@ -75,18 +76,19 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-black text-slate-700 uppercase tracking-wider mb-1.5">
+                    <label for="inp-lookup-phone" class="block text-xs font-black text-slate-700 uppercase tracking-wider mb-1.5">
                         2. 4 số cuối số điện thoại *
                     </label>
-                    <input type="text" name="phone_last4" maxlength="4" value="{{ old('phone_last4') }}"
-                        placeholder="VD: 5678" required
-                        class="w-full px-4 py-3 rounded-2xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 font-mono text-xl sm:text-2xl font-black tracking-widest text-center placeholder:font-sans placeholder:tracking-normal placeholder:text-slate-400 bg-slate-50 focus:bg-white transition" />
+                    <input type="text" id="inp-lookup-phone" name="phone_last4" maxlength="4" value="{{ old('phone_last4') }}"
+                        autocomplete="off" inputmode="numeric" pattern="[0-9]{4}"
+                        placeholder="5678…" required
+                        class="w-full px-4 py-3 rounded-2xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 focus-visible:outline-none font-mono text-xl sm:text-2xl font-black tracking-widest text-center placeholder:font-sans placeholder:tracking-normal placeholder:text-slate-400 bg-slate-50 focus:bg-white transition tabular-nums" />
                     <p class="text-[11px] text-slate-400 mt-1">Bảo vệ quyền riêng tư: Chỉ người đặt hàng hoặc gửi máy mới có thể xem thông tin</p>
                 </div>
 
                 <button type="submit"
-                    class="w-full bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-extrabold py-3.5 px-6 rounded-2xl shadow-sm flex items-center justify-center space-x-2 transition transform hover:-translate-y-0.5 text-sm sm:text-base">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="w-full bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-extrabold py-3.5 px-6 rounded-2xl shadow-sm flex items-center justify-center space-x-2 transition transform hover:-translate-y-0.5 text-sm sm:text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 focus-visible:ring-offset-2 min-h-[48px] touch-target cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>

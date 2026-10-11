@@ -4,17 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>In Tem Dán Máy In - {{ $ticket->ticket_code }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ asset('css/print-engine.css') }}?v={{ filemtime(public_path('css/print-engine.css')) }}">
     <style>
-        @media print {
-            .no-print { display: none !important; }
-            body { margin: 0; padding: 0; background: #fff; }
-            .sticker-container {
-                box-shadow: none !important;
-                border: 2px solid #000 !important;
-                margin: 0 !important;
-                page-break-inside: avoid;
-            }
+        .sticker-container {
+            box-shadow: none !important;
+            border: 2px solid #000 !important;
+            margin: 0 !important;
+            page-break-inside: avoid;
         }
         @page {
             size: 100mm 75mm;

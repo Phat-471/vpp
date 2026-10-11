@@ -1,0 +1,345 @@
+/* ==========================================================================
+   PURE PRINT ENGINE CSS - TỐI ƯU HÓA IN ẤN CHO MÁY IN VĂN PHÒNG & IN NHIỆT K80
+   Không phụ thuộc CDN, tải tức thì (<10KB), hiển thị sắc nét trên giấy A4/A5/K80
+   ========================================================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #0f172a;
+    background: #f1f5f9;
+    font-size: 13px;
+    line-height: 1.45;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+/* Action Bar khi xem trước trên màn hình */
+.print-action-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    background: #0f172a;
+    color: #ffffff;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.print-action-bar .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 7px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.print-action-bar .btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.print-action-bar .btn-print {
+    background: #059669;
+    color: #ffffff;
+}
+
+.print-action-bar .btn-secondary {
+    background: #4f46e5;
+    color: #ffffff;
+}
+
+.print-action-bar .btn-close {
+    background: #475569;
+    color: #ffffff;
+}
+
+/* Khung trang in chính */
+.print-page {
+    background: #ffffff;
+    margin: 60px auto 30px auto;
+    padding: 24px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.print-page-a4 {
+    max-width: 210mm;
+}
+
+.print-page-a5 {
+    max-width: 148mm;
+}
+
+.print-page-k80 {
+    width: 80mm;
+    max-width: 80mm;
+    padding: 12px 6px;
+    margin: 60px auto 20px auto;
+    font-size: 11px;
+}
+
+.print-page-sticker {
+    width: 100mm;
+    max-width: 100mm;
+    padding: 10px;
+    margin: 60px auto 20px auto;
+}
+
+/* Đường cắt chia liên */
+.cut-line {
+    position: relative;
+    text-align: center;
+    margin: 16px 0;
+}
+
+.cut-line::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    border-top: 1.5px dashed #94a3b8;
+}
+
+.cut-line span {
+    position: relative;
+    background: #ffffff;
+    padding: 0 10px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #64748b;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+/* Bảng in chuẩn sắc nét */
+.print-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 12px;
+}
+
+.print-table th {
+    background: #f8fafc;
+    color: #1e293b;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.03em;
+    padding: 6px 8px;
+    border: 1px solid #cbd5e1;
+}
+
+.print-table td {
+    padding: 6px 8px;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+}
+
+.print-table tbody tr:nth-child(even) {
+    background: #fcfdfe;
+}
+
+/* Typography & Định dạng số */
+.tabular-nums {
+    font-variant-numeric: tabular-nums;
+}
+
+.font-mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.font-black {
+    font-weight: 900;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.italic {
+    font-style: italic;
+}
+
+/* Flexbox utilities */
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.items-start {
+    align-items: flex-start;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.gap-1 { gap: 4px; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; }
+
+/* Grid utilities */
+.grid {
+    display: grid;
+}
+
+.grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.grid-cols-12 {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.col-span-2 { grid-column: span 2 / span 2; }
+.col-span-3 { grid-column: span 3 / span 3; }
+.col-span-4 { grid-column: span 4 / span 4; }
+.col-span-5 { grid-column: span 5 / span 5; }
+.col-span-6 { grid-column: span 6 / span 6; }
+.col-span-7 { grid-column: span 7 / span 7; }
+.col-span-8 { grid-column: span 8 / span 8; }
+.col-span-12 { grid-column: span 12 / span 12; }
+
+/* Borders & Boxes */
+.border {
+    border: 1px solid #cbd5e1;
+}
+
+.border-2 {
+    border: 2px solid #0f172a;
+}
+
+.border-dashed {
+    border-style: dashed;
+}
+
+.rounded {
+    border-radius: 6px;
+}
+
+.rounded-lg {
+    border-radius: 8px;
+}
+
+.rounded-xl {
+    border-radius: 12px;
+}
+
+.p-1 { padding: 4px; }
+.p-2 { padding: 8px; }
+.p-3 { padding: 12px; }
+.p-4 { padding: 16px; }
+
+.mb-1 { margin-bottom: 4px; }
+.mb-2 { margin-bottom: 8px; }
+.mb-3 { margin-bottom: 12px; }
+.mb-4 { margin-bottom: 16px; }
+.mt-1 { margin-top: 4px; }
+.mt-2 { margin-top: 8px; }
+.mt-3 { margin-top: 12px; }
+.mt-4 { margin-top: 16px; }
+
+/* Colors */
+.text-slate-500 { color: #64748b; }
+.text-slate-600 { color: #475569; }
+.text-slate-700 { color: #334155; }
+.text-slate-800 { color: #1e293b; }
+.text-slate-900 { color: #0f172a; }
+.text-indigo-700 { color: #4338ca; }
+.text-indigo-900 { color: #312e81; }
+.text-emerald-700 { color: #047857; }
+.text-rose-600 { color: #e11d48; }
+.text-rose-700 { color: #be123c; }
+
+.bg-slate-50 { background-color: #f8fafc; }
+.bg-slate-100 { background-color: #f1f5f9; }
+.bg-white { background-color: #ffffff; }
+
+/* ==========================================================================
+   MEDIA PRINT RULES: Áp dụng khi in thực tế (Ctrl + P)
+   ========================================================================== */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+        font-size: 12px;
+    }
+
+    .print-page {
+        margin: 0 auto !important;
+        padding: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .avoid-break {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    .page-break {
+        page-break-after: always !important;
+        break-after: page !important;
+    }
+}

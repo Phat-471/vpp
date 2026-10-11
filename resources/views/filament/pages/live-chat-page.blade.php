@@ -30,6 +30,10 @@
                 <span style="color: #6ee7b7;">Đang mở:</span>
                 <b style="color: #a7f3d0;" class="font-black">{{ $this->activeCount }}</b>
             </div>
+            <button type="button" id="admin-audio-toggle" onclick="toggleAdminChatSound()" style="background: rgba(255, 255, 255, 0.12); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25);" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition hover:opacity-90 cursor-pointer" title="Bật/Tắt chuông báo tin nhắn mới">
+                <span id="admin-audio-icon">🔔</span>
+                <span id="admin-audio-text">Chuông: Bật</span>
+            </button>
             <a href="{{ route('storefront.index') }}" target="_blank" style="background: rgba(255, 255, 255, 0.12); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25);" class="inline-flex items-center space-x-1 px-3 py-1.5 rounded-xl text-xs font-bold transition hover:opacity-90">
                 <span>🌐 Xem Cửa Hàng</span>
                 <span>↗</span>
@@ -190,21 +194,62 @@
                     </div>
                 </header>
 
-                {{-- Customer Insight Strip (Nếu có trong DB) --}}
-                @if($customer = $this->customerDetails)
+                {{-- Customer Insight Strip (Nếu có trong DB hoặc có SĐT) --}}
+                @php
+                    $customer = $this->customerDetails;
+                    $orders = $this->customerOrders;
+                    $tickets = $this->customerRepairTickets;
+                @endphp
+                @if($customer || $orders->isNotEmpty() || $tickets->isNotEmpty())
                     <div class="chat-customer-insight">
                         <div class="insight-info">
-                            <span>👤 <b>{{ $customer->name }}</b> (Khách quen)</span>
-                            <span>📦 <b>{{ $customer->orders()->count() }}</b> đơn hàng</span>
-                            <span>🛠️ <b>{{ $customer->repairTickets()->count() }}</b> phiếu sửa máy in</span>
-                            @if($customer->debt_balance > 0)
-                                <span class="insight-debt">⚠️ Công nợ: {{ number_format($customer->debt_balance) }}đ</span>
+                            @if($customer)
+                                <span>👤 <b>{{ $customer->name }}</b> (Khách quen)</span>
+                                <span>📦 <b>{{ $customer->orders()->count() }}</b> đơn hàng</span>
+                                <span>🛠️ <b>{{ $customer->repairTickets()->count() }}</b> phiếu sửa máy in</span>
+                                @if($customer->debt_balance > 0)
+                                    <span class="insight-debt">⚠️ Công nợ: {{ number_format($customer->debt_balance) }}đ</span>
+                                @endif
+                            @else
+                                <span>📞 Khách có SĐT: <b>{{ $this->currentSession->customer_phone }}</b></span>
                             @endif
                         </div>
-                        <a href="{{ route('filament.admin.resources.customers.edit', $customer) }}" target="_blank" class="insight-link">
-                            Hồ sơ khách ↗
-                        </a>
+                        @if($customer)
+                            <a href="{{ route('filament.admin.resources.customers.edit', $customer) }}" target="_blank" class="insight-link">
+                                Hồ sơ khách ↗
+                            </a>
+                        @endif
                     </div>
+
+                    {{-- Danh sách nhanh Đơn hàng & Phiếu sửa máy in gần nhất --}}
+                    @if($orders->isNotEmpty() || $tickets->isNotEmpty())
+                        <div class="chat-customer-records">
+                            @if($orders->isNotEmpty())
+                                <div class="record-group">
+                                    <span class="record-group-title">📦 Đơn gần nhất:</span>
+                                    @foreach($orders as $ord)
+                                        <a href="{{ route('filament.admin.resources.orders.edit', $ord) }}" target="_blank" class="record-pill" title="Xem chi tiết đơn hàng #{{ $ord->order_code }}">
+                                            <b>#{{ $ord->order_code }}</b>
+                                            <span>{{ number_format($ord->grand_total) }}đ</span>
+                                            <span class="status-dot status-{{ $ord->status }}"></span>
+                                        </a>
+                                    @endforeach
+                                </div>
+                            @endif
+                            @if($tickets->isNotEmpty())
+                                <div class="record-group">
+                                    <span class="record-group-title">🖨️ Phiếu sửa:</span>
+                                    @foreach($tickets as $tkt)
+                                        <a href="{{ route('filament.admin.resources.repair-tickets.edit', $tkt) }}" target="_blank" class="record-pill" title="Xem chi tiết phiếu sửa {{ $tkt->ticket_code }}">
+                                            <b>{{ $tkt->ticket_code }}</b>
+                                            <span>{{ Str::limit($tkt->device_name, 16) }}</span>
+                                            <span class="status-dot status-{{ $tkt->status }}"></span>
+                                        </a>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                    @endif
                 @endif
 
                 {{-- Pagination Helper Bar --}}
@@ -261,10 +306,13 @@
                         @foreach($this->quickReplies as $index => $reply)
                             <button type="button" wire:click="useQuickReply({{ $index }})" class="quick-chip-btn">
                                 @if($index === 0) 👋 Chào & hỏi nhu cầu
-                                @elseif($index === 1) 📦 Báo giá & số lượng
+                                @elseif($index === 1) 📦 Báo giá & tồn kho
                                 @elseif($index === 2) 🖨️ Hỏi máy in & lỗi
-                                @elseif($index === 3) 🚚 Kiểm tra đơn hàng
-                                @elseif($index === 4) ⏳ Đã ghi nhận xử lý
+                                @elseif($index === 3) 🛵 Nạp mực tận nơi
+                                @elseif($index === 4) 🚚 Kiểm tra đơn hàng
+                                @elseif($index === 5) 🧾 Xuất hóa đơn VAT
+                                @elseif($index === 6) ⏳ Đã ghi nhận xử lý
+                                @elseif($index === 7) 🙏 Cảm ơn & kết thúc
                                 @else 💬 Mẫu {{ $index + 1 }}
                                 @endif
                             </button>
@@ -1147,6 +1195,71 @@
             background: #1e293b;
             border-color: #334155;
         }
+
+        /* CUSTOMER RECORDS QUICK STRIP */
+        .chat-customer-records {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 8px 16px;
+            background: #f1f5f9;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 11px;
+        }
+        .record-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .record-group-title {
+            font-weight: 700;
+            color: #475569;
+        }
+        .record-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 2px 8px;
+            border-radius: 6px;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #0f172a;
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+        .record-pill:hover {
+            border-color: #6366f1;
+            color: #4338ca;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #94a3b8;
+        }
+        .status-dot.status-completed, .status-dot.status-paid, .status-dot.status-fixed, .status-dot.status-delivered {
+            background: #10b981;
+        }
+        .status-dot.status-pending, .status-dot.status-diagnosing, .status-dot.status-fixing {
+            background: #f59e0b;
+        }
+        .status-dot.status-cancelled {
+            background: #ef4444;
+        }
+        .dark .chat-customer-records {
+            background: #1e293b;
+            border-color: #334155;
+        }
+        .dark .record-group-title {
+            color: #94a3b8;
+        }
+        .dark .record-pill {
+            background: #0f172a;
+            border-color: #334155;
+            color: #f8fafc;
+        }
     </style>
 
     @script
@@ -1159,6 +1272,58 @@
         };
         $wire.on('chat-session-selected', () => requestAnimationFrame(scrollChat));
         $wire.on('chat-reply-sent', () => requestAnimationFrame(scrollChat));
+
+        // Audio notification system using Web Audio API
+        let lastUnreadCount = {{ $this->unreadCount }};
+        const playAdminChime = () => {
+            if (localStorage.getItem('vpp_admin_chat_sound') === 'muted') return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                if (ctx.state === 'suspended') ctx.resume();
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, now);
+                osc.frequency.exponentialRampToValueAtTime(1320, now + 0.12);
+                gain.gain.setValueAtTime(0.25, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+                osc.start(now);
+                osc.stop(now + 0.35);
+            } catch (e) {}
+        };
+
+        window.toggleAdminChatSound = () => {
+            const current = localStorage.getItem('vpp_admin_chat_sound');
+            const newStatus = current === 'muted' ? 'enabled' : 'muted';
+            localStorage.setItem('vpp_admin_chat_sound', newStatus);
+            updateAdminSoundUI();
+            if (newStatus === 'enabled') playAdminChime();
+        };
+
+        const updateAdminSoundUI = () => {
+            const isMuted = localStorage.getItem('vpp_admin_chat_sound') === 'muted';
+            const icon = document.getElementById('admin-audio-icon');
+            const text = document.getElementById('admin-audio-text');
+            if (icon && text) {
+                icon.textContent = isMuted ? '🔕' : '🔔';
+                text.textContent = isMuted ? 'Chuông: Tắt' : 'Chuông: Bật';
+            }
+        };
+
+        updateAdminSoundUI();
+
+        Livewire.hook('commit', ({ succeed }) => {
+            succeed(() => {
+                const currentUnread = {{ $this->unreadCount }};
+                if (currentUnread > lastUnreadCount) {
+                    playAdminChime();
+                }
+                lastUnreadCount = currentUnread;
+            });
+        });
     </script>
     @endscript
 </x-filament-panels::page>

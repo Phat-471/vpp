@@ -28,6 +28,20 @@ class Category extends Model
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::saved(function () {
+            \Illuminate\Support\Facades\Cache::forget('storefront_active_categories');
+            \Illuminate\Support\Facades\Cache::forget('pos_active_categories');
+            \Illuminate\Support\Facades\Cache::forget('storefront_category_sections');
+        });
+        static::deleted(function () {
+            \Illuminate\Support\Facades\Cache::forget('storefront_active_categories');
+            \Illuminate\Support\Facades\Cache::forget('pos_active_categories');
+            \Illuminate\Support\Facades\Cache::forget('storefront_category_sections');
+        });
+    }
+
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);

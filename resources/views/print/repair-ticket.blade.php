@@ -4,13 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>In Phiếu Tiếp Nhận Máy In - {{ $ticket->ticket_code }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ asset('css/print-engine.css') }}?v={{ filemtime(public_path('css/print-engine.css')) }}">
     <style>
-        @media print {
-            .no-print { display: none !important; }
-            body { margin: 0; padding: 0; background: #fff; }
-            .print-page { box-shadow: none; border: none; margin: 0; width: 100%; max-width: 100%; padding: 10mm; }
-        }
         @page {
             size: A4 portrait;
             margin: 8mm;

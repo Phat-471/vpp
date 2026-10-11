@@ -14,6 +14,7 @@ use App\Services\PosPayment;
 use App\Services\PosShiftService;
 use App\Support\ContactFormat;
 use App\Support\StorefrontSettings;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Locked;
@@ -337,7 +338,7 @@ class PosTerminal extends Component
             'currentShift' => app(PosShiftService::class)->current(auth('web')->user()),
             'shiftRequired' => app(PosShiftService::class)->required(),
             'products' => $products, 'cartProducts' => $cartProducts,
-            'categories' => Category::where('is_active', true)->orderBy('sort_order')->get(),
+            'categories' => Cache::remember('pos_active_categories', 3600, fn () => Category::where('is_active', true)->orderBy('sort_order')->get()),
             'subtotal' => $subtotal, 'total' => $total, 'change' => max(0, (int) $this->cashGiven - $total),
             'completedOrder' => $completedOrder,
             'qrUrl' => $completedOrder ? app(PosPayment::class)->qrUrl($completedOrder) : null,

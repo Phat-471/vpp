@@ -717,6 +717,11 @@ class OrderResource extends Resource
             ->emptyStateIcon('heroicon-o-shopping-bag');
     }
 
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->with(['customer', 'creator']);
+    }
+
     public static function getPages(): array
     {
         return [

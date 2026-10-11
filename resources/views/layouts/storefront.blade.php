@@ -129,7 +129,8 @@
 
     @yield('schema_extra')
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="{{ asset('css/storefront.css') }}?v={{ filemtime(public_path('css/storefront.css')) }}">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #0f172a; }
@@ -138,7 +139,7 @@
     </style>
     @stack('styles')
 </head>
-<body class="bg-[#f8fafc] text-slate-900 min-h-screen flex flex-col justify-between antialiased selection:bg-emerald-600 selection:text-white">
+<body class="bg-[#f8fafc] text-slate-900 min-h-screen flex flex-col justify-between antialiased selection:bg-emerald-600 selection:text-white pb-20 md:pb-0">
 
     <!-- 1. TOP ANNOUNCEMENT BAR (Gọn gàng: Giờ mở cửa bên trái, Tra cứu phiếu bên phải) -->
     @if(($storefrontSettings['notice_bar_enabled'] ?? '1') !== '0' && trim((string) ($storefrontSettings['notice_bar_text'] ?? '')) !== '')
@@ -445,6 +446,72 @@
             </div>
         </div>
     </div>
+
+    <!-- 8.1. FLOATING QUICK CONTACT (Zalo & Hotline - Luôn ghim cố định góc phải) -->
+    <div class="fixed bottom-20 md:bottom-6 right-4 z-40 flex flex-col gap-2.5 items-end">
+        @php
+            $zaloPhone = preg_replace('/\D/', '', $storefrontSettings['zalo'] ?? $storefrontSettings['hotline'] ?? '');
+            $zaloUrl = !empty($storefrontSettings['zalo_url']) ? $storefrontSettings['zalo_url'] : ($zaloPhone ? "https://zalo.me/{$zaloPhone}" : '#');
+            $cleanHotline = preg_replace('/\D/', '', $storefrontSettings['hotline'] ?? '');
+        @endphp
+        <a href="{{ $zaloUrl }}" target="_blank" rel="noopener noreferrer"
+           aria-label="Chat Zalo tư vấn kỹ thuật máy in và văn phòng phẩm"
+           class="w-12 h-12 rounded-full bg-[#0068ff] hover:bg-[#0052cc] text-white flex items-center justify-center shadow-lg hover:shadow-xl transition transform hover:scale-105 active:scale-95 border-2 border-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0068ff] focus-visible:ring-offset-2">
+            <span class="font-black text-sm tracking-tight" aria-hidden="true">Zalo</span>
+        </a>
+
+        <a href="tel:{{ $cleanHotline }}"
+           aria-label="Gọi điện trực tiếp hotline: {{ $storefrontSettings['hotline'] ?? '' }}"
+           class="w-12 h-12 rounded-full bg-rose-600 hover:bg-rose-700 text-white flex items-center justify-center shadow-lg hover:shadow-xl transition transform hover:scale-105 active:scale-95 border-2 border-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:ring-offset-2 animate-pulse hover:animate-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+        </a>
+    </div>
+
+    @hasSection('custom_bottom_bar')
+        @yield('custom_bottom_bar')
+    @else
+    <!-- 8.2. MOBILE BOTTOM NAVIGATION (Thanh điều hướng cố định ở đáy màn hình theo AGENTS.md) -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 md:hidden shadow-[0_-4px_12px_rgba(0,0,0,0.05)]" aria-label="Thanh điều hướng di động">
+        <div class="grid grid-cols-5 h-16 items-center">
+            <a href="{{ route('storefront.index') }}" class="flex flex-col items-center justify-center h-full gap-0.5 text-[10px] font-bold {{ request()->routeIs('storefront.index') ? 'text-indigo-600' : 'text-slate-500 hover:text-slate-800' }}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                <span>Trang Chủ</span>
+            </a>
+
+            <a href="{{ route('storefront.products') }}" class="flex flex-col items-center justify-center h-full gap-0.5 text-[10px] font-bold {{ request()->routeIs('storefront.products*') ? 'text-indigo-600' : 'text-slate-500 hover:text-slate-800' }}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                <span>Sản Phẩm</span>
+            </a>
+
+            <a href="{{ route('lookup.index') }}" class="flex flex-col items-center justify-center h-full gap-0.5 text-[10px] font-bold {{ request()->routeIs('lookup.*') ? 'text-indigo-600' : 'text-slate-500 hover:text-slate-800' }}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                <span>Tra Cứu</span>
+            </a>
+
+            <a href="{{ route('storefront.cart') }}" class="flex flex-col items-center justify-center h-full gap-0.5 text-[10px] font-bold relative {{ request()->routeIs('storefront.cart') ? 'text-indigo-600' : 'text-slate-500 hover:text-slate-800' }}">
+                <div class="relative">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+                    <span id="mobile-bottom-cart-badge" class="absolute -top-1.5 -right-2 px-1.5 py-0.2 bg-rose-500 text-white rounded-full text-[9px] font-black tabular-nums shadow-xs">0</span>
+                </div>
+                <span>Giỏ Hàng</span>
+            </a>
+
+            @if(auth('customer')->check())
+                <a href="{{ route('customer.profile') }}" class="flex flex-col items-center justify-center h-full gap-0.5 text-[10px] font-bold {{ request()->routeIs('customer.*') ? 'text-indigo-600' : 'text-slate-500 hover:text-slate-800' }}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                    <span class="truncate max-w-[60px]">Tài Khoản</span>
+                </a>
+            @else
+                <a href="{{ route('customer.login') }}" class="flex flex-col items-center justify-center h-full gap-0.5 text-[10px] font-bold {{ request()->routeIs('customer.login') ? 'text-indigo-600' : 'text-slate-500 hover:text-slate-800' }}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
+                    <span>Đăng Nhập</span>
+                </a>
+            @endif
+        </div>
+    </nav>
+    @endif
 
     <!-- 9. LIVE CHAT 24/7 SUPPORT WIDGET -->
     @include('storefront.components.livechat')

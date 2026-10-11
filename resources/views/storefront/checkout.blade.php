@@ -78,35 +78,38 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Họ và tên người nhận *</label>
-                            <input type="text" id="chk-name" required 
+                            <label for="chk-name" class="block text-xs font-bold text-slate-700 mb-1">Họ và tên người nhận *</label>
+                            <input type="text" id="chk-name" name="customer_name" required 
                                    value="{{ auth('customer')->user()->name ?? '' }}"
-                                   placeholder="VD: Nguyễn Văn An" 
-                                   class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 bg-slate-50 font-medium" />
+                                   autocomplete="name"
+                                   placeholder="VD: Nguyễn Văn An…" 
+                                   class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus-visible:outline-none bg-slate-50 font-medium" />
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Số điện thoại nhận hàng *</label>
-                            <input type="tel" id="chk-phone" required 
+                            <label for="chk-phone" class="block text-xs font-bold text-slate-700 mb-1">Số điện thoại nhận hàng *</label>
+                            <input type="tel" id="chk-phone" name="customer_phone" required 
                                    value="{{ auth('customer')->user()->phone ?? '' }}"
-                                   placeholder="VD: 0901 234 567" 
-                                   class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 bg-slate-50 font-medium" />
+                                   autocomplete="tel" inputmode="tel"
+                                   placeholder="VD: 0901 234 567…" 
+                                   class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus-visible:outline-none bg-slate-50 font-medium font-mono" />
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Địa chỉ giao hàng cụ thể *</label>
-                        <input type="text" id="chk-address" required 
+                        <label for="chk-address" class="block text-xs font-bold text-slate-700 mb-1">Địa chỉ giao hàng cụ thể *</label>
+                        <input type="text" id="chk-address" name="shipping_address" required 
                                value="{{ auth('customer')->user()->address ?? '' }}"
-                               placeholder="VD: Số 30 Đường Bình Hòa, TP. Biên Hòa, Đồng Nai" 
-                               class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 bg-slate-50 font-medium" />
+                               autocomplete="street-address"
+                               placeholder="VD: Số 30 Đường Bình Hòa, TP. Biên Hòa, Đồng Nai…" 
+                               class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus-visible:outline-none bg-slate-50 font-medium" />
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Ghi chú giao hàng (nếu có)</label>
-                        <input type="text" id="chk-notes" 
-                               placeholder="VD: Giao trong giờ hành chính, gọi trước 15 phút..." 
-                               class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 bg-slate-50 font-medium" />
+                        <label for="chk-notes" class="block text-xs font-bold text-slate-700 mb-1">Ghi chú giao hàng (nếu có)</label>
+                        <input type="text" id="chk-notes" name="notes" 
+                               placeholder="VD: Giao trong giờ hành chính, gọi trước 15 phút…" 
+                               class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus-visible:outline-none bg-slate-50 font-medium" />
                     </div>
                 </div>
 
@@ -161,9 +164,9 @@
 
                 <div id="checkout-error-alert" class="hidden p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-2xl text-xs font-bold"></div>
 
-                <button type="submit" id="btn-submit-checkout" class="w-full py-4 px-6 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-black text-sm rounded-2xl shadow-lg transition transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
-                    <span>XÁC NHẬN ĐẶT HÀNG NGAY</span>
-                    <span>→</span>
+                <button type="submit" id="btn-submit-checkout" class="w-full py-4 px-6 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-black text-sm rounded-2xl shadow-lg transition transform hover:-translate-y-0.5 flex items-center justify-center space-x-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 focus-visible:ring-offset-2 min-h-[48px] touch-target cursor-pointer">
+                    <span id="btn-submit-text">XÁC NHẬN ĐẶT HÀNG NGAY</span>
+                    <span aria-hidden="true">→</span>
                 </button>
 
             </form>

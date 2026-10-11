@@ -97,6 +97,15 @@ class Product extends Model
                 $product->has_custom_image = false;
             }
         });
+
+        $clearCache = function () {
+            \Illuminate\Support\Facades\Cache::forget('storefront_flash_sale_ids');
+            \Illuminate\Support\Facades\Cache::forget('storefront_best_seller_ids');
+            \Illuminate\Support\Facades\Cache::forget('storefront_stats');
+        };
+
+        static::saved($clearCache);
+        static::deleted($clearCache);
     }
 
     public function isLowStock(): bool

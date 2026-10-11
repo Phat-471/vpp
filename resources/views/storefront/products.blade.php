@@ -210,86 +210,17 @@
             <!-- Products Grid (2 cols mobile, 3 cols tablet, 4 cols desktop) -->
             <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
                 @forelse($products as $p)
-                <div
-                    onclick="window.location.href='{{ route('storefront.product-detail', $p->slug) }}'"
-                    class="bg-white rounded-2xl border border-slate-200/90 hover:border-emerald-500 hover:shadow-xl p-3 sm:p-4 flex flex-col justify-between shadow-xs transition duration-200 group cursor-pointer"
-                >
-                    <div>
-                        <!-- Product Image Box -->
-                        <div class="relative w-full aspect-square bg-slate-50 rounded-xl overflow-hidden mb-3 flex items-center justify-center border border-slate-100">
-                            <img src="{{ $p->image_url }}" alt="{{ $p->name }}" class="w-full h-full object-contain p-2 group-hover:scale-105 transition transform duration-200" loading="lazy" />
-
-                            @if($p->units->count() > 0)
-                            <span class="absolute top-1.5 left-1.5 px-2 py-0.5 bg-amber-400 text-slate-950 font-black text-[9px] rounded-md shadow-2xs">
-                                BÁN SỈ THÙNG
-                            </span>
-                            @endif
-                        </div>
-
-                        <!-- Product Category & SKU -->
-                        <div class="flex items-center justify-between text-[10px] text-slate-400 mb-1">
-                            <span class="truncate max-w-[90px]">{{ $p->category?->name ?? 'Văn Phòng Phẩm' }}</span>
-                            <span class="font-mono text-slate-500 font-semibold">{{ $p->sku }}</span>
-                        </div>
-
-                        <!-- Product Title -->
-                        <h3 class="font-bold text-xs sm:text-sm text-slate-900 line-clamp-2 leading-snug group-hover:text-emerald-700 transition mb-2">
-                            {{ $p->name }}
-                        </h3>
-                    </div>
-
-                    <div class="pt-2 border-t border-slate-100 space-y-2">
-                        <!-- Price and Stock -->
-                        <div class="flex items-baseline justify-between">
-                            <div>
-                                <span class="font-black text-sm sm:text-base text-rose-600 font-mono">
-                                    {{ number_format($p->retail_price, 0, ',', '.') }}₫
-                                </span>
-                                <span class="text-[10px] text-slate-500 font-medium">/{{ $p->base_unit }}</span>
-                            </div>
-                            <span class="text-[10px] {{ $p->stock_quantity <= 5 ? 'text-rose-600 font-black' : 'text-emerald-700 font-semibold' }}">
-                                {{ $p->stock_quantity > 0 ? 'Còn: ' . $p->stock_quantity : 'Tạm hết' }}
-                            </span>
-                        </div>
-
-                        <!-- Dual Unit Packaging Price (if any) -->
-                        @if($p->units->count() > 0)
-                        @php $unit = $p->units->first(); @endphp
-                        <div class="text-[10px] text-amber-800 bg-amber-50/80 px-2 py-1 rounded-lg border border-amber-200/60 flex items-center justify-between">
-                            <span>Sỉ {{ $unit->unit_name }} (x{{ $unit->conversion_rate }}):</span>
-                            <span class="font-mono font-bold">{{ number_format($unit->price, 0, ',', '.') }}₫</span>
-                        </div>
-                        @endif
-
-                        <!-- Action Buttons -->
-                        <div class="grid grid-cols-2 gap-1.5 pt-1">
-                            <button
-                                type="button"
-                                onclick="event.stopPropagation(); addToCart({{ $p->id }}, null, '{{ addslashes($p->name) }}', '{{ $p->base_unit }}', {{ (float) $p->retail_price }}, '{{ $p->image_url }}')"
-                                class="w-full py-2 px-2 bg-emerald-50 hover:bg-emerald-600 hover:text-white text-emerald-700 rounded-xl text-[11px] font-bold transition flex items-center justify-center space-x-1 border border-emerald-200"
-                            >
-                                <span>+ Thêm</span>
-                            </button>
-                            <span
-                                class="w-full py-2 px-2 bg-slate-100 group-hover:bg-emerald-600 group-hover:text-white text-slate-800 rounded-xl text-[11px] font-bold transition text-center flex items-center justify-center"
-                            >
-                                Chi Tiết →
-                            </span>
-                        </div>
-                    </div>
-
-                </div>
+                    @include('storefront.components.product-card', ['p' => $p])
                 @empty
-                <div class="col-span-full py-16 text-center bg-white rounded-3xl border border-slate-200 space-y-3">
-                    <span class="text-4xl block">🔍</span>
-                    <h3 class="text-base font-bold text-slate-800">Không tìm thấy sản phẩm phù hợp</h3>
-                    <p class="text-xs text-slate-500 max-w-sm mx-auto">
-                        Thử tìm kiếm với từ khóa khác hoặc bấm nút bên dưới để xem toàn bộ danh mục sản phẩm.
-                    </p>
-                    <a href="{{ route('storefront.products') }}" class="inline-block px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-xs">
-                        Xem tất cả sản phẩm
-                    </a>
-                </div>
+                    <div class="col-span-full">
+                        <x-empty-state
+                            icon="🔍"
+                            title="Không tìm thấy sản phẩm phù hợp"
+                            description="Thử tìm kiếm với từ khóa khác hoặc bấm nút bên dưới để xem toàn bộ danh mục sản phẩm."
+                            actionText="Xem tất cả sản phẩm"
+                            :actionHref="route('storefront.products')"
+                        />
+                    </div>
                 @endforelse
             </div>
 

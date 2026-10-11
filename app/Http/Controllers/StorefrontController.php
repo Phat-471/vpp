@@ -13,6 +13,7 @@ use App\Models\Product;
 use App\Models\ProductUnit;
 use App\Models\RepairTicket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -48,53 +49,6 @@ class StorefrontController extends Controller
 
         $isFiltering = !empty($searchKeyword) || !empty($selectedCategory) || !empty($selectedPrinter);
 
-        // 1. FLASH SALE: Ưu tiên sản phẩm admin bật cờ is_flash_sale, bổ sung cho đủ đúng 16 sản phẩm
-        $flaggedFlashSales = Product::with(['category', 'units'])
-            ->where('is_active', true)
-            ->where('retail_price', '>', 0)
-            ->where('is_flash_sale', true)
-            ->orderBy('id', 'desc')
-            ->take(16)
-            ->get();
-
-        if ($flaggedFlashSales->count() < 16) {
-            $existingFlashIds = $flaggedFlashSales->pluck('id')->all();
-            $fillersFlash = Product::with(['category', 'units'])
-                ->where('is_active', true)
-                ->where('retail_price', '>', 0)
-                ->whereNotIn('id', $existingFlashIds)
-                ->orderBy('id', 'asc')
-                ->take(16 - $flaggedFlashSales->count())
-                ->get();
-            $flashSaleProducts = $flaggedFlashSales->concat($fillersFlash);
-        } else {
-            $flashSaleProducts = $flaggedFlashSales;
-        }
-
-        // 2. SẢN PHẨM BÁN CHẠY: Ưu tiên sản phẩm admin bật cờ is_best_seller, bổ sung cho đủ 8 sản phẩm
-        $flaggedBestSellers = Product::with(['category', 'units'])
-            ->where('is_active', true)
-            ->where('retail_price', '>', 0)
-            ->where('is_best_seller', true)
-            ->orderBy('id', 'desc')
-            ->take(8)
-            ->get();
-
-        if ($flaggedBestSellers->count() < 8) {
-            $existingBestIds = $flaggedBestSellers->pluck('id')->all();
-            $fillersBest = Product::with(['category', 'units'])
-                ->where('is_active', true)
-                ->where('retail_price', '>', 0)
-                ->whereNotIn('id', $existingBestIds)
-                ->orderBy('stock_quantity', 'desc')
-                ->take(8 - $flaggedBestSellers->count())
-                ->get();
-            $bestSellerProducts = $flaggedBestSellers->concat($fillersBest);
-        } else {
-            $bestSellerProducts = $flaggedBestSellers;
-        }
-
-        // 3. SẢN PHẨM THEO DANH MỤC: 5 danh mục chủ lực của ngành VPP & Thiết bị máy in
         $targetCategorySlugs = [
             'giay-in-photo',
             'hop-muc-may-in',
@@ -102,28 +56,99 @@ class StorefrontController extends Controller
             'bia-ho-so-luu-tru',
             'dung-cu-van-phong'
         ];
-        $categorySections = Category::where('is_active', true)
-            ->whereIn('slug', $targetCategorySlugs)
-            ->with(['products' => function ($q) {
-                $q->where('is_active', true)
-                  ->with(['units', 'category'])
-                  ->orderBy('id', 'asc')
-                  ->take(8);
-            }])
-            ->get()
-            ->sortBy(function ($cat) use ($targetCategorySlugs) {
-                return array_search($cat->slug, $targetCategorySlugs);
-            })
-            ->values();
+
+        // 1. FLASH SALE & BEST SELLER (Cached danh sách ID số nguyên siêu nhẹ, tránh lỗi serialization)
+        if (!$isFiltering) {
+            $flashSaleIds = Cache::remember('storefront_flash_sale_ids', 300, function () {
+                $flagged = Product::where('is_active', true)
+                    ->where('retail_price', '>', 0)
+                    ->where('is_flash_sale', true)
+                    ->orderBy('id', 'desc')
+                    ->take(16)
+                    ->pluck('id')
+                    ->all();
+
+                if (count($flagged) < 16) {
+                    $fillers = Product::where('is_active', true)
+                        ->where('retail_price', '>', 0)
+                        ->whereNotIn('id', $flagged)
+                        ->orderBy('id', 'asc')
+                        ->take(16 - count($flagged))
+                        ->pluck('id')
+                        ->all();
+                    return array_merge($flagged, $fillers);
+                }
+                return $flagged;
+            });
+
+            $flashSaleProducts = !empty($flashSaleIds)
+                ? Product::with(['category', 'units'])
+                    ->whereIn('id', $flashSaleIds)
+                    ->get()
+                    ->sortBy(fn ($p) => array_search($p->id, $flashSaleIds))
+                    ->values()
+                : collect();
+
+            $bestSellerIds = Cache::remember('storefront_best_seller_ids', 300, function () {
+                $flagged = Product::where('is_active', true)
+                    ->where('retail_price', '>', 0)
+                    ->where('is_best_seller', true)
+                    ->orderBy('id', 'desc')
+                    ->take(8)
+                    ->pluck('id')
+                    ->all();
+
+                if (count($flagged) < 8) {
+                    $fillers = Product::where('is_active', true)
+                        ->where('retail_price', '>', 0)
+                        ->whereNotIn('id', $flagged)
+                        ->orderBy('stock_quantity', 'desc')
+                        ->take(8 - count($flagged))
+                        ->pluck('id')
+                        ->all();
+                    return array_merge($flagged, $fillers);
+                }
+                return $flagged;
+            });
+
+            $bestSellerProducts = !empty($bestSellerIds)
+                ? Product::with(['category', 'units'])
+                    ->whereIn('id', $bestSellerIds)
+                    ->get()
+                    ->sortBy(fn ($p) => array_search($p->id, $bestSellerIds))
+                    ->values()
+                : collect();
+
+            // Lấy sản phẩm 5 danh mục trọng điểm (Indexed Eager Loading, tận dụng idx_products_active_cat_id)
+            $categorySections = Category::where('is_active', true)
+                ->whereIn('slug', $targetCategorySlugs)
+                ->with(['products' => function ($q) {
+                    $q->where('is_active', true)
+                      ->with(['units', 'category'])
+                      ->orderBy('id', 'asc')
+                      ->take(8);
+                }])
+                ->get()
+                ->sortBy(function ($cat) use ($targetCategorySlugs) {
+                    return array_search($cat->slug, $targetCategorySlugs);
+                })
+                ->values();
+        } else {
+            $flashSaleProducts = collect();
+            $bestSellerProducts = collect();
+            $categorySections = collect();
+        }
 
         $products = $productsQuery->orderBy('id', 'desc')->take(40)->get();
 
-        // Quick stats for desktop credibility bar
-        $stats = [
-            'total_products' => Product::where('is_active', true)->count(),
-            'total_printers' => PrinterModel::count(),
-            'served_tickets' => RepairTicket::count(),
-        ];
+        // Quick stats for desktop credibility bar (Cached 10 phút)
+        $stats = Cache::remember('storefront_stats', 600, function () {
+            return [
+                'total_products' => Product::where('is_active', true)->count(),
+                'total_printers' => PrinterModel::count(),
+                'served_tickets' => RepairTicket::count(),
+            ];
+        });
 
         return view('storefront.index', compact(
             'categories',
@@ -142,8 +167,13 @@ class StorefrontController extends Controller
 
     public function products(Request $request)
     {
-        $categories = Category::where('is_active', true)->orderBy('sort_order')->get();
-        $printerModels = PrinterModel::orderBy('brand')->orderBy('model_name')->get();
+        $categories = Cache::remember('storefront_active_categories', 3600, function () {
+            return Category::where('is_active', true)->orderBy('sort_order')->get();
+        });
+
+        $printerModels = Cache::remember('storefront_printer_models', 3600, function () {
+            return PrinterModel::orderBy('brand')->orderBy('model_name')->get();
+        });
 
         $selectedCategory = $request->query('category');
         $selectedPrinter = $request->query('printer');

@@ -19,6 +19,12 @@ class PrinterModel extends Model
         'notes',
     ];
 
+    protected static function booted(): void
+    {
+        static::saved(fn () => \Illuminate\Support\Facades\Cache::forget('storefront_printer_models'));
+        static::deleted(fn () => \Illuminate\Support\Facades\Cache::forget('storefront_printer_models'));
+    }
+
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'product_printer')

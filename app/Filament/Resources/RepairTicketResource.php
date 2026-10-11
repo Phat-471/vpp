@@ -725,6 +725,11 @@ class RepairTicketResource extends Resource
             ->emptyStateIcon('heroicon-o-wrench-screwdriver');
     }
 
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->with(['technician', 'printerModel', 'customer']);
+    }
+
     public static function getPages(): array
     {
         return [
