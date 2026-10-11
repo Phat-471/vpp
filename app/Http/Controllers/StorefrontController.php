@@ -167,18 +167,26 @@ class StorefrontController extends Controller
 
     public function products(Request $request)
     {
-        $categories = Cache::remember('storefront_active_categories', 3600, function () {
-            return Category::where('is_active', true)->orderBy('sort_order')->get();
-        });
+        $categories = Category::where('is_active', true)
+            ->withCount(['products' => fn ($q) => $q->where('is_active', true)])
+            ->orderBy('sort_order')
+            ->get();
 
-        $printerModels = Cache::remember('storefront_printer_models', 3600, function () {
-            return PrinterModel::orderBy('brand')->orderBy('model_name')->get();
-        });
+        $printerModels = PrinterModel::orderBy('brand')->orderBy('model_name')->get();
+        $printerBrands = PrinterModel::select('brand')->distinct()->orderBy('brand')->pluck('brand');
 
         $selectedCategory = $request->query('category');
         $selectedPrinter = $request->query('printer');
+        $selectedBrand = $request->query('brand');
         $searchKeyword = trim($request->query('q', ''));
-        $sort = $request->query('sort', 'newest');
+        $sort = $request->query('sort', 'popular');
+        $priceRange = $request->query('price_range');
+        $minPrice = $request->query('min_price');
+        $maxPrice = $request->query('max_price');
+        $onlyStock = $request->boolean('in_stock');
+        $onlyFlashSale = $request->boolean('flash_sale');
+        $onlyBestSeller = $request->boolean('best_seller');
+        $viewMode = $request->query('view', 'grid');
 
         $currentCategory = $selectedCategory ? Category::where('slug', $selectedCategory)->first() : null;
 
@@ -197,10 +205,43 @@ class StorefrontController extends Controller
             $query->whereHas('category', fn ($q) => $q->where('slug', $selectedCategory));
         }
 
+        if ($selectedBrand) {
+            $query->whereHas('compatiblePrinters', fn ($q) => $q->where('printer_models.brand', $selectedBrand));
+        }
+
         if ($selectedPrinter) {
             $query->whereHas('compatiblePrinters', fn ($q) => $q->where('printer_models.id', $selectedPrinter));
         }
 
+        // Lọc theo khoảng giá phổ biến
+        if ($priceRange) {
+            match ($priceRange) {
+                'under_50k' => $query->where('retail_price', '<', 50000),
+                '50k_150k' => $query->whereBetween('retail_price', [50000, 150000]),
+                '150k_500k' => $query->whereBetween('retail_price', [150000, 500000]),
+                'over_500k' => $query->where('retail_price', '>', 500000),
+                default => null,
+            };
+        }
+        if (is_numeric($minPrice) && $minPrice > 0) {
+            $query->where('retail_price', '>=', (float)$minPrice);
+        }
+        if (is_numeric($maxPrice) && $maxPrice > 0) {
+            $query->where('retail_price', '<=', (float)$maxPrice);
+        }
+
+        // Lọc theo tính năng
+        if ($onlyStock) {
+            $query->where('stock_quantity', '>', 0);
+        }
+        if ($onlyFlashSale) {
+            $query->where('is_flash_sale', true);
+        }
+        if ($onlyBestSeller) {
+            $query->where('is_best_seller', true);
+        }
+
+        // Sắp xếp
         switch ($sort) {
             case 'price_asc':
                 $query->orderBy('retail_price', 'asc');
@@ -211,9 +252,17 @@ class StorefrontController extends Controller
             case 'name_asc':
                 $query->orderBy('name', 'asc');
                 break;
+            case 'discount':
+                $query->orderByRaw('(retail_price - COALESCE(flash_sale_price, retail_price)) DESC');
+                break;
             case 'newest':
-            default:
                 $query->orderBy('id', 'desc');
+                break;
+            case 'popular':
+            default:
+                $query->orderByDesc('is_best_seller')
+                      ->orderByDesc('stock_quantity')
+                      ->orderByDesc('id');
                 break;
         }
 
@@ -222,12 +271,21 @@ class StorefrontController extends Controller
         return view('storefront.products', compact(
             'categories',
             'printerModels',
+            'printerBrands',
             'products',
             'selectedCategory',
             'selectedPrinter',
+            'selectedBrand',
             'searchKeyword',
             'currentCategory',
-            'sort'
+            'sort',
+            'priceRange',
+            'minPrice',
+            'maxPrice',
+            'onlyStock',
+            'onlyFlashSale',
+            'onlyBestSeller',
+            'viewMode'
         ));
     }
 
