@@ -52,13 +52,14 @@ stateDiagram-v2
 ┌──────────────┬──────────────┬──────────────┬──────────────┬──────────────┬──────────────┬──────────────┐
 │   BACKLOG    │   RESEARCH   │    BUILD     │    REVIEW    │     TEST     │  INTEGRATE   │     DONE     │
 ├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┼──────────────┼──────────────┤
-│ [CARD-009]   │              │ [CARD-008]   │              │              │              │ [CARD-001]   │
-│ [CARD-010]   │              │              │              │              │              │ [CARD-002]   │
-│ [CARD-011]   │              │              │              │              │              │ [CARD-003]   │
+│ [CARD-010]   │              │ [CARD-009]   │              │              │              │ [CARD-001]   │
+│ [CARD-011]   │              │              │              │              │              │ [CARD-002]   │
+│              │              │              │              │              │              │ [CARD-003]   │
 │              │              │              │              │              │              │ [CARD-004]   │
 │              │              │              │              │              │              │ [CARD-005]   │
 │              │              │              │              │              │              │ [CARD-006]   │
 │              │              │              │              │              │              │ [CARD-007]   │
+│              │              │              │              │              │              │ [CARD-008]   │
 └──────────────┴──────────────┴──────────────┴──────────────┴──────────────┴──────────────┴──────────────┘
 ```
 
@@ -95,42 +96,43 @@ stateDiagram-v2
 
 #### `[CARD-006]` Admin Order Fulfillment Lifecycle & Trừ/Hoàn kho tự động trong `DB::transaction()`
 * **Phân hệ:** Filament Admin Order Management & Inventory Lifecycle
-* **Trạng thái:** `DONE`
-* **Kiểm định:**
-  - Hoàn tất Service `InventoryService` xử lý trừ kho theo hệ số quy đổi kép (`ProductUnit`).
-  - Tự động hoàn kho khi đơn chuyển sang `cancelled` và tái trừ kho khi kích hoạt lại đơn.
-  - Chống double-refund khi lưu đơn hoặc xóa item trong đơn đã hủy.
-  - Bổ sung 8 test cases trong `OrderFulfillmentTest` đạt 100% pass (toàn bộ test suite 122/122 passed).
+* **Trạng thái:** `DONE` (Commit `fc68f10`)
+* **Kiểm định:** Đã tích hợp `InventoryService`, tự động hoàn/trừ kho an toàn, kiểm thử `OrderFulfillmentTest` 100% pass.
 
 #### `[CARD-007]` Nút In hóa đơn trực tiếp từ danh sách OrderResource Filament
 * **Phân hệ:** Filament POS & Packaging UX
+* **Trạng thái:** `DONE` (Commit `fc68f10`)
+* **Kiểm định:** Tích hợp các nút in `In bill A5`, `In A4 (2 liên)` và `In bill K80` trên cả Table Action và Edit Header Action.
+
+#### `[CARD-008]` Webhook SePay/Casso Idempotent & Auto-Reconcile thanh toán Order / RepairTicket
+* **Phân hệ:** Webhook & Payment Reconciliation
 * **Trạng thái:** `DONE`
-* **Kiểm định:** Đã tích hợp các nút in trực tiếp `In bill A5`, `In A4 (2 liên)` và `In bill K80` trên cả Table Action và Header Action trang chỉnh sửa.
+* **Kiểm định:**
+  - Xác thực Bearer / Apikey token cho SePay và secure-token cho Casso khi được cấu hình.
+  - Cơ chế Idempotent chống ghi nhận giao dịch trùng lặp theo `transaction_id`.
+  - Tự động khớp và gạch nợ cho Đơn hàng (`HD...`) và Phiếu sửa chữa (`SC...`) trong `DB::transaction()`.
+  - Tự động chuyển đơn hàng `pending` sang `processing` khi nhận đủ tiền.
+  - 6 bài test trong `WebhookReconciliationTest` đạt 100% pass (toàn bộ 128/128 tests passed).
 
 ---
 
 ### 4.2. NHIỆM VỤ ĐANG THỰC THI (ACTIVE SPRINT)
 
-#### `[CARD-008]` Webhook SePay/Casso Idempotent & Auto-Reconcile thanh toán Order / RepairTicket
-* **Phân hệ:** Webhook & Payment Reconciliation
+#### `[CARD-009]` Xuất kho tự động linh kiện sửa chữa máy in (`repair_items` <-> `products`)
+* **Phân hệ:** Repair Service & Inventory Sync
 * **Vị trí hiện tại:** `BUILD`
 * **Độ ưu tiên:** `P1`
 * **Worker phụ trách:** Slot T2 (Builder)
 * **Mục tiêu kỹ thuật:**
-  1. Xác thực Bearer Token / API Key cho webhook SePay & Casso.
-  2. Cơ chế Idempotent chống trùng lặp theo `payment_transactions.transaction_id`.
-  3. Bóc tách regex mã `HD...` hoặc `SC...` để tự động chuyển đơn sang `paid` và lưu giao dịch trong `DB::transaction()`.
-* **Deterministic Gate:** Viết `WebhookReconciliationTest` kiểm tra xác thực và đối soát.
+  1. Liên kết các linh kiện thay thế trên phiếu sửa máy in với kho sản phẩm chung (`products.id`).
+  2. Tự động trừ kho khi phiếu sửa chữa chuyển sang `in_progress` hoặc `completed`.
+  3. Tự động hoàn kho khi phiếu sửa chữa bị hủy (`cancelled`).
+  4. Khóa không cho xuất kho âm hoặc cảnh báo linh kiện không đủ.
+* **Deterministic Gate:** Viết `RepairInventorySyncTest` kiểm tra biến động tồn kho linh kiện.
 
 ---
 
 ### 4.3. HÀNG ĐỢI CÔNG VIỆC CHỜ TRIỂN KHAI (BACKLOG)
-
-#### `[CARD-009]` Xuất kho tự động linh kiện sửa chữa máy in (`repair_items` <-> `products`)
-* **Phân hệ:** Repair Service & Inventory Sync
-* **Vị trí hiện tại:** `BACKLOG`
-* **Độ ưu tiên:** `P1`
-* **Mục tiêu:** Liên kết các linh kiện thay thế trên phiếu sửa máy in với kho sản phẩm chung; tự động trừ kho khi thợ bắt đầu sửa (`in_progress`) và khóa không cho xuất kho âm.
 
 #### `[CARD-010]` Quản lý ca làm việc POS (PosShift) & Đối soát tiền mặt/VietQR cuối ca
 * **Phân hệ:** POS Cash Management & Shift Reconcile

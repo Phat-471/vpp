@@ -49,32 +49,42 @@ class PaymentTransaction extends Model
      */
     public function matchAndApply(): bool
     {
-        $code = strtoupper(trim($this->reference_code));
+        return \Illuminate\Support\Facades\DB::transaction(function () {
+            $code = strtoupper(trim($this->reference_code));
 
-        // 1. Try matching Repair Ticket
-        $ticket = RepairTicket::where('ticket_code', $code)->first();
-        if ($ticket) {
-            $this->repair_ticket_id = $ticket->id;
-            $ticket->paid_amount += $this->amount;
-            $ticket->recalculateTotals();
-            $this->status = 'processed';
+            // 1. Try matching Repair Ticket
+            $ticket = RepairTicket::where('ticket_code', $code)->first();
+            if ($ticket) {
+                $this->repair_ticket_id = $ticket->id;
+                $ticket->paid_amount = (float) $ticket->paid_amount + (float) $this->amount;
+                $ticket->recalculateTotals();
+
+                $this->status = 'processed';
+                $this->save();
+                return true;
+            }
+
+            // 2. Try matching Order
+            $order = Order::where('order_code', $code)->first();
+            if ($order) {
+                $this->order_id = $order->id;
+                $order->paid_amount = (float) $order->paid_amount + (float) $this->amount;
+                $order->recalculateTotals();
+
+                // If fully paid and order was pending, advance to processing
+                if ($order->payment_status === 'paid' && $order->status === 'pending') {
+                    $order->status = 'processing';
+                    $order->save();
+                }
+
+                $this->status = 'processed';
+                $this->save();
+                return true;
+            }
+
+            $this->status = 'unmatched';
             $this->save();
-            return true;
-        }
-
-        // 2. Try matching Order
-        $order = Order::where('order_code', $code)->first();
-        if ($order) {
-            $this->order_id = $order->id;
-            $order->paid_amount += $this->amount;
-            $order->recalculateTotals();
-            $this->status = 'processed';
-            $this->save();
-            return true;
-        }
-
-        $this->status = 'unmatched';
-        $this->save();
-        return false;
+            return false;
+        });
     }
 }

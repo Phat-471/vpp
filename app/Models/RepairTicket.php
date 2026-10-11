@@ -108,8 +108,10 @@ class RepairTicket extends Model
 
     public function recalculateTotals(): void
     {
-        $this->parts_total = $this->repairItems()->sum('subtotal');
-        $this->grand_total = max(0, ($this->labor_fee + $this->parts_total + $this->tax_amount) - $this->discount_amount);
+        if ($this->repairItems()->exists()) {
+            $this->parts_total = $this->repairItems()->sum('subtotal');
+        }
+        $this->grand_total = max(0, ((float) $this->labor_fee + (float) $this->parts_total + (float) $this->tax_amount) - (float) $this->discount_amount);
         
         if ($this->paid_amount >= $this->grand_total && $this->grand_total > 0) {
             $this->payment_status = 'paid';

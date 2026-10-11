@@ -134,10 +134,12 @@ class Order extends Model
 
     public function recalculateTotals(): void
     {
-        $this->subtotal = $this->orderItems()->sum('subtotal');
-        $taxable = max(0, $this->subtotal - $this->discount_amount);
-        $this->tax_amount = round($taxable * ($this->tax_rate / 100), 2);
-        $this->grand_total = $taxable + $this->tax_amount;
+        if ($this->orderItems()->exists()) {
+            $this->subtotal = $this->orderItems()->sum('subtotal');
+        }
+        $taxable = max(0, (float) $this->subtotal - (float) $this->discount_amount);
+        $this->tax_amount = round($taxable * ((float) $this->tax_rate / 100), 2);
+        $this->grand_total = $taxable + $this->tax_amount + (float) ($this->shipping_fee ?? 0);
 
         if ($this->paid_amount >= $this->grand_total && $this->grand_total > 0) {
             $this->payment_status = 'paid';
