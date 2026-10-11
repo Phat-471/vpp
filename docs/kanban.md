@@ -52,7 +52,7 @@ stateDiagram-v2
 ┌──────────────┬──────────────┬──────────────┬──────────────┬──────────────┬──────────────┬──────────────┐
 │   BACKLOG    │   RESEARCH   │    BUILD     │    REVIEW    │     TEST     │  INTEGRATE   │     DONE     │
 ├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┼──────────────┼──────────────┤
-│              │              │ [CARD-011]   │              │              │              │ [CARD-001]   │
+│              │              │              │              │              │              │ [CARD-001]   │
 │              │              │              │              │              │              │ [CARD-002]   │
 │              │              │              │              │              │              │ [CARD-003]   │
 │              │              │              │              │              │              │ [CARD-004]   │
@@ -62,6 +62,7 @@ stateDiagram-v2
 │              │              │              │              │              │              │ [CARD-008]   │
 │              │              │              │              │              │              │ [CARD-009]   │
 │              │              │              │              │              │              │ [CARD-010]   │
+│              │              │              │              │              │              │ [CARD-011]   │
 └──────────────┴──────────────┴──────────────┴──────────────┴──────────────┴──────────────┴──────────────┘
 ```
 
@@ -138,17 +139,16 @@ stateDiagram-v2
   - Bảo vệ toàn vẹn lịch sử tài chính bằng `PosShiftPolicy` (chặn xóa ca trái phép).
   - 5/5 bài test trong `PosShiftReconciliationTest` đạt 100% pass (toàn bộ 144/144 tests passed).
 
----
-
-### 4.2. NHIỆM VỤ ĐANG THỰC THI (ACTIVE SPRINT)
-
 #### `[CARD-011]` VPS Production Hardening, Queue Worker Supervisor & Sao lưu định kỳ
 * **Phân hệ:** Infrastructure & Production Ops
-* **Vị trí hiện tại:** `BUILD`
-* **Độ ưu tiên:** `P3`
-* **Worker phụ trách:** Slot T2 (Builder)
-* **Mục tiêu kỹ thuật:** Cấu hình Supervisor chạy nền cho hàng đợi xử lý ảnh WebP, tối ưu hóa bộ nhớ đệm cache Laravel và thiết lập script backup tự động hàng đêm.
-* **Deterministic Gate:** Script cấu hình và lệnh test artisan thực thi không phát sinh lỗi.
+* **Trạng thái:** `DONE`
+* **Kiểm định:**
+  - Xây dựng cấu hình Supervisor Worker (`deploy/supervisor/vpp-worker.conf`) chạy nền cho hàng đợi xử lý ảnh WebP và background jobs.
+  - Cấu hình Nginx ảo hóa Production (`deploy/nginx/vpp.conf`) tối ưu HTTP/2, TLS 1.3, cache 30 ngày static assets, security headers, upload 64MB.
+  - Kịch bản triển khai tự động Zero-downtime (`deploy/deploy.sh`) tích hợp maintenance mode, cache config/route/view/event và restart worker.
+  - Lệnh Artisan sao lưu an toàn `DatabaseBackupCommand` (`php artisan vpp:backup`) hỗ trợ cả MySQL và SQLite, tự động dọn dẹp bản lưu cũ hơn 7 ngày.
+  - Đăng ký cron job tự động chạy lúc 02:00 AM hàng ngày trong `routes/console.php`.
+  - 3 bài test trong `BackupCommandTest` đạt 100% pass (toàn bộ 147/147 tests passed).
 ---
 
 ## 5. HƯỚNG DẪN CAN THIỆP CỦA CON NGƯỜI (HUMAN-IN-THE-LOOP OVERRIDE)

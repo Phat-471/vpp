@@ -20,4 +20,4 @@
 | **`[DONE]`** | `CARD-008` | Webhook SePay/Casso Idempotent & Auto-Reconcile thanh toán Order / RepairTicket |
 | **`[DONE]`** | `CARD-009` | Xuất kho tự động linh kiện sửa chữa máy in (`repair_items` <-> `products`) |
 | **`[DONE]`** | `CARD-010` | Quản lý ca làm việc POS (PosShift) & Đối soát tiền mặt/VietQR cuối ca |
-| **`[BUILD]`** | `CARD-011` | VPS Production Hardening, Queue Worker Supervisor & Sao lưu định kỳ |
+| **`[DONE]`** | `CARD-011` | VPS Production Hardening, Queue Worker Supervisor & Sao lưu định kỳ |
