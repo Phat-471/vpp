@@ -47,7 +47,25 @@
 @endsection
 
 @section('content')
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6 sm:space-y-8 w-full">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-6 space-y-6 sm:space-y-8 w-full">
+
+        <!-- 0. THANH ĐIỀU HƯỚNG MẪU GIAO DIỆN (TEMPLATE PREVIEW SWITCHER PILL) -->
+        <div class="p-2 sm:p-2.5 rounded-2xl bg-slate-900 text-white flex flex-wrap items-center justify-between gap-2 shadow-md border border-slate-800 text-xs">
+            <div class="flex items-center space-x-2">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-400 text-slate-950 uppercase tracking-wider">
+                    ✓ MẪU 1 ACTIVE
+                </span>
+                <span class="font-bold text-slate-200">
+                    Giao diện: <b>Đại Siêu Thị Bán Lẻ & Flash Sale (Mega E-Commerce)</b>
+                </span>
+            </div>
+            <div class="flex items-center space-x-2 text-[11px]">
+                <span class="text-slate-400 hidden sm:inline">Chuyển mẫu xem thử:</span>
+                <a href="{{ route('storefront.index', ['template' => '2']) }}" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition">
+                    Mẫu 2: Doanh Nghiệp & Dịch Vụ Máy In B2B →
+                </a>
+            </div>
+        </div>
 
         <!-- 0. TICKER TIN KHUYẾN MÃI NÓNG HỔI (MEGA DEALS ANNOUNCEMENT) -->
         <div class="bg-gradient-to-r from-amber-500 via-rose-500 to-emerald-600 rounded-2xl p-0.5 shadow-sm overflow-hidden">

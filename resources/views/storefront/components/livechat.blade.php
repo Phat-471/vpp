@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="{{ asset('css/live-chat.css') }}">
+<link rel="stylesheet" href="{{ asset('css/live-chat.css') }}?v={{ filemtime(public_path('css/live-chat.css')) }}">
 <div id="live-chat-widget" class="lc-widget"
     data-init-url="{{ route('chat.init') }}" data-send-url="{{ route('chat.send') }}"
     data-messages-url="{{ route('chat.messages') }}" data-read-url="{{ route('chat.read') }}">

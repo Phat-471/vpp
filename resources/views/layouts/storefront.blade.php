@@ -297,19 +297,6 @@
         @yield('content')
     </div>
 
-    <!-- 4. FLOATING ACTION WIDGETS (Zalo & Hotline - Ghim cố định góc phải) -->
-    <div id="storefront-contact-shortcuts" class="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-40 {{ View::hasSection('custom_bottom_bar') ? 'hidden sm:flex' : 'flex' }} flex-col space-y-2.5">
-        <a href="{{ $storefrontSettings['zalo_url'] }}" target="_blank" class="flex items-center space-x-2 bg-[#0068ff] hover:bg-blue-600 text-white px-3.5 py-2.5 rounded-full shadow-xl transition transform hover:scale-105 group border-2 border-white">
-            <span class="w-6 h-6 rounded-full bg-white text-[#0068ff] font-black text-xs flex items-center justify-center">Z</span>
-            <span class="text-xs font-bold hidden sm:inline">Zalo Chat</span>
-        </a>
-
-        <a href="{{ $storefrontSettings['hotline_url'] }}" class="flex items-center space-x-2 bg-[#059669] hover:bg-emerald-700 text-white px-3.5 py-2.5 rounded-full shadow-xl transition transform hover:scale-105 group border-2 border-white">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-            <span class="text-xs font-bold hidden sm:inline">Hotline: {{ $storefrontSettings['hotline'] }}</span>
-        </a>
-    </div>
-
     <!-- 5. UNIFIED FOOTER SECTION (Đồng bộ mọi trang) -->
     <footer class="bg-slate-900 text-slate-400 py-10 mt-12 border-t border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -447,25 +434,36 @@
         </div>
     </div>
 
-    <!-- 8.1. FLOATING QUICK CONTACT (Zalo & Hotline - Luôn ghim cố định góc phải) -->
-    <div class="fixed bottom-20 md:bottom-6 right-4 z-40 flex flex-col gap-2.5 items-end">
+    <!-- 8.1. NÚT ZALO CHAT - GHIM CỐ ĐỊNH GÓC DƯỚI BÊN TRÁI (LEFT SIDE) -->
+    <div id="floating-zalo-container" class="fixed bottom-20 sm:bottom-6 left-4 sm:left-6 z-40 {{ View::hasSection('custom_bottom_bar') ? 'hidden sm:block' : 'block' }}">
         @php
             $zaloPhone = preg_replace('/\D/', '', $storefrontSettings['zalo'] ?? $storefrontSettings['hotline'] ?? '');
             $zaloUrl = !empty($storefrontSettings['zalo_url']) ? $storefrontSettings['zalo_url'] : ($zaloPhone ? "https://zalo.me/{$zaloPhone}" : '#');
-            $cleanHotline = preg_replace('/\D/', '', $storefrontSettings['hotline'] ?? '');
         @endphp
         <a href="{{ $zaloUrl }}" target="_blank" rel="noopener noreferrer"
            aria-label="Chat Zalo tư vấn kỹ thuật máy in và văn phòng phẩm"
-           class="w-12 h-12 rounded-full bg-[#0068ff] hover:bg-[#0052cc] text-white flex items-center justify-center shadow-lg hover:shadow-xl transition transform hover:scale-105 active:scale-95 border-2 border-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0068ff] focus-visible:ring-offset-2">
-            <span class="font-black text-sm tracking-tight" aria-hidden="true">Zalo</span>
+           class="group relative flex items-center gap-2 bg-[#0068ff] hover:bg-[#0052cc] text-white p-2.5 sm:px-4 sm:py-2.5 rounded-full shadow-xl hover:shadow-2xl transition transform hover:scale-105 active:scale-95 border-2 border-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0068ff]">
+            <!-- Radar Pulse Animation -->
+            <span class="absolute -inset-1 rounded-full bg-[#0068ff]/40 animate-ping pointer-events-none -z-10" aria-hidden="true"></span>
+            <span class="w-7 h-7 sm:w-6 sm:h-6 rounded-full bg-white text-[#0068ff] font-black text-xs flex items-center justify-center shrink-0 shadow-xs" aria-hidden="true">Z</span>
+            <span class="text-xs font-black tracking-wide hidden sm:inline pr-1">Chat Zalo</span>
         </a>
+    </div>
 
+    <!-- 8.2. NÚT GỌI ĐIỆN THOẠI HOTLINE - GHIM CỐ ĐỊNH GÓC DƯỚI BÊN PHẢI (RIGHT SIDE) -->
+    <div id="floating-hotline-container" class="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-40 {{ View::hasSection('custom_bottom_bar') ? 'hidden sm:block' : 'block' }}">
+        @php
+            $cleanHotline = preg_replace('/\D/', '', $storefrontSettings['hotline'] ?? '');
+        @endphp
         <a href="tel:{{ $cleanHotline }}"
-           aria-label="Gọi điện trực tiếp hotline: {{ $storefrontSettings['hotline'] ?? '' }}"
-           class="w-12 h-12 rounded-full bg-rose-600 hover:bg-rose-700 text-white flex items-center justify-center shadow-lg hover:shadow-xl transition transform hover:scale-105 active:scale-95 border-2 border-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:ring-offset-2 animate-pulse hover:animate-none">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-            </svg>
+           aria-label="Gọi điện thoại trực tiếp hotline: {{ $storefrontSettings['hotline'] ?? '' }}"
+           class="group relative flex items-center gap-2 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 text-white p-2.5 sm:px-4 sm:py-2.5 rounded-full shadow-xl hover:shadow-2xl transition transform hover:scale-105 active:scale-95 border-2 border-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500">
+            <!-- Radar Pulse Animation -->
+            <span class="absolute -inset-1 rounded-full bg-rose-600/40 animate-ping pointer-events-none -z-10" aria-hidden="true"></span>
+            <span class="w-7 h-7 sm:w-6 sm:h-6 rounded-full bg-white text-rose-600 flex items-center justify-center shrink-0 shadow-xs" aria-hidden="true">
+                <svg class="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+            </span>
+            <span class="text-xs font-black tracking-wide hidden sm:inline pr-1 font-mono">Hotline: {{ $storefrontSettings['hotline'] }}</span>
         </a>
     </div>
 

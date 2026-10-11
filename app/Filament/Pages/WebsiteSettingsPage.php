@@ -132,6 +132,20 @@ class WebsiteSettingsPage extends Page implements HasForms
                                             ->rows(2)
                                             ->placeholder('VD: 🎉 Khuyến mãi đầu tháng: Miễn phí vận chuyển cho đơn từ 500.000đ nội thành | Nhận nạp mực máy in tận nơi siêu tốc trong 30 phút!'),
                                     ]),
+
+                                Section::make('Mẫu Giao Diện Trang Chủ (Homepage Template)')
+                                    ->description('Lựa chọn phong cách hiển thị trang chủ phù hợp với định hướng kinh doanh của cửa hàng.')
+                                    ->schema([
+                                        Select::make('homepage_template')
+                                            ->label('Mẫu hiển thị trang chủ mặc định')
+                                            ->options([
+                                                '1' => 'Mẫu 1: Siêu Thị Bán Lẻ & Flash Sale (Mega E-Commerce) - Nổi bật ưu đãi, danh mục, bán lẻ',
+                                                '2' => 'Mẫu 2: Doanh Nghiệp & Dịch Vụ Kỹ Thuật Máy In (B2B & Service Hub) - Nổi bật cứu hộ 30p, nạp mực, báo giá sỉ',
+                                            ])
+                                            ->default('1')
+                                            ->selectablePlaceholder(false)
+                                            ->helperText('Có thể xem thử giao diện bằng cách thêm "?template=1" hoặc "?template=2" vào đuôi địa chỉ trang chủ.'),
+                                    ]),
                             ]),
 
                         // ==========================================

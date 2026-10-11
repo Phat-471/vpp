@@ -150,6 +150,43 @@ class StorefrontController extends Controller
             ];
         });
 
+        $template = (string) $request->query('template', setting('homepage_template', '1'));
+
+        if ($template === '2' || $template === 'b2b') {
+            // Lấy sản phẩm giấy in bán sỉ theo thùng (Double A, PaperOne, IK Plus...)
+            $b2bPaperProducts = Product::with(['category', 'units'])
+                ->where('is_active', true)
+                ->whereHas('category', fn ($q) => $q->where('slug', 'giay-in-photo'))
+                ->orderByDesc('is_best_seller')
+                ->take(8)
+                ->get();
+
+            // Hộp mực & Linh kiện kỹ thuật phổ biến nhất
+            $popularCartridges = Product::with(['category', 'units', 'compatiblePrinters'])
+                ->where('is_active', true)
+                ->whereHas('category', fn ($q) => $q->whereIn('slug', ['hop-muc-may-in', 'linh-kien-may-in']))
+                ->orderByDesc('is_best_seller')
+                ->take(8)
+                ->get();
+
+            return view('storefront.index-b2b', compact(
+                'categories',
+                'printerModels',
+                'products',
+                'flashSaleProducts',
+                'bestSellerProducts',
+                'categorySections',
+                'isFiltering',
+                'selectedCategory',
+                'selectedPrinter',
+                'searchKeyword',
+                'stats',
+                'b2bPaperProducts',
+                'popularCartridges',
+                'template'
+            ));
+        }
+
         return view('storefront.index', compact(
             'categories',
             'printerModels',
@@ -161,7 +198,8 @@ class StorefrontController extends Controller
             'selectedCategory',
             'selectedPrinter',
             'searchKeyword',
-            'stats'
+            'stats',
+            'template'
         ));
     }
 

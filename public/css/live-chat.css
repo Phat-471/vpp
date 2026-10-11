@@ -1,18 +1,13 @@
 /* Live Chat Widget Styles - VPP & Máy In (High Aesthetic & Accessible) */
 .lc-widget {
     position: fixed;
-    bottom: 24px;
+    bottom: 96px;
     right: 24px;
     z-index: 55;
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     font-size: 14px;
     line-height: 1.5;
     color: #0f172a;
-}
-
-#storefront-contact-shortcuts {
-    right: auto;
-    left: 24px;
 }
 
 .lc-widget [hidden] {
@@ -89,7 +84,7 @@
 /* Main Chat Modal Box */
 .lc-box {
     position: absolute;
-    bottom: 64px;
+    bottom: 0;
     right: 0;
     width: min(390px, calc(100vw - 24px));
     height: min(600px, calc(100dvh - 120px));
@@ -543,17 +538,14 @@
 
 /* Mobile Responsiveness */
 @media (max-width: 640px) {
-    #storefront-contact-shortcuts {
-        left: 12px;
-    }
     .lc-widget {
-        bottom: 80px; /* Sits nicely above the fixed mobile bottom bar */
-        right: 12px;
+        bottom: 156px; /* Sits nicely above the fixed hotline button and mobile bottom bar */
+        right: 16px;
     }
     .lc-box {
         width: calc(100vw - 24px);
         height: min(580px, calc(100dvh - 165px));
-        bottom: 56px;
+        bottom: 0;
         right: 0;
         border-radius: 16px;
     }

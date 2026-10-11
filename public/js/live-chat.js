@@ -260,6 +260,7 @@ export function mountLiveChat(root) {
 
     async function setOpen(open) {
         box.hidden = !open;
+        toggle.hidden = open;
         toggle.setAttribute('aria-expanded', String(open));
         storage('vpp_chat_open', open ? '1' : '0');
         if (!open) { toggle.focus(); schedule(); return; }
