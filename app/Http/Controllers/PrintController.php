@@ -45,4 +45,12 @@ class PrintController extends Controller
 
         return view('print.vat-invoice', compact('order', 'vietQrUrl'));
     }
+
+    public function posShift($id)
+    {
+        $shift = \App\Models\PosShift::with(['cashier', 'orders'])->where('id', $id)->orWhere('uuid', $id)->firstOrFail();
+        $summary = app(\App\Services\PosShiftService::class)->summary($shift);
+
+        return view('print.pos-shift', compact('shift', 'summary'));
+    }
 }

@@ -52,7 +52,7 @@ stateDiagram-v2
 ┌──────────────┬──────────────┬──────────────┬──────────────┬──────────────┬──────────────┬──────────────┐
 │   BACKLOG    │   RESEARCH   │    BUILD     │    REVIEW    │     TEST     │  INTEGRATE   │     DONE     │
 ├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┼──────────────┼──────────────┤
-│ [CARD-011]   │              │ [CARD-010]   │              │              │              │ [CARD-001]   │
+│              │              │ [CARD-011]   │              │              │              │ [CARD-001]   │
 │              │              │              │              │              │              │ [CARD-002]   │
 │              │              │              │              │              │              │ [CARD-003]   │
 │              │              │              │              │              │              │ [CARD-004]   │
@@ -61,6 +61,7 @@ stateDiagram-v2
 │              │              │              │              │              │              │ [CARD-007]   │
 │              │              │              │              │              │              │ [CARD-008]   │
 │              │              │              │              │              │              │ [CARD-009]   │
+│              │              │              │              │              │              │ [CARD-010]   │
 └──────────────┴──────────────┴──────────────┴──────────────┴──────────────┴──────────────┴──────────────┘
 ```
 
@@ -127,31 +128,27 @@ stateDiagram-v2
   - Cung cấp các phương thức `refundTicketStock`, `deductTicketStock`, `checkTicketStockAvailability` trong `InventoryService`.
   - 11/11 tests trong `RepairInventorySyncTest` đạt 100% pass (toàn bộ 139/139 tests passed).
 
+#### `[CARD-010]` Quản lý ca làm việc POS (PosShift) & Đối soát tiền mặt/VietQR cuối ca
+* **Phân hệ:** POS Cash Management & Shift Reconcile
+* **Trạng thái:** `DONE`
+* **Kiểm định:**
+  - Thiết kế mẫu in nhiệt K80 chuẩn `@media print` (`/print/pos-shift/{id}`) thể hiện đầy đủ tiền đầu ca, doanh thu tiền mặt, CK VietQR, tiền thực đếm, chênh lệch và 2 chữ ký bàn giao.
+  - Tích hợp nút in nhanh K80 trên màn hình đối soát ca Livewire POS `PosShifts`.
+  - Xây dựng tài nguyên quản trị Filament `PosShiftResource` cho chủ cửa hàng xem lịch sử, lọc trạng thái/thu ngân và in phiếu kết ca.
+  - Bảo vệ toàn vẹn lịch sử tài chính bằng `PosShiftPolicy` (chặn xóa ca trái phép).
+  - 5/5 bài test trong `PosShiftReconciliationTest` đạt 100% pass (toàn bộ 144/144 tests passed).
+
 ---
 
 ### 4.2. NHIỆM VỤ ĐANG THỰC THI (ACTIVE SPRINT)
 
-#### `[CARD-010]` Quản lý ca làm việc POS (PosShift) & Đối soát tiền mặt/VietQR cuối ca
-* **Phân hệ:** POS Cash Management & Shift Reconcile
-* **Vị trí hiện tại:** `BUILD`
-* **Độ ưu tiên:** `P2`
-* **Worker phụ trách:** Slot T2 (Builder)
-* **Mục tiêu kỹ thuật:**
-  1. Mở ca bán hàng: Nhập tiền mặt đầu ca, nhân viên phụ trách ca.
-  2. Trong ca: Ghi nhận đơn hàng POS gắn với ca, thống kê tổng doanh thu tiền mặt, chuyển khoản VietQR trong ca.
-  3. Đóng ca: Kiểm đếm thực tế tiền mặt cuối ca, tự động tính chênh lệch thừa/thiếu, tạo báo cáo kết ca.
-  4. In phiếu kết ca chuẩn máy in nhiệt K80.
-* **Deterministic Gate:** Viết `PosShiftReconciliationTest` kiểm tra toàn bộ luồng mở ca, tính toán doanh thu và đóng ca.
-
----
-
-### 4.3. HÀNG ĐỢI CÔNG VIỆC CHỜ TRIỂN KHAI (BACKLOG)
-
 #### `[CARD-011]` VPS Production Hardening, Queue Worker Supervisor & Sao lưu định kỳ
 * **Phân hệ:** Infrastructure & Production Ops
-* **Vị trí hiện tại:** `BACKLOG`
+* **Vị trí hiện tại:** `BUILD`
 * **Độ ưu tiên:** `P3`
-* **Mục tiêu:** Cấu hình Supervisor chạy nền cho hàng đợi xử lý ảnh WebP, tối ưu hóa bộ nhớ đệm cache Laravel và thiết lập script backup tự động hàng đêm.
+* **Worker phụ trách:** Slot T2 (Builder)
+* **Mục tiêu kỹ thuật:** Cấu hình Supervisor chạy nền cho hàng đợi xử lý ảnh WebP, tối ưu hóa bộ nhớ đệm cache Laravel và thiết lập script backup tự động hàng đêm.
+* **Deterministic Gate:** Script cấu hình và lệnh test artisan thực thi không phát sinh lỗi.
 ---
 
 ## 5. HƯỚNG DẪN CAN THIỆP CỦA CON NGƯỜI (HUMAN-IN-THE-LOOP OVERRIDE)

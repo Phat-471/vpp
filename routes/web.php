@@ -91,3 +91,4 @@ Route::get('/print/repair-ticket/{id}', [PrintController::class, 'repairTicket']
 Route::get('/print/repair-ticket-sticker/{id}', [PrintController::class, 'repairTicketSticker'])->name('print.repair-ticket-sticker');
 Route::get('/print/order/{id}', [PrintController::class, 'order'])->name('print.order');
 Route::get('/print/vat-invoice/{id}', [PrintController::class, 'vatInvoice'])->name('print.vat-invoice');
+Route::get('/print/pos-shift/{id}', [PrintController::class, 'posShift'])->name('print.pos-shift');
