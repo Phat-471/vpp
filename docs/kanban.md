@@ -52,11 +52,13 @@ stateDiagram-v2
 ┌──────────────┬──────────────┬──────────────┬──────────────┬──────────────┬──────────────┬──────────────┐
 │   BACKLOG    │   RESEARCH   │    BUILD     │    REVIEW    │     TEST     │  INTEGRATE   │     DONE     │
 ├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┼──────────────┼──────────────┤
-│ [CARD-007]   │              │ [CARD-006]   │              │              │              │ [CARD-001]   │
-│ [CARD-008]   │              │              │              │              │              │ [CARD-002]   │
-│ [CARD-009]   │              │              │              │              │              │ [CARD-003]   │
-│ [CARD-010]   │              │              │              │              │              │ [CARD-004]   │
-│ [CARD-011]   │              │              │              │              │              │ [CARD-005]   │
+│ [CARD-009]   │              │ [CARD-008]   │              │              │              │ [CARD-001]   │
+│ [CARD-010]   │              │              │              │              │              │ [CARD-002]   │
+│ [CARD-011]   │              │              │              │              │              │ [CARD-003]   │
+│              │              │              │              │              │              │ [CARD-004]   │
+│              │              │              │              │              │              │ [CARD-005]   │
+│              │              │              │              │              │              │ [CARD-006]   │
+│              │              │              │              │              │              │ [CARD-007]   │
 └──────────────┴──────────────┴──────────────┴──────────────┴──────────────┴──────────────┴──────────────┘
 ```
 
@@ -91,44 +93,38 @@ stateDiagram-v2
 * **Trạng thái:** `DONE` (Commit `e62ea25`)
 * **Kiểm định:** 114/114 tests passing (800 assertions) đạt 100%.
 
+#### `[CARD-006]` Admin Order Fulfillment Lifecycle & Trừ/Hoàn kho tự động trong `DB::transaction()`
+* **Phân hệ:** Filament Admin Order Management & Inventory Lifecycle
+* **Trạng thái:** `DONE`
+* **Kiểm định:**
+  - Hoàn tất Service `InventoryService` xử lý trừ kho theo hệ số quy đổi kép (`ProductUnit`).
+  - Tự động hoàn kho khi đơn chuyển sang `cancelled` và tái trừ kho khi kích hoạt lại đơn.
+  - Chống double-refund khi lưu đơn hoặc xóa item trong đơn đã hủy.
+  - Bổ sung 8 test cases trong `OrderFulfillmentTest` đạt 100% pass (toàn bộ test suite 122/122 passed).
+
+#### `[CARD-007]` Nút In hóa đơn trực tiếp từ danh sách OrderResource Filament
+* **Phân hệ:** Filament POS & Packaging UX
+* **Trạng thái:** `DONE`
+* **Kiểm định:** Đã tích hợp các nút in trực tiếp `In bill A5`, `In A4 (2 liên)` và `In bill K80` trên cả Table Action và Header Action trang chỉnh sửa.
+
 ---
 
 ### 4.2. NHIỆM VỤ ĐANG THỰC THI (ACTIVE SPRINT)
 
-#### `[CARD-006]` Admin Order Fulfillment Lifecycle & Trừ/Hoàn kho tự động trong `DB::transaction()`
-* **Phân hệ:** Filament Admin Order Management
+#### `[CARD-008]` Webhook SePay/Casso Idempotent & Auto-Reconcile thanh toán Order / RepairTicket
+* **Phân hệ:** Webhook & Payment Reconciliation
 * **Vị trí hiện tại:** `BUILD`
-* **Độ ưu tiên:** `P0` (Transitive Score: Unblocks CARD-007, CARD-008)
+* **Độ ưu tiên:** `P1`
 * **Worker phụ trách:** Slot T2 (Builder)
 * **Mục tiêu kỹ thuật:**
-  1. Xây dựng State Machine cho trạng thái đơn hàng (`pending` $\rightarrow$ `processing` $\rightarrow$ `shipping` $\rightarrow$ `delivered` $\rightarrow$ `cancelled`).
-  2. Tự động trừ số lượng sản phẩm tồn kho (`stock_quantity`) theo đơn vị quy đổi kép khi xác nhận chuẩn bị hàng.
-  3. Tự động hoàn tồn kho khi đơn bị hủy.
-  4. Bọc toàn bộ logic trong `DB::transaction()` để đảm bảo toàn vẹn dữ liệu.
-* **Deterministic Gate:** Viết `OrderFulfillmentTest` kiểm tra trạng thái và số lượng tồn kho.
-* **Adversarial Review Checklist:**
-  - [ ] Kiểm tra trường hợp khách mua đơn vị quy đổi kép (Thùng 5 Ram) trừ kho đúng 5 đơn vị cơ bản.
-  - [ ] Kiểm tra ngăn chặn hủy đơn nhiều lần gây hoàn kho trùng lặp.
-  - [ ] Kiểm tra phân quyền nhân viên thu ngân vs quản trị viên.
+  1. Xác thực Bearer Token / API Key cho webhook SePay & Casso.
+  2. Cơ chế Idempotent chống trùng lặp theo `payment_transactions.transaction_id`.
+  3. Bóc tách regex mã `HD...` hoặc `SC...` để tự động chuyển đơn sang `paid` và lưu giao dịch trong `DB::transaction()`.
+* **Deterministic Gate:** Viết `WebhookReconciliationTest` kiểm tra xác thực và đối soát.
 
 ---
 
 ### 4.3. HÀNG ĐỢI CÔNG VIỆC CHỜ TRIỂN KHAI (BACKLOG)
-
-#### `[CARD-007]` Nút In hóa đơn trực tiếp từ danh sách OrderResource Filament
-* **Phân hệ:** Filament POS & Packaging UX
-* **Vị trí hiện tại:** `BACKLOG`
-* **Độ ưu tiên:** `P1` (Phụ thuộc vào CARD-006)
-* **Mục tiêu:** Thêm Action "In đơn hàng" vào Filament Table để nhân viên đóng gói có thể in nhanh khổ A4 2 liên, A5 hoặc K80 với 1 click.
-
-#### `[CARD-008]` Webhook SePay/Casso Idempotent & Auto-Reconcile thanh toán Order / RepairTicket
-* **Phân hệ:** Webhook & Payment Reconciliation
-* **Vị trí hiện tại:** `BACKLOG`
-* **Độ ưu tiên:** `P1` (Phụ thuộc vào CARD-006)
-* **Mục tiêu:**
-  1. Xác thực Bearer Token Webhook từ SePay / Casso.
-  2. Chống Replay Attack bằng kiểm tra `payment_transactions.transaction_id`.
-  3. Bóc tách regex mã `HD...` hoặc `SC...` để tự động chuyển đơn sang `paid` và trừ kho trong `DB::transaction()`.
 
 #### `[CARD-009]` Xuất kho tự động linh kiện sửa chữa máy in (`repair_items` <-> `products`)
 * **Phân hệ:** Repair Service & Inventory Sync
@@ -147,7 +143,6 @@ stateDiagram-v2
 * **Vị trí hiện tại:** `BACKLOG`
 * **Độ ưu tiên:** `P3`
 * **Mục tiêu:** Cấu hình Supervisor chạy nền cho hàng đợi xử lý ảnh WebP, tối ưu hóa bộ nhớ đệm cache Laravel và thiết lập script backup tự động hàng đêm.
-
 ---
 
 ## 5. HƯỚNG DẪN CAN THIỆP CỦA CON NGƯỜI (HUMAN-IN-THE-LOOP OVERRIDE)

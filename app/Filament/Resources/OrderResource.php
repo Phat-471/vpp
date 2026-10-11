@@ -484,15 +484,17 @@ class OrderResource extends Resource
                     ->label('Trạng thái')
                     ->badge()
                     ->colors([
-                        'success' => 'completed',
-                        'info' => 'shipping',
+                        'success' => fn ($state) => in_array($state, ['completed', 'delivered']),
+                        'info' => fn ($state) => in_array($state, ['shipping', 'processing']),
                         'warning' => 'pending',
                         'danger' => 'cancelled',
                     ])
                     ->formatStateUsing(fn ($state) => match ($state) {
                         'completed' => 'Đã hoàn tất',
-                        'shipping' => 'Đang giao',
-                        'pending' => 'Chờ xử lý',
+                        'delivered' => 'Đã giao hàng',
+                        'shipping' => 'Đang giao hàng',
+                        'processing' => 'Đang đóng gói',
+                        'pending' => 'Chờ xác nhận',
                         'cancelled' => 'Đã hủy',
                         default => $state,
                     }),
@@ -545,9 +547,11 @@ class OrderResource extends Resource
                 Tables\Filters\SelectFilter::make('status')
                     ->label('Trạng thái đơn')
                     ->options([
+                        'pending' => 'Chờ xác nhận',
+                        'processing' => 'Đang đóng gói / Chuẩn bị',
+                        'shipping' => 'Đang giao hàng',
+                        'delivered' => 'Đã giao hàng',
                         'completed' => 'Đã hoàn tất',
-                        'shipping' => 'Đang giao',
-                        'pending' => 'Chờ xử lý',
                         'cancelled' => 'Đã hủy',
                     ]),
 
@@ -579,10 +583,12 @@ class OrderResource extends Resource
                         Forms\Components\Select::make('status')
                             ->label('Trạng thái đơn *')
                             ->options([
-                                'completed' => '✅ Đã hoàn tất & xuất kho',
+                                'pending' => '⏳ Chờ xác nhận',
+                                'processing' => '📦 Đang chuẩn bị / Đóng gói',
                                 'shipping' => '🚚 Đang giao hàng',
-                                'pending' => '⏳ Chờ xử lý / Đóng gói',
-                                'cancelled' => '❌ Đã hủy đơn',
+                                'delivered' => '📫 Đã giao thành công',
+                                'completed' => '✅ Đã hoàn tất & xuất kho',
+                                'cancelled' => '❌ Hủy đơn & Hoàn trả kho',
                             ])
                             ->required(),
                         Forms\Components\Select::make('payment_status')
@@ -611,15 +617,16 @@ class OrderResource extends Resource
                         'notes' => $record->notes,
                     ])
                     ->action(function (Order $record, array $data): void {
-                        DB::transaction(function () use ($record, $data) {
-                            $record->update([
-                                'status' => $data['status'],
+                        app(\App\Services\InventoryService::class)->updateOrderStatus(
+                            $record,
+                            $data['status'],
+                            [
                                 'payment_status' => $data['payment_status'],
                                 'payment_method' => $data['payment_method'] ?? $record->payment_method,
                                 'notes' => $data['notes'] ?? $record->notes,
                                 'paid_amount' => $data['payment_status'] === 'paid' ? $record->grand_total : $record->paid_amount,
-                            ]);
-                        });
+                            ]
+                        );
 
                         Notification::make()
                             ->title('Cập nhật trạng thái thành công')
@@ -654,6 +661,13 @@ class OrderResource extends Resource
                     ->icon('heroicon-o-printer')
                     ->color('info')
                     ->url(fn (Order $record) => url("/print/order/{$record->id}"))
+                    ->openUrlInNewTab(),
+
+                Tables\Actions\Action::make('print_a4')
+                    ->label('In A4 (2 liên)')
+                    ->icon('heroicon-o-document-duplicate')
+                    ->color('success')
+                    ->url(fn (Order $record) => url("/print/order/{$record->id}?format=a4_dual"))
                     ->openUrlInNewTab(),
 
                 Tables\Actions\Action::make('print_k80')

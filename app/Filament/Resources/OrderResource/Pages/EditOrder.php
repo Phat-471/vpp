@@ -21,6 +21,13 @@ class EditOrder extends EditRecord
                 ->url(fn (Order $record) => url("/print/order/{$record->id}"))
                 ->openUrlInNewTab(),
 
+            Actions\Action::make('print_a4')
+                ->label('In A4 (2 liên)')
+                ->icon('heroicon-o-document-duplicate')
+                ->color('success')
+                ->url(fn (Order $record) => url("/print/order/{$record->id}?format=a4_dual"))
+                ->openUrlInNewTab(),
+
             Actions\Action::make('print_k80')
                 ->label('In bill K80')
                 ->icon('heroicon-o-receipt-percent')

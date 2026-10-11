@@ -83,6 +83,28 @@ class Order extends Model
                 $order->order_code = $prefix.str_pad($latest + 1, 4, '0', STR_PAD_LEFT);
             }
         });
+
+        static::updating(function ($order) {
+            if ($order->isDirty('status')) {
+                $oldStatus = $order->getOriginal('status');
+                $newStatus = $order->status;
+                if ($newStatus === 'cancelled' && $oldStatus !== 'cancelled') {
+                    $order->refundStock();
+                } elseif ($oldStatus === 'cancelled' && $newStatus !== 'cancelled') {
+                    $order->deductStock();
+                }
+            }
+        });
+    }
+
+    public function refundStock(): void
+    {
+        app(\App\Services\InventoryService::class)->refundOrderStock($this);
+    }
+
+    public function deductStock(bool $strict = false): void
+    {
+        app(\App\Services\InventoryService::class)->deductOrderStock($this, $strict);
     }
 
     public function customer(): BelongsTo

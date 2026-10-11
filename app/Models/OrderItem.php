@@ -48,15 +48,20 @@ class OrderItem extends Model
 
         static::created(function ($item) {
             if ($item->product_id && $item->product) {
-                $baseQty = $item->quantity * ($item->conversion_rate ?: 1);
-                $item->product->deductStock($baseQty);
+                if (!$item->order || $item->order->status !== 'cancelled') {
+                    $baseQty = $item->quantity * ($item->conversion_rate ?: 1);
+                    $item->product->deductStock($baseQty);
+                }
             }
         });
 
         static::deleted(function ($item) {
             if ($item->product_id && $item->product) {
-                $baseQty = $item->quantity * ($item->conversion_rate ?: 1);
-                $item->product->addStock($baseQty);
+                $order = $item->order()->first();
+                if (!$order || $order->status !== 'cancelled') {
+                    $baseQty = $item->quantity * ($item->conversion_rate ?: 1);
+                    $item->product->addStock($baseQty);
+                }
             }
             if ($item->order) {
                 $item->order->recalculateTotals();
