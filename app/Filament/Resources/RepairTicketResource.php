@@ -54,12 +54,12 @@ class RepairTicketResource extends Resource
 
     public static function canDelete(Model $record): bool
     {
-        return false;
+        return auth()->user()?->isAdmin() ?? false;
     }
 
     public static function canDeleteAny(): bool
     {
-        return false;
+        return auth()->user()?->isAdmin() ?? false;
     }
 
     public static function form(Form $form): Form

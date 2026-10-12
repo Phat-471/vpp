@@ -21,7 +21,25 @@ class OtpAuthenticationTest extends TestCase
             'password_confirmation' => '12345678',
         ]);
 
-        $response->assertRedirect(route('customer.profile'));
+        $response->assertRedirect(route('otp.verify.page'));
+        $this->assertNotNull(session('pending_customer_registration'));
+
+        $otpService = app(OtpService::class);
+        $otpService->generate('0988776655', 'register');
+
+        $otpRecord = PhoneOtp::where('phone', '0988776655')->latest('id')->first();
+        $this->assertNotNull($otpRecord);
+
+        $verifyResponse = $this->postJson(route('otp.verify'), [
+            'phone' => '0988776655',
+            'otp' => $otpRecord->otp_code,
+            'action' => 'register',
+        ]);
+
+        $verifyResponse->assertOk();
+        $verifyResponse->assertJson([
+            'success' => true,
+        ]);
 
         $customer = Customer::where('phone', '0988776655')->first();
         $this->assertNotNull($customer);

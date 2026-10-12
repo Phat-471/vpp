@@ -75,7 +75,7 @@ class LookupSystemTest extends TestCase
         $response = $this->get(route('lookup.index'));
 
         $response->assertOk();
-        $response->assertSee('TRA CỨU TIẾN ĐỘ TRỰC TUYẾN');
+        $response->assertSee('Tra cứu tiến độ');
         $response->assertSee('HDxxxx');
         $response->assertSee('SCxxxx');
     }
