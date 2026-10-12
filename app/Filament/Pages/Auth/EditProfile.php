@@ -15,6 +15,11 @@ use Illuminate\Validation\Rules\Password;
 
 class EditProfile extends BaseEditProfile
 {
+    public static function isSimple(): bool
+    {
+        return false;
+    }
+
     public static function getLabel(): string
     {
         return 'Hồ sơ quản trị';
@@ -33,6 +38,19 @@ class EditProfile extends BaseEditProfile
     public function getSubheading(): string | Htmlable | null
     {
         return 'Cập nhật họ tên hiển thị, địa chỉ email đăng nhập và mật khẩu tài khoản quản trị của bạn.';
+    }
+
+    public function getBreadcrumbs(): array
+    {
+        return [
+            route('filament.admin.pages.dashboard') => 'Bảng điều khiển',
+            'Hồ sơ quản trị',
+        ];
+    }
+
+    public function getMaxWidth(): \Filament\Support\Enums\MaxWidth | string | null
+    {
+        return \Filament\Support\Enums\MaxWidth::FiveExtraLarge;
     }
 
     public function form(Form $form): Form
