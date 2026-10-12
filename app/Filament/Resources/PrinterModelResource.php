@@ -27,6 +27,12 @@ class PrinterModelResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
+    public static function canViewAny(): bool
+    {
+        $user = auth()->user();
+        return (bool) ($user && ($user->isTechnician() || $user->isCashier()));
+    }
+
     public static function form(Form $form): Form
     {
         return $form

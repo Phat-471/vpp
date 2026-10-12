@@ -62,6 +62,7 @@ class AdminPanelProvider extends PanelProvider
                 'Khách hàng',
                 'Tài chính',
                 'Nội dung',
+                'Nhân sự',
                 'Cấu hình',
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')

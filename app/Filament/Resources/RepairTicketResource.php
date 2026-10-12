@@ -45,6 +45,12 @@ class RepairTicketResource extends Resource
         return 'warning';
     }
 
+    public static function canViewAny(): bool
+    {
+        $user = auth()->user();
+        return (bool) ($user && ($user->isTechnician() || $user->isCashier()));
+    }
+
     public static function form(Form $form): Form
     {
         return $form

@@ -13,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class ProductResource extends Resource
@@ -30,6 +31,23 @@ class ProductResource extends Resource
     protected static ?string $pluralModelLabel = 'Danh sách sản phẩm';
 
     protected static ?int $navigationSort = 1;
+
+    public static function canCreate(): bool
+    {
+        $user = auth()->user();
+        return (bool) ($user && ($user->isAdmin() || $user->isCashier()));
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        $user = auth()->user();
+        return (bool) ($user && ($user->isAdmin() || $user->isCashier()));
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
 
     public static function form(Form $form): Form
     {

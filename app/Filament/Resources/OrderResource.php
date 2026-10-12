@@ -44,6 +44,11 @@ class OrderResource extends Resource
         return 'danger';
     }
 
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->isCashier() ?? false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form

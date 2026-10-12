@@ -27,6 +27,11 @@ class FinancialReportPage extends Page
 
     protected static string $view = 'filament.pages.financial-report-page';
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
     public string $period = 'this_month'; // today, yesterday, last_7_days, this_month, last_month, this_quarter, this_year, all, custom
     public ?string $startDate = null;
     public ?string $endDate = null;

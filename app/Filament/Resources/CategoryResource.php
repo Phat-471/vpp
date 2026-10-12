@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class CategoryResource extends Resource
@@ -32,6 +33,23 @@ class CategoryResource extends Resource
     public static function getNavigationBadge(): ?string
     {
         return (string) static::getModel()::count() ?: null;
+    }
+
+    public static function canCreate(): bool
+    {
+        $user = auth()->user();
+        return (bool) ($user && ($user->isAdmin() || $user->isCashier()));
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        $user = auth()->user();
+        return (bool) ($user && ($user->isAdmin() || $user->isCashier()));
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
     }
 
     public static function form(Form $form): Form

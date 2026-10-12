@@ -36,6 +36,11 @@ class WebsiteSettingsPage extends Page implements HasForms
 
     protected static string $view = 'filament.pages.website-settings-page';
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
     public ?array $data = [];
 
     public const VIETNAMESE_BANKS = [
