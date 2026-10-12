@@ -31,7 +31,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7">
                                 </path>
                             </svg>
-                            Tài khoản
+                            Tài khoản chính thức
                         </span>
                     </div>
                     <h1 class="text-xl sm:text-2xl font-black text-white tracking-tight">
@@ -125,7 +125,7 @@
                         class="tab-btn w-full flex items-center justify-between px-4 py-3.5 rounded-2xl font-bold text-xs transition text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900">
                         <div class="flex items-center space-x-3">
                             <span class="text-base">🖨️</span>
-                        <span>Sửa chữa</span>
+                        <span>Phiếu Sửa Chữa Máy In</span>
                         </div>
                         <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-slate-100 text-slate-700">
                             {{ $repairTickets->count() }}
