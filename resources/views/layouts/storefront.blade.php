@@ -481,7 +481,9 @@
     @endif
 
     <!-- 9. LIVE CHAT 24/7 SUPPORT WIDGET -->
-    @include('storefront.components.livechat')
+    <div class="{{ View::hasSection('custom_bottom_bar') ? 'hidden sm:block' : 'block' }}">
+        @include('storefront.components.livechat')
+    </div>
 
     <!-- 10. GLOBAL JAVASCRIPT LOGIC (Shared by all pages) -->
     <script>
