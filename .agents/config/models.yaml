@@ -1,0 +1,18 @@
+# Thay model ID theo tài khoản/provider hiện có.
+# Tên dưới đây là placeholder, không đảm bảo còn khả dụng.
+architect:
+  provider: openai
+  model: REPLACE_WITH_AVAILABLE_MODEL
+  temperature: 0.1
+developer:
+  provider: anthropic
+  model: REPLACE_WITH_AVAILABLE_MODEL
+  temperature: 0.1
+reviewer:
+  provider: google
+  model: REPLACE_WITH_AVAILABLE_MODEL
+  temperature: 0.0
+qa:
+  provider: google
+  model: REPLACE_WITH_AVAILABLE_MODEL
+  temperature: 0.0

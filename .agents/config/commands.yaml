@@ -1,0 +1,10 @@
+# Chỉ các command được khai báo tại đây mới có thể được QA chạy.
+# Command chạy tại thư mục workspace. Chỉnh theo stack dự án của bạn.
+allowed:
+  - ["python", "-m", "pytest", "-q"]
+  - ["npm", "test", "--", "--run"]
+  - ["npm", "run", "lint"]
+  - ["npm", "run", "build"]
+  - ["npx", "playwright", "test"]
+  - ["php", "artisan", "test"]
+timeout_seconds: 180

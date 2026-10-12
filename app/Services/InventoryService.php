@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\PurchaseOrder;
 use App\Models\RepairTicket;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -189,6 +190,78 @@ class InventoryService
             $ticket->update($updateData);
 
             return $ticket->fresh();
+        });
+    }
+
+    /**
+     * Nhận hàng và nhập kho từ phiếu nhập nhà cung cấp (tăng tồn, cập nhật giá vốn, ghi nhận nợ NCC).
+     */
+    public function receivePurchaseOrder(PurchaseOrder $order): PurchaseOrder
+    {
+        return DB::transaction(function () use ($order) {
+            if ($order->isReceived()) {
+                throw new \RuntimeException("Phiếu nhập {$order->code} đã được nhập kho trước đó.");
+            }
+
+            $order->load(['items.product', 'supplier']);
+
+            foreach ($order->items as $item) {
+                if ($item->product_id && $item->product) {
+                    $item->product->addStock((int) $item->quantity);
+                    if ($item->cost_price > 0) {
+                        $item->product->update(['cost_price' => $item->cost_price]);
+                    }
+                }
+            }
+
+            if ($order->debt_amount > 0 && $order->supplier) {
+                $order->supplier->increment('debt_balance', $order->debt_amount);
+            }
+
+            $order->update([
+                'status' => 'received',
+                'received_at' => now(),
+            ]);
+
+            return $order->fresh();
+        });
+    }
+
+    /**
+     * Hủy phiếu nhập kho (nếu đã nhập thì tự động trừ tồn kho và giảm công nợ NCC đã ghi nhận).
+     */
+    public function cancelPurchaseOrder(PurchaseOrder $order, ?string $reason = null): PurchaseOrder
+    {
+        return DB::transaction(function () use ($order, $reason) {
+            if ($order->isCancelled()) {
+                return $order;
+            }
+
+            if ($order->isReceived()) {
+                $order->load(['items.product', 'supplier']);
+
+                foreach ($order->items as $item) {
+                    if ($item->product_id && $item->product) {
+                        $item->product->deductStock((int) $item->quantity);
+                    }
+                }
+
+                if ($order->debt_amount > 0 && $order->supplier) {
+                    $order->supplier->decrement('debt_balance', $order->debt_amount);
+                }
+            }
+
+            $notes = $order->notes;
+            if ($reason) {
+                $notes = $notes ? "{$notes}\n[Lý do hủy: {$reason}]" : "[Lý do hủy: {$reason}]";
+            }
+
+            $order->update([
+                'status' => 'cancelled',
+                'notes' => $notes,
+            ]);
+
+            return $order->fresh();
         });
     }
 }
