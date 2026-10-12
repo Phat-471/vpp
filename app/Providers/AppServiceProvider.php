@@ -43,6 +43,11 @@ class AppServiceProvider extends ServiceProvider
             Limit::perMinute(5)->by(app(StaffLogin::class)->throttleKey((string) $request->input('identifier')).'|'.$request->ip()),
         ]);
 
+        RateLimiter::for('lookup', fn (Request $request) => [
+            Limit::perMinute(30)->by('lookup-ip|'.$request->ip()),
+            Limit::perMinute(5)->by('lookup-code|'.$request->ip().'|'.strtoupper(trim((string) ($request->input('code') ?? $request->route('code'))))),
+        ]);
+
         RateLimiter::for('customer-login', function (Request $request) {
             if (app()->runningUnitTests()) {
                 return Limit::none();

@@ -98,15 +98,23 @@ class OtpService
         // 6. Gửi mã OTP qua Gateway (ZNS hoặc SMS)
         $dispatchResult = $this->dispatchOtp($cleanedPhone, $otpCode, $channel);
 
+        if (!$dispatchResult['success']) {
+            $phoneOtp->update(['is_used' => true]);
+
+            return [
+                'success' => false,
+                'message' => $dispatchResult['message'],
+            ];
+        }
+
         return [
             'success' => true,
-            'message' => "Mã OTP 6 số đã được gửi tới số {$cleanedPhone}.",
-            'phone' => $cleanedPhone,
+            'message' => 'Mã xác thực đã được gửi.',
             'phone_masked' => AppHelper::maskPhone($cleanedPhone),
             'expires_in' => self::EXPIRE_MINUTES * 60,
             'cooldown_seconds' => self::RESEND_COOLDOWN_SECONDS,
             'channel' => $channel,
-            'dev_otp' => $dispatchResult['is_mock'] ? $otpCode : null, // Chỉ trả về khi đang chạy mock/chưa cấu hình API
+            'dev_otp' => !empty($dispatchResult['is_mock']) && app()->environment(['local', 'testing']) ? $otpCode : null,
         ];
     }
 
@@ -210,13 +218,13 @@ class OtpService
                 ]);
 
                 if ($response->successful() && $response->json('error') === 0) {
-                    Log::info("Đã gửi ZNS OTP thành công cho {$phone}");
+                    Log::info('ZNS OTP sent', ['phone_masked' => AppHelper::maskPhone($phone)]);
                     return ['success' => true, 'is_mock' => false];
                 }
 
-                Log::warning("Gửi ZNS thất bại cho {$phone}: " . $response->body());
+                Log::warning('ZNS OTP delivery failed', ['status' => $response->status()]);
             } catch (\Throwable $e) {
-                Log::error("Lỗi kết nối Zalo ZNS API: " . $e->getMessage());
+                Log::error('ZNS OTP delivery error', ['exception' => $e::class]);
             }
         }
 
@@ -231,19 +239,23 @@ class OtpService
                 ]);
 
                 if ($smsResponse->successful()) {
-                    Log::info("Đã gửi SMS OTP thành công cho {$phone}");
+                    Log::info('SMS OTP sent', ['phone_masked' => AppHelper::maskPhone($phone)]);
                     return ['success' => true, 'is_mock' => false];
                 }
             } catch (\Throwable $e) {
-                Log::error("Lỗi kết nối SMS Gateway: " . $e->getMessage());
+                Log::error('SMS OTP delivery error', ['exception' => $e::class]);
             }
         }
 
-        // Kênh 3: Dự phòng / Môi trường chưa cắm token ZNS thật
-        Log::info("[OTP THỬ NGHIỆM] Số: {$phone} | Kênh: {$channel} | Mã OTP: {$otpCode} | Hạn: " . self::EXPIRE_MINUTES . " phút");
+        if (app()->environment(['local', 'testing'])) {
+            return ['success' => true, 'is_mock' => true];
+        }
+
+        Log::warning('OTP delivery unavailable', ['channel' => $channel]);
+
         return [
-            'success' => true,
-            'is_mock' => true,
+            'success' => false,
+            'message' => 'Không gửi được mã xác thực. Vui lòng thử lại sau hoặc liên hệ cửa hàng.',
         ];
     }
 }

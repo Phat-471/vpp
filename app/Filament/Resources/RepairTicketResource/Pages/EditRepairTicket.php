@@ -28,13 +28,6 @@ class EditRepairTicket extends EditRecord
                 ->url(fn (RepairTicket $record) => route('print.repair-ticket-sticker', $record->id))
                 ->openUrlInNewTab(),
 
-            Actions\DeleteAction::make()
-                ->label('Xóa phiếu')
-                ->icon('heroicon-m-trash')
-                ->modalHeading('Xác nhận xóa phiếu sửa chữa')
-                ->modalDescription(fn (RepairTicket $record) => "Bạn có chắc chắn muốn xóa phiếu sửa chữa '{$record->ticket_code}' của khách {$record->customer_name}? Hành động này không thể hoàn tác.")
-                ->modalSubmitActionLabel('Xác nhận xóa')
-                ->modalCancelActionLabel('Hủy bỏ'),
         ];
     }
 

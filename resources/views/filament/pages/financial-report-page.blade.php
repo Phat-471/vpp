@@ -16,6 +16,7 @@
             border: 1px solid rgba(99, 102, 241, 0.2);
         }
         .report-pill-btn {
+            min-height: 44px;
             padding: 0.4rem 0.85rem;
             border-radius: 0.75rem;
             font-size: 0.75rem;
@@ -51,6 +52,11 @@
         }
         @media (max-width: 640px) {
             .report-grid-4 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+        @media (max-width: 380px) {
+            .report-grid-4 {
                 grid-template-columns: 1fr;
             }
         }
@@ -74,6 +80,7 @@
         .report-tab-nav {
             display: flex;
             align-items: center;
+            overflow-x: auto;
             gap: 0.5rem;
             border-bottom: 2px solid #e2e8f0;
             margin-bottom: 1.5rem;
@@ -82,6 +89,7 @@
             border-color: #1e293b;
         }
         .report-tab-item {
+            min-height: 44px;
             padding: 0.75rem 1.25rem;
             font-size: 0.875rem;
             font-weight: 700;
@@ -90,6 +98,7 @@
             margin-bottom: -2px;
             transition: all 0.2s ease;
             color: #64748b;
+            flex: 0 0 auto;
         }
         .report-tab-item.active {
             color: #4f46e5;
@@ -143,7 +152,7 @@
             <div class="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4">
                 <div class="flex items-center space-x-3.5">
                     <div style="background: rgba(99, 102, 241, 0.25); border: 1px solid rgba(165, 180, 252, 0.3);" class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shrink-0 shadow-inner">
-                        📊
+                        <x-heroicon-o-chart-bar class="w-5 h-5" aria-hidden="true" />
                     </div>
                     <div>
                         <div class="flex items-center space-x-2">
@@ -492,12 +501,12 @@
                         <h4 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Tỷ trọng Kênh Bán Hàng:</h4>
                         <div class="grid grid-cols-2 gap-2 text-xs">
                             <div class="p-2.5 rounded-xl bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/40">
-                                <div class="text-[11px] text-indigo-700 dark:text-indigo-400 font-semibold">⚡ Bán tại quầy (POS)</div>
+                                <div class="text-[11px] text-indigo-700 dark:text-indigo-400 font-semibold">Bán tại quầy (POS)</div>
                                 <div class="text-sm font-extrabold text-slate-900 dark:text-white mt-0.5">{{ number_format($data['pos_revenue'], 0, ',', '.') }} ₫</div>
                                 <div class="text-[10px] text-slate-500">{{ $data['pos_orders'] }} đơn</div>
                             </div>
                             <div class="p-2.5 rounded-xl bg-sky-50/50 dark:bg-sky-950/20 border border-sky-100 dark:border-sky-900/40">
-                                <div class="text-[11px] text-sky-700 dark:text-sky-400 font-semibold">🌐 Online / Website</div>
+                                <div class="text-[11px] text-sky-700 dark:text-sky-400 font-semibold">Website</div>
                                 <div class="text-sm font-extrabold text-slate-900 dark:text-white mt-0.5">{{ number_format($data['online_revenue'], 0, ',', '.') }} ₫</div>
                                 <div class="text-[10px] text-slate-500">{{ $data['online_orders'] }} đơn</div>
                             </div>
@@ -611,12 +620,12 @@
                                             @if($ord->is_vat_invoice)
                                                 <a href="{{ url('/print/vat-invoice/' . $ord->id) }}" target="_blank"
                                                     class="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:text-rose-300 rounded-lg transition">
-                                                    📄 Hóa đơn VAT
+                                                    Hóa đơn VAT
                                                 </a>
                                             @endif
                                             <a href="{{ url('/print/order/' . $ord->id) }}" target="_blank"
                                                 class="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/40 dark:text-indigo-300 rounded-lg transition">
-                                                🧾 Bill A5
+                                                Hóa đơn A5
                                             </a>
                                         </div>
                                     </td>
@@ -642,7 +651,7 @@
                 <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
                     <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                         <div class="flex items-center space-x-3">
-                            <span class="text-3xl">📦</span>
+                            <x-heroicon-o-cube class="w-7 h-7" aria-hidden="true" />
                             <div>
                                 <h3 class="font-extrabold text-slate-900 dark:text-white text-base">Phân Hệ Bán Hàng VPP & Thiết Bị</h3>
                                 <p class="text-xs text-slate-500">Giấy in, bút mực, thiết bị văn phòng, máy in mới</p>
@@ -685,7 +694,7 @@
                 <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
                     <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                         <div class="flex items-center space-x-3">
-                            <span class="text-3xl">🔧</span>
+                            <x-heroicon-o-wrench-screwdriver class="w-7 h-7" aria-hidden="true" />
                             <div>
                                 <h3 class="font-extrabold text-slate-900 dark:text-white text-base">Phân Hệ Dịch Vụ Sửa Chữa Máy In</h3>
                                 <p class="text-xs text-slate-500">Công kỹ thuật, nạp mực, thay trống, gạt, linh kiện</p>

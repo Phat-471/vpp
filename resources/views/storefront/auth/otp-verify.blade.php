@@ -1,25 +1,25 @@
 @extends('layouts.storefront')
 
-@section('title', 'Xác Thực Tài Khoản Qua Zalo | VPP & Dịch Vụ Máy In')
-@section('meta_description', 'Xác thực tài khoản khách hàng chính chủ qua Zalo nhanh chóng, tiện lợi và hoàn toàn miễn phí.')
+@section('title', ($action === 'register' ? 'Hoàn tất đăng ký' : 'Xác minh số điện thoại') . ' | VPP & Dịch Vụ Máy In')
+@section('meta_description', 'Nhập mã xác thực để tiếp tục.')
 
 @section('content')
 <div class="min-h-[80vh] flex items-center justify-center py-8 px-4 sm:px-6">
     <div class="w-full max-w-lg bg-white rounded-3xl border border-slate-200/80 shadow-2xl p-6 sm:p-8 space-y-6">
 
-        <!-- Top Header Brand & Icon -->
+        <!-- Header -->
         <div class="text-center space-y-2">
             <div class="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100 text-[#0068ff] flex items-center justify-center text-3xl mx-auto shadow-xs font-black">
-                💬
+                <x-heroicon-o-device-phone-mobile class="w-7 h-7" aria-hidden="true" />
             </div>
             <span class="inline-block px-3 py-0.5 rounded-full bg-blue-50 text-[#0068ff] text-[11px] font-black uppercase tracking-wider border border-blue-200/50">
-                XÁC THỰC ZALO CHÍNH CHỦ • 0 ĐỒNG
+                XÁC MINH SỐ ĐIỆN THOẠI
             </span>
             <h1 class="text-xl sm:text-2xl font-black text-slate-900">
-                Kích Hoạt Tài Khoản Qua Zalo
+                {{ $action === 'register' ? 'Hoàn tất đăng ký' : 'Xác minh tài khoản' }}
             </h1>
             <p class="text-xs text-slate-500 leading-relaxed max-w-sm mx-auto">
-                Để bảo vệ quyền lợi mua hàng và xác minh số điện thoại chính chủ
+                Mã xác thực sẽ gửi đến
                 <strong class="font-mono text-slate-900 font-bold text-sm block mt-0.5">{{ $maskedPhone }}</strong>
             </p>
         </div>
@@ -38,63 +38,19 @@
             </div>
         @endif
 
-        <!-- KHỐI HÀNH ĐỘNG XÁC THỰC ZALO 1 CHẠM (0 ĐỒNG TRỌN ĐỜI) -->
-        <div class="p-5 rounded-2xl bg-gradient-to-br from-blue-50 via-indigo-50/40 to-slate-50 border-2 border-blue-200 space-y-4">
-            
-            <div class="flex items-center justify-between">
-                <div class="space-y-0.5">
-                    <span class="text-[11px] font-extrabold uppercase tracking-wide text-blue-900 block">
-                        MÃ XÁC THỰC CỦA BẠN:
-                    </span>
-                    <span class="text-[11px] text-slate-500">Dùng mã này để xác thực qua Zalo của Shop</span>
-                </div>
-                
-                <div class="flex items-center space-x-2">
-                    <span id="display-otp-code" class="text-2xl sm:text-3xl font-mono font-black text-blue-700 tracking-wider bg-white px-3 py-1 rounded-xl border border-blue-300 shadow-xs">
-                        {{ $otpCode ?? '123456' }}
-                    </span>
-                    <button type="button" onclick="copyOtpCode()" title="Sao chép mã" class="p-2 bg-white hover:bg-blue-100 text-blue-600 rounded-xl border border-blue-200 transition text-xs font-bold shadow-xs">
-                        📋
-                    </button>
-                </div>
-            </div>
-
-            <!-- Hướng dẫn 2 bước -->
-            <div class="text-[11px] text-slate-600 space-y-1.5 bg-white/80 p-3 rounded-xl border border-blue-100">
-                <div class="flex items-start space-x-2">
-                    <span class="w-4 h-4 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">1</span>
-                    <span>Bấm nút <strong>"Mở Zalo Xác Thực"</strong> bên dưới để gửi tin nhắn cho Cửa hàng.</span>
-                </div>
-                <div class="flex items-start space-x-2">
-                    <span class="w-4 h-4 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">2</span>
-                    <span>Nhập mã <strong>{{ $otpCode ?? '123456' }}</strong> vào 6 ô bên dưới và bấm nút Kích hoạt.</span>
-                </div>
-            </div>
-
-            <!-- Nút Mở Zalo 1 Chạm -->
-            <div class="space-y-2">
-                <a href="{{ $zaloUrl ?? 'https://zalo.me/0974194305' }}" target="_blank" onclick="onOpenZaloClick()"
-                   class="w-full py-3.5 px-4 bg-[#0068ff] hover:bg-[#0052cc] text-white font-black text-xs sm:text-sm rounded-xl shadow-md shadow-blue-500/25 transition flex items-center justify-center space-x-2 active:scale-98">
-                    <span>💬 BẤM ĐỂ MỞ ZALO XÁC THỰC NGAY</span>
-                    <span>→</span>
-                </a>
-
-                <button type="button" onclick="autoFillOtp()"
-                        class="w-full py-2 px-3 bg-white hover:bg-slate-100 text-indigo-700 text-[11px] font-bold rounded-xl border border-slate-300 transition flex items-center justify-center space-x-1.5">
-                    <span>⚡ Bấm vào đây để tự điền mã [ {{ $otpCode ?? '123456' }} ]</span>
+        <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+            <p class="text-sm text-slate-700">Gửi mã một lần để tiếp tục xác minh.</p>
+            <button type="button" id="btnSendOtp" onclick="requestOtp()"
+                class="w-full min-h-[44px] px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl transition">
+                Gửi mã xác thực
+            </button>
+            <p id="otp-send-status" class="text-xs text-slate-600" role="status" aria-live="polite">Số nhận mã: {{ $maskedPhone }}</p>
+            @if(app()->environment(['local', 'testing']))
+                <p id="dev-otp-notice" class="hidden text-xs font-mono font-bold text-amber-800" role="status"></p>
+                <button type="button" id="btnFillDevOtp" onclick="autoFillOtp()" class="hidden w-full min-h-[44px] px-4 bg-white text-slate-700 border border-slate-300 font-semibold text-xs rounded-xl">
+                    Điền mã thử nghiệm
                 </button>
-            </div>
-
-            <!-- Quét mã QR nếu dùng máy tính -->
-            <div class="pt-2 border-t border-blue-200/60 flex items-center justify-center space-x-3 text-center">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ urlencode($zaloUrl ?? 'https://zalo.me/0974194305') }}"
-                     alt="QR Zalo Hotline" class="w-16 h-16 rounded-xl border border-slate-300 bg-white p-1" />
-                <div class="text-left text-[11px] text-slate-500 max-w-[240px]">
-                    <strong class="text-slate-800 block">Nếu dùng máy tính:</strong>
-                    Mở Zalo trên điện thoại quét mã QR bên cạnh để mở chat với Shop.
-                </div>
-            </div>
-
+            @endif
         </div>
 
         <!-- Error Alert (Client-side / AJAX) -->
@@ -125,7 +81,7 @@
             <!-- Nút bấm Xác Thực -->
             <button type="submit" id="btnVerify"
                     class="w-full py-3.5 px-5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white text-xs sm:text-sm font-black rounded-2xl shadow-md shadow-indigo-600/20 transition-all flex items-center justify-center space-x-2 active:scale-[0.98]">
-                <span>XÁC NHẬN & KÍCH HOẠT TÀI KHOẢN</span>
+                <span>{{ $action === 'register' ? 'XÁC NHẬN ĐĂNG KÝ' : 'XÁC NHẬN SỐ ĐIỆN THOẠI' }}</span>
                 <span>→</span>
             </button>
         </form>
@@ -149,7 +105,69 @@
     const digits = document.querySelectorAll('.otp-digit');
     const errAlert = document.getElementById('otp-error-alert');
     const btnVerify = document.getElementById('btnVerify');
-    const defaultOtp = "{{ $otpCode ?? '' }}";
+    let defaultOtp = '';
+    const sendStatus = document.getElementById('otp-send-status');
+    const sendButton = document.getElementById('btnSendOtp');
+    const devOtpNotice = document.getElementById('dev-otp-notice');
+    const fillDevOtpButton = document.getElementById('btnFillDevOtp');
+
+    async function requestOtp() {
+        sendButton.disabled = true;
+        sendStatus.textContent = 'Đang gửi mã…';
+
+        try {
+            const response = await fetch("{{ route('otp.send') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                },
+                body: JSON.stringify({ phone, channel: 'zns', action: @json($action) }),
+            });
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                const error = new Error(data.message || 'Không gửi được mã. Vui lòng thử lại.');
+                error.waitSeconds = data.wait_seconds || 0;
+                throw error;
+            }
+
+            sendStatus.textContent = data.message || 'Mã xác thực đã được gửi.';
+            if (data.dev_otp && devOtpNotice && fillDevOtpButton) {
+                defaultOtp = String(data.dev_otp);
+                devOtpNotice.textContent = `Mã thử nghiệm: ${defaultOtp}`;
+                devOtpNotice.classList.remove('hidden');
+                fillDevOtpButton.classList.remove('hidden');
+            }
+
+            startSendCooldown(data.cooldown_seconds || 60);
+        } catch (error) {
+            sendStatus.textContent = error.message;
+            if (error.waitSeconds) {
+                startSendCooldown(error.waitSeconds);
+            } else {
+                sendButton.disabled = false;
+                sendButton.textContent = 'Gửi mã xác thực';
+            }
+        }
+    }
+
+    function startSendCooldown(seconds) {
+        let remaining = Math.max(1, Number(seconds) || 60);
+        sendButton.disabled = true;
+        sendButton.textContent = `Gửi lại sau ${remaining}s`;
+        const timer = setInterval(() => {
+            remaining--;
+            if (remaining <= 0) {
+                clearInterval(timer);
+                sendButton.disabled = false;
+                sendButton.textContent = 'Gửi lại mã';
+                return;
+            }
+            sendButton.textContent = `Gửi lại sau ${remaining}s`;
+        }, 1000);
+    }
 
     // Tự động focus ô đầu tiên
     if (digits.length > 0) {
@@ -164,24 +182,6 @@
             if (chars[i]) d.value = chars[i];
         });
         checkAutoSubmit();
-    }
-
-    // Sao chép mã
-    function copyOtpCode() {
-        const code = document.getElementById('display-otp-code')?.textContent?.trim() || defaultOtp;
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(code).then(() => {
-                alert('Đã sao chép mã xác thực: ' + code);
-            });
-        }
-    }
-
-    // Khi bấm mở Zalo
-    function onOpenZaloClick() {
-        const code = document.getElementById('display-otp-code')?.textContent?.trim() || defaultOtp;
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText('Xác thực tài khoản VPP: ' + code);
-        }
     }
 
     // Xử lý chuyển ô tự động & Paste cả chuỗi 6 số
@@ -242,7 +242,7 @@
 
         hideError();
         btnVerify.disabled = true;
-        btnVerify.innerHTML = '<span class="inline-block animate-spin mr-2">⏳</span> Đang kích hoạt tài khoản...';
+        btnVerify.innerHTML = '<span class="inline-block animate-spin mr-2">⏳</span> Đang xác minh...';
 
         try {
             const res = await fetch("{{ route('otp.verify') }}", {
@@ -255,7 +255,7 @@
                 body: JSON.stringify({
                     phone: phone,
                     otp: otpCode,
-                    action: 'verify',
+                    action: @json($action),
                 }),
             });
 
@@ -267,7 +267,7 @@
 
             btnVerify.classList.remove('from-indigo-600', 'to-indigo-700');
             btnVerify.classList.add('from-emerald-600', 'to-emerald-700');
-            btnVerify.innerHTML = '<span>✓ Kích hoạt thành công! Đang chuyển hướng...</span>';
+            btnVerify.innerHTML = '<span>✓ Thành công. Đang chuyển hướng...</span>';
 
             setTimeout(() => {
                 window.location.href = data.redirect_url || "{{ route('customer.profile') }}";

@@ -58,14 +58,16 @@ Route::post('/api/otp/send', [\App\Http\Controllers\OtpController::class, 'sendO
 Route::post('/api/otp/verify', [\App\Http\Controllers\OtpController::class, 'verifyOtp'])->middleware('throttle:15,1')->name('otp.verify');
 
 // 3.2. Dự phòng: Quét QR Zalo
-Route::get('/xac-thuc-zalo/{token}', [ZaloAuthController::class, 'showVerificationPage'])->name('zalo.verify.page');
-Route::prefix('zalo-auth')->name('zalo.verify.')->group(function () {
-    Route::post('/init', [ZaloAuthController::class, 'init'])->name('init');
-    Route::get('/check/{token}', [ZaloAuthController::class, 'check'])->name('check');
-    Route::get('/prompt/{token}', [ZaloAuthController::class, 'prompt'])->name('prompt');
-    Route::post('/confirm', [ZaloAuthController::class, 'confirm'])->name('confirm');
-    Route::post('/mock-confirm', [ZaloAuthController::class, 'mockConfirm'])->name('mock-confirm');
-});
+if (app()->environment(['local', 'testing'])) {
+    Route::get('/xac-thuc-zalo/{token}', [ZaloAuthController::class, 'showVerificationPage'])->name('zalo.verify.page');
+    Route::prefix('zalo-auth')->name('zalo.verify.')->group(function () {
+        Route::post('/init', [ZaloAuthController::class, 'init'])->name('init');
+        Route::get('/check/{token}', [ZaloAuthController::class, 'check'])->name('check');
+        Route::get('/prompt/{token}', [ZaloAuthController::class, 'prompt'])->name('prompt');
+        Route::post('/confirm', [ZaloAuthController::class, 'confirm'])->name('confirm');
+        Route::post('/mock-confirm', [ZaloAuthController::class, 'mockConfirm'])->name('mock-confirm');
+    });
+}
 
 // 4. Giới thiệu & Chính sách dịch vụ & Trang CMS động
 Route::get('/trang/{slug}', [StorefrontController::class, 'dynamicPage'])->name('storefront.page');
@@ -82,9 +84,9 @@ Route::post('/api/chat/read', [LiveChatController::class, 'read'])->middleware('
 
 // 6. Tra cứu tiến độ đơn hàng & sửa máy in (Mã phiếu/đơn + 4 số cuối SĐT)
 Route::get('/tra-cuu', [LookupController::class, 'index'])->name('lookup.index');
-Route::post('/tra-cuu', [LookupController::class, 'search'])->name('lookup.search');
-Route::get('/tra-cuu/don-hang/{code}', [LookupController::class, 'orderView'])->name('lookup.order');
-Route::get('/tra-cuu/{code}', [LookupController::class, 'view'])->name('lookup.view');
+Route::post('/tra-cuu', [LookupController::class, 'search'])->middleware('throttle:lookup')->name('lookup.search');
+Route::get('/tra-cuu/don-hang/{code}', [LookupController::class, 'orderView'])->middleware('throttle:lookup')->name('lookup.order');
+Route::get('/tra-cuu/{code}', [LookupController::class, 'view'])->middleware('throttle:lookup')->name('lookup.view');
 
 // 7. In ấn chuẩn A4 / A5 máy in văn phòng & Tem dán máy in
 Route::get('/print/repair-ticket/{id}', [PrintController::class, 'repairTicket'])->name('print.repair-ticket');

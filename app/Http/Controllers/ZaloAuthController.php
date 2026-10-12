@@ -20,6 +20,8 @@ class ZaloAuthController extends Controller
      */
     public function init(Request $request): JsonResponse
     {
+        $this->ensureSandboxEnabled();
+
         $verification = $this->zaloAuthService->createSession(
             $request->ip(),
             $request->userAgent()
@@ -38,6 +40,8 @@ class ZaloAuthController extends Controller
      */
     public function check(Request $request, string $token): JsonResponse
     {
+        $this->ensureSandboxEnabled();
+
         $status = $this->zaloAuthService->checkStatus($token);
 
         // Nếu đã được xác thực, tự động đăng nhập session trên máy tính
@@ -60,6 +64,8 @@ class ZaloAuthController extends Controller
      */
     public function showVerificationPage(Request $request, string $token): View
     {
+        $this->ensureSandboxEnabled();
+
         $verification = ZaloVerification::with('customer')->where('token', $token)->firstOrFail();
         $qrData = $this->zaloAuthService->getSessionQrData($verification);
 
@@ -75,6 +81,8 @@ class ZaloAuthController extends Controller
      */
     public function prompt(Request $request, string $token): View
     {
+        $this->ensureSandboxEnabled();
+
         $verification = ZaloVerification::where('token', $token)->firstOrFail();
 
         return view('storefront.auth.zalo-prompt', [
@@ -89,6 +97,8 @@ class ZaloAuthController extends Controller
      */
     public function confirm(Request $request): JsonResponse
     {
+        $this->ensureSandboxEnabled();
+
         $request->validate([
             'token' => 'required|string',
             'name' => 'required|string|max:100',
@@ -127,6 +137,8 @@ class ZaloAuthController extends Controller
      */
     public function mockConfirm(Request $request): JsonResponse
     {
+        $this->ensureSandboxEnabled();
+
         $request->validate([
             'token' => 'required|string',
         ]);
@@ -165,5 +177,10 @@ class ZaloAuthController extends Controller
                 'customer_phone' => AppHelper::maskPhone($result['customer']->phone),
             ],
         ]);
+    }
+
+    private function ensureSandboxEnabled(): void
+    {
+        abort_unless(app()->environment(['local', 'testing']), 404);
     }
 }

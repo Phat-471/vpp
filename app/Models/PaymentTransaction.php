@@ -52,11 +52,16 @@ class PaymentTransaction extends Model
         return \Illuminate\Support\Facades\DB::transaction(function () {
             $code = strtoupper(trim($this->reference_code));
 
-            // 1. Try matching Repair Ticket
-            $ticket = RepairTicket::where('ticket_code', $code)->first();
+            $ticket = RepairTicket::where('ticket_code', $code)->lockForUpdate()->first();
             if ($ticket) {
+                if ($ticket->status === 'cancelled') {
+                    $this->status = 'unmatched';
+                    $this->save();
+                    return false;
+                }
                 $this->repair_ticket_id = $ticket->id;
-                $ticket->paid_amount = (float) $ticket->paid_amount + (float) $this->amount;
+                $ticket->increment('paid_amount', $this->amount);
+                $ticket->refresh();
                 $ticket->recalculateTotals();
 
                 $this->status = 'processed';
@@ -64,11 +69,16 @@ class PaymentTransaction extends Model
                 return true;
             }
 
-            // 2. Try matching Order
-            $order = Order::where('order_code', $code)->first();
+            $order = Order::where('order_code', $code)->lockForUpdate()->first();
             if ($order) {
+                if ($order->status === 'cancelled') {
+                    $this->status = 'unmatched';
+                    $this->save();
+                    return false;
+                }
                 $this->order_id = $order->id;
-                $order->paid_amount = (float) $order->paid_amount + (float) $this->amount;
+                $order->increment('paid_amount', $this->amount);
+                $order->refresh();
                 $order->recalculateTotals();
 
                 // If fully paid and order was pending, advance to processing

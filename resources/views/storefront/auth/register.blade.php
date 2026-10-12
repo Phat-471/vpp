@@ -1,7 +1,7 @@
 @extends('layouts.storefront')
 
 @section('title', 'Đăng Ký Tài Khoản Khách Hàng | ' . ($storefrontSettings['site_name'] ?? 'VPP & Dịch Vụ Máy In'))
-@section('meta_description', 'Tạo tài khoản mua sắm văn phòng phẩm và theo dõi dịch vụ máy in nhanh chóng chỉ trong 10 giây.')
+@section('meta_description', 'Tạo tài khoản để mua văn phòng phẩm và theo dõi dịch vụ máy in.')
 
 @section('content')
 <div class="max-w-lg mx-auto px-4 py-8 sm:py-12 space-y-6">
@@ -13,7 +13,7 @@
         </div>
         <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Đăng Ký Tài Khoản</h1>
         <p class="text-xs sm:text-sm text-slate-500 max-w-sm mx-auto leading-relaxed">
-            Đăng ký nhanh chỉ 10 giây để lưu địa chỉ giao hàng, nhận ưu đãi giá sỉ.
+            Tạo tài khoản để lưu địa chỉ giao hàng và theo dõi đơn.
         </p>
     </div>
 
@@ -54,7 +54,7 @@
             <!-- Họ và tên -->
             <div>
                 <label for="regName" class="block text-xs font-bold text-slate-700 mb-1">
-                    Họ và tên của bạn <span class="text-rose-500">*</span>
+                    Họ và tên <span class="text-rose-500">*</span>
                 </label>
                 <input type="text" id="regName" name="name" required minlength="2" maxlength="100"
                     value="{{ old('name') }}" placeholder="VD: Nguyễn Văn An"
@@ -134,7 +134,7 @@
             <!-- Nút bấm Đăng Ký -->
             <button type="submit" id="btnRegisterSubmit"
                 class="w-full py-3.5 px-4 bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 text-white font-black text-xs sm:text-sm rounded-xl shadow-md shadow-indigo-500/20 transition flex items-center justify-center space-x-2 active:scale-98">
-                <span>HOÀN TẤT ĐĂNG KÝ TÀI KHOẢN</span>
+            <span>Tiếp tục xác minh</span>
                 <span>→</span>
             </button>
         </form>
@@ -148,7 +148,7 @@
 
     <!-- Cam kết an toàn thông tin -->
     <div class="text-center text-[11px] text-slate-400 space-y-1">
-        <p>🔒 Thông tin của Quý khách được mã hóa và bảo mật theo chuẩn an toàn.</p>
+        <p>Không chia sẻ mật khẩu hoặc mã xác minh với người khác.</p>
         <p>Hotline hỗ trợ: <a href="{{ $storefrontSettings['hotline_url'] ?? 'tel:0974194305' }}" class="font-bold text-slate-600 underline">{{ $storefrontSettings['hotline'] ?? '0974.194.305' }}</a></p>
     </div>
 

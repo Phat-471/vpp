@@ -20,7 +20,7 @@
             </div>
             @if($record->notes)
                 <div class="sm:col-span-2 text-slate-600 dark:text-slate-300 italic pt-1 border-t border-slate-200 dark:border-slate-700">
-                    💡 Lưu ý kỹ thuật: {{ $record->notes }}
+                    Lưu ý kỹ thuật: {{ $record->notes }}
                 </div>
             @endif
         </div>
@@ -71,7 +71,7 @@
             </div>
         @else
             <div class="p-6 text-center rounded-xl border border-dashed border-slate-300 dark:border-slate-700 text-xs text-slate-500">
-                <span class="text-2xl block mb-1">📦</span>
+                <x-heroicon-o-cube class="w-7 h-7 mx-auto mb-2 text-slate-400" aria-hidden="true" />
                 Chưa có linh kiện hoặc hộp mực nào trong kho được liên kết với máy in này.
                 <p class="text-[11px] text-slate-400 mt-1">Vào trang "Chỉnh sửa" dòng máy in để gắn thêm sản phẩm tương thích.</p>
             </div>

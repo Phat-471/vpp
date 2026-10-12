@@ -22,12 +22,6 @@ class EditProduct extends EditRecord
                 ->url(fn () => route('storefront.product-detail', $this->record->slug))
                 ->openUrlInNewTab(),
 
-            Actions\DeleteAction::make()
-                ->label('Xóa sản phẩm')
-                ->modalHeading('Xóa sản phẩm này?')
-                ->modalDescription('Bạn có chắc chắn muốn xóa sản phẩm này khỏi cơ sở dữ liệu? Hành động này không thể hoàn tác.')
-                ->modalSubmitActionLabel('Đồng ý xóa')
-                ->modalCancelActionLabel('Hủy bỏ'),
         ];
     }
 }

@@ -135,7 +135,7 @@ class WebsiteSettingsPage extends Page implements HasForms
                                         Textarea::make('notice_bar_text')
                                             ->label('Nội dung thông báo nổi')
                                             ->rows(2)
-                                            ->placeholder('VD: 🎉 Khuyến mãi đầu tháng: Miễn phí vận chuyển cho đơn từ 500.000đ nội thành | Nhận nạp mực máy in tận nơi siêu tốc trong 30 phút!'),
+                                            ->placeholder('VD: Khuyến mãi đầu tháng, ưu đãi vận chuyển hoặc dịch vụ nạp mực.'),
                                     ]),
 
                                 Section::make('Mẫu Giao Diện Trang Chủ (Homepage Template)')

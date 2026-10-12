@@ -518,6 +518,8 @@ class StorefrontController extends Controller
                 'grand_total' => $grandTotal,
             ]);
 
+            session()->put('verified_order_' . $order->uuid, true);
+
             DB::commit();
 
             $vietQrUrl = null;
@@ -573,15 +575,17 @@ class StorefrontController extends Controller
             ], 404);
         }
 
+        $isOwner = auth('customer')->check() && auth('customer')->id() === $order->customer_id;
+        $hasVerifiedSession = session()->get('verified_order_' . $order->uuid) === true;
+        if (!$isOwner && !$hasVerifiedSession) {
+            return response()->json(['success' => false, 'message' => 'Không có quyền xem trạng thái đơn hàng.'], 403);
+        }
+
         $isPaid = $order->payment_status === 'paid' || ($order->paid_amount >= $order->grand_total && $order->grand_total > 0);
 
         return response()->json([
             'success' => true,
-            'order_code' => $order->order_code,
             'payment_status' => $order->payment_status,
-            'payment_method' => $order->payment_method,
-            'paid_amount' => (float) $order->paid_amount,
-            'grand_total' => (float) $order->grand_total,
             'is_paid' => $isPaid,
         ]);
     }
@@ -669,36 +673,21 @@ class StorefrontController extends Controller
         ]);
 
         $customer = Customer::where('phone', $cleanedPhone)->first();
-        if ($customer && !empty($customer->password) && $customer->phone_verified_at) {
-            return back()->withInput()->with('error', 'Số điện thoại này đã được đăng ký và xác thực. Vui lòng đăng nhập!');
+        if ($customer && !empty($customer->password)) {
+            return back()->withInput()->with('error', 'Số điện thoại này đã có tài khoản. Vui lòng đăng nhập hoặc khôi phục mật khẩu.');
         }
 
-        if ($customer) {
-            $customer->update([
-                'name' => trim($request->name),
-                'email' => $request->email ? trim($request->email) : $customer->email,
-                'address' => $request->address ? trim($request->address) : $customer->address,
-                'password' => $request->password,
-                'phone_verified_at' => $customer->phone_verified_at ?? now(),
-            ]);
-        } else {
-            $customer = Customer::create([
-                'name' => trim($request->name),
-                'phone' => $cleanedPhone,
-                'phone_last4' => substr($cleanedPhone, -4),
-                'email' => $request->email ? trim($request->email) : null,
-                'address' => $request->address ? trim($request->address) : null,
-                'password' => $request->password,
-                'phone_verified_at' => now(),
-            ]);
-        }
+        $request->session()->put('pending_customer_registration', [
+            'name' => trim($request->name),
+            'phone' => $cleanedPhone,
+            'email' => $request->email ? trim($request->email) : null,
+            'address' => $request->address ? trim($request->address) : null,
+            'password_hash' => Hash::make($request->password),
+        ]);
+        $request->session()->put('otp_phone', $cleanedPhone);
 
-        // Đăng nhập trực tiếp và đưa vào trang tài khoản
-        auth('customer')->login($customer, true);
-        $request->session()->regenerate();
-
-        return redirect()->route('customer.profile')
-            ->with('success', 'Đăng ký tài khoản thành công! Chào mừng ' . $customer->name . ' đến với hệ thống.');
+        return redirect()->route('otp.verify.page')
+            ->with('success', 'Thông tin đã lưu tạm. Xác minh số điện thoại để hoàn tất đăng ký.');
     }
 
     public function loginForm()

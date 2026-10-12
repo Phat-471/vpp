@@ -3,7 +3,7 @@
     <div style="background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%); color: #ffffff;" class="mb-4 p-4 rounded-2xl shadow-lg border border-indigo-800/40 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
         <div class="flex items-center space-x-3">
             <div style="background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(129, 140, 248, 0.3);" class="w-11 h-11 rounded-xl flex items-center justify-center text-2xl shrink-0 shadow-inner">
-                💬
+                <x-heroicon-o-chat-bubble-left-right class="w-5 h-5" aria-hidden="true" />
             </div>
             <div>
                 <div class="flex items-center space-x-2">
@@ -31,11 +31,12 @@
                 <b style="color: #a7f3d0;" class="font-black">{{ $this->activeCount }}</b>
             </div>
             <button type="button" id="admin-audio-toggle" onclick="toggleAdminChatSound()" style="background: rgba(255, 255, 255, 0.12); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25);" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition hover:opacity-90 cursor-pointer" title="Bật/Tắt chuông báo tin nhắn mới">
-                <span id="admin-audio-icon">🔔</span>
+                <span id="admin-audio-icon">Âm thanh</span>
                 <span id="admin-audio-text">Chuông: Bật</span>
             </button>
             <a href="{{ route('storefront.index') }}" target="_blank" style="background: rgba(255, 255, 255, 0.12); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25);" class="inline-flex items-center space-x-1 px-3 py-1.5 rounded-xl text-xs font-bold transition hover:opacity-90">
-                <span>🌐 Xem Cửa Hàng</span>
+                <x-heroicon-o-globe-alt class="w-4 h-4" aria-hidden="true" />
+                <span>Xem cửa hàng</span>
                 <span>↗</span>
             </a>
         </div>
@@ -47,13 +48,13 @@
         <aside class="chat-inbox">
             <div class="chat-inbox-header">
                 <div class="chat-inbox-title">
-                    <h2>💬 Hội thoại khách hàng</h2>
+                    <h2>Hội thoại khách hàng</h2>
                     <span class="chat-badge-count">{{ $this->sessions->total() }}</span>
                 </div>
 
                 {{-- Search Box --}}
                 <div class="chat-search-wrap">
-                    <span class="chat-search-icon">🔍</span>
+                    <span class="chat-search-icon"><x-heroicon-o-magnifying-glass class="w-4 h-4" aria-hidden="true" /></span>
                     <input id="chat-search" type="search" wire:model.live.debounce.400ms="search" maxlength="100" placeholder="Tìm tên, SĐT, nội dung…">
                     @if(trim($search) !== '')
                         <button type="button" wire:click="$set('search', '')" class="chat-search-clear">✕</button>
@@ -121,7 +122,7 @@
 
                             @if($session->customer_phone)
                                 <div class="chat-session-phone">
-                                    <span>📞</span>
+                                    <x-heroicon-o-phone class="w-4 h-4" aria-hidden="true" />
                                     <span>{{ $session->customer_phone }}</span>
                                 </div>
                             @endif
@@ -140,7 +141,7 @@
                     </button>
                 @empty
                     <div class="chat-inbox-empty">
-                        <div class="empty-icon">📭</div>
+                        <div class="empty-icon"><x-heroicon-o-inbox class="w-7 h-7" aria-hidden="true" /></div>
                         <p>Không tìm thấy hội thoại nào.</p>
                         <small>Hãy thử bộ lọc khác hoặc xóa từ khóa tìm kiếm.</small>
                     </div>
@@ -165,13 +166,13 @@
                             <div class="chat-header-name-row">
                                 <h2>{{ $this->currentSession->customer_name }}</h2>
                                 <span class="chat-status-pill {{ $this->currentSession->status === 'active' ? 'open' : 'closed' }}">
-                                    {{ $this->currentSession->status === 'active' ? '🟢 Đang mở hỗ trợ' : '⚪ Đã đóng' }}
+                                    {{ $this->currentSession->status === 'active' ? 'Đang mở' : 'Đã đóng' }}
                                 </span>
                             </div>
                             <p class="chat-header-sub">
                                 @if($this->currentSession->customer_phone)
                                     <a href="tel:{{ $this->currentSession->customer_phone }}" class="chat-phone-link">
-                                        📞 {{ $this->currentSession->customer_phone }}
+                                        <x-heroicon-o-phone class="w-4 h-4 inline-block align-middle" aria-hidden="true" /> {{ $this->currentSession->customer_phone }}
                                     </a>
                                 @else
                                     <span>Khách vãng lai web</span>
@@ -189,7 +190,7 @@
                         @endif
 
                         <button type="button" wire:click="toggleSessionStatus" wire:loading.attr="disabled" wire:target="toggleSessionStatus" wire:confirm="Xác nhận thay đổi trạng thái hội thoại?" class="btn-toggle-status {{ $this->currentSession->status === 'active' ? 'btn-close' : 'btn-open' }}">
-                            {{ $this->currentSession->status === 'active' ? '🔒 Đóng hội thoại' : '🔓 Mở lại hội thoại' }}
+                            {{ $this->currentSession->status === 'active' ? 'Đóng hội thoại' : 'Mở lại hội thoại' }}
                         </button>
                     </div>
                 </header>
@@ -204,14 +205,14 @@
                     <div class="chat-customer-insight">
                         <div class="insight-info">
                             @if($customer)
-                                <span>👤 <b>{{ $customer->name }}</b> (Khách quen)</span>
-                                <span>📦 <b>{{ $customer->orders()->count() }}</b> đơn hàng</span>
-                                <span>🛠️ <b>{{ $customer->repairTickets()->count() }}</b> phiếu sửa máy in</span>
+                                <span><x-heroicon-o-user class="w-4 h-4 inline-block align-middle" aria-hidden="true" /> <b>{{ $customer->name }}</b> (Khách quen)</span>
+                                <span><x-heroicon-o-cube class="w-4 h-4 inline-block align-middle" aria-hidden="true" /> <b>{{ $customer->orders()->count() }}</b> đơn hàng</span>
+                                <span><x-heroicon-o-wrench-screwdriver class="w-4 h-4 inline-block align-middle" aria-hidden="true" /> <b>{{ $customer->repairTickets()->count() }}</b> phiếu sửa máy in</span>
                                 @if($customer->debt_balance > 0)
-                                    <span class="insight-debt">⚠️ Công nợ: {{ number_format($customer->debt_balance) }}đ</span>
+                                    <span class="insight-debt">Công nợ: {{ number_format($customer->debt_balance) }}đ</span>
                                 @endif
                             @else
-                                <span>📞 Khách có SĐT: <b>{{ $this->currentSession->customer_phone }}</b></span>
+                                <span><x-heroicon-o-phone class="w-4 h-4 inline-block align-middle" aria-hidden="true" /> SĐT: <b>{{ $this->currentSession->customer_phone }}</b></span>
                             @endif
                         </div>
                         @if($customer)
@@ -226,7 +227,7 @@
                         <div class="chat-customer-records">
                             @if($orders->isNotEmpty())
                                 <div class="record-group">
-                                    <span class="record-group-title">📦 Đơn gần nhất:</span>
+                                    <span class="record-group-title"><x-heroicon-o-cube class="w-4 h-4 inline-block align-middle" aria-hidden="true" /> Đơn gần nhất:</span>
                                     @foreach($orders as $ord)
                                         <a href="{{ route('filament.admin.resources.orders.edit', $ord) }}" target="_blank" class="record-pill" title="Xem chi tiết đơn hàng #{{ $ord->order_code }}">
                                             <b>#{{ $ord->order_code }}</b>
@@ -238,7 +239,7 @@
                             @endif
                             @if($tickets->isNotEmpty())
                                 <div class="record-group">
-                                    <span class="record-group-title">🖨️ Phiếu sửa:</span>
+                                    <span class="record-group-title"><x-heroicon-o-wrench-screwdriver class="w-4 h-4 inline-block align-middle" aria-hidden="true" /> Phiếu sửa:</span>
                                     @foreach($tickets as $tkt)
                                         <a href="{{ route('filament.admin.resources.repair-tickets.edit', $tkt) }}" target="_blank" class="record-pill" title="Xem chi tiết phiếu sửa {{ $tkt->ticket_code }}">
                                             <b>{{ $tkt->ticket_code }}</b>
@@ -292,7 +293,7 @@
                         </article>
                     @empty
                         <div class="chat-no-messages">
-                            <div class="empty-icon">💬</div>
+                            <div class="empty-icon"><x-heroicon-o-chat-bubble-left-right class="w-7 h-7" aria-hidden="true" /></div>
                             <p>Chưa có tin nhắn trong hội thoại này.</p>
                             <small>Hãy gửi lời chào đầu tiên để hỗ trợ khách hàng.</small>
                         </div>
@@ -302,7 +303,7 @@
                 {{-- Quick Reply Section --}}
                 <div class="chat-quick-section">
                     <div class="quick-header">
-                        <label>💡 Mẫu câu phản hồi nhanh (Bấm 1 chạm để điền):</label>
+                        <label>Mẫu trả lời nhanh</label>
                         <select id="chat-quick-reply" wire:change="useQuickReply($event.target.value)" class="chat-hidden-select" aria-label="Mẫu câu phản hồi nhanh">
                             <option value="" disabled selected>Chọn mẫu câu…</option>
                             @foreach($this->quickReplies as $index => $reply)
@@ -314,15 +315,15 @@
                     <div class="quick-chips">
                         @foreach($this->quickReplies as $index => $reply)
                             <button type="button" wire:click="useQuickReply({{ $index }})" class="quick-chip-btn">
-                                @if($index === 0) 👋 Chào & hỏi nhu cầu
-                                @elseif($index === 1) 📦 Báo giá & tồn kho
-                                @elseif($index === 2) 🖨️ Hỏi máy in & lỗi
-                                @elseif($index === 3) 🛵 Nạp mực tận nơi
-                                @elseif($index === 4) 🚚 Kiểm tra đơn hàng
-                                @elseif($index === 5) 🧾 Xuất hóa đơn VAT
+                                @if($index === 0) Chào và hỏi nhu cầu
+                                @elseif($index === 1) Báo giá và tồn kho
+                                @elseif($index === 2) Máy in và lỗi
+                                @elseif($index === 3) Nạp mực tại chỗ
+                                @elseif($index === 4) Kiểm tra đơn hàng
+                                @elseif($index === 5) Hóa đơn VAT
                                 @elseif($index === 6) ⏳ Đã ghi nhận xử lý
-                                @elseif($index === 7) 🙏 Cảm ơn & kết thúc
-                                @else 💬 Mẫu {{ $index + 1 }}
+                                @elseif($index === 7) Cảm ơn và kết thúc
+                                @else Mẫu {{ $index + 1 }}
                                 @endif
                             </button>
                         @endforeach
@@ -361,19 +362,20 @@
                     <div class="reply-footer" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
                         <div class="reply-hint" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                             <label class="btn-attach" style="cursor: pointer; display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 8px; background: #f8fafc; border: 1px solid #cbd5e1; font-size: 12px; font-weight: 600; color: #334155;" title="Đính kèm ảnh minh họa hoặc hướng dẫn">
-                                <span>📷 Đính kèm ảnh</span>
+                                <x-heroicon-o-camera class="w-4 h-4" aria-hidden="true" />
+                                <span>Đính kèm ảnh</span>
                                 <input type="file" wire:model="attachment" accept="image/jpeg,image/png,image/webp,image/jpg" style="display: none;">
                             </label>
 
                             @if($this->currentSession->status === 'closed')
-                                <span class="hint-closed">⚠️ Hội thoại đang đóng. Bấm "Mở lại hội thoại" ở trên để tiếp tục trò chuyện.</span>
+                                <span class="hint-closed">Hội thoại đã đóng. Mở lại để tiếp tục trò chuyện.</span>
                             @else
-                                <span class="hidden sm:inline text-xs text-slate-500">⚡ Nhấn <b>Ctrl + Enter</b> để gửi nhanh</span>
+                                <span class="hidden sm:inline text-xs text-slate-500">Nhấn <b>Ctrl + Enter</b> để gửi</span>
                             @endif
                         </div>
 
                         <button type="submit" wire:loading.attr="disabled" wire:target="sendReply, attachment" @disabled($this->currentSession->status === 'closed')" class="btn-send">
-                            <span wire:loading.remove wire:target="sendReply, attachment">Gửi trả lời ➔</span>
+                            <span wire:loading.remove wire:target="sendReply, attachment">Gửi trả lời</span>
                             <span wire:loading wire:target="sendReply, attachment">Đang xử lý…</span>
                         </button>
                     </div>
@@ -382,17 +384,17 @@
                 {{-- Empty State: Khi chưa chọn hội thoại --}}
                 <div class="chat-conversation-empty">
                     <div class="empty-box">
-                        <div class="empty-icon-large">💬</div>
+                        <div class="empty-icon-large"><x-heroicon-o-chat-bubble-left-right class="w-8 h-8" aria-hidden="true" /></div>
                         <h2>Chọn hội thoại để hỗ trợ</h2>
                         <p>Hội thoại chưa đọc không bị đánh dấu đã đọc khi chỉ mở trang này.</p>
                         
                         <div class="empty-tips-grid">
                             <div class="empty-tip-card">
-                                <strong>⚡ Phản hồi siêu tốc</strong>
+                                <strong>Phản hồi nhanh</strong>
                                 <small>Tư vấn khách trong 1-3 phút giúp tăng 80% tỷ lệ chốt đơn văn phòng phẩm.</small>
                             </div>
                             <div class="empty-tip-card">
-                                <strong>🛠️ Kỹ thuật máy in</strong>
+                                <strong>Kỹ thuật máy in</strong>
                                 <small>Hỗ trợ kiểm tra lỗi máy in, báo giá hộp mực và cử thợ nạp mực tận nơi.</small>
                             </div>
                         </div>
@@ -1336,7 +1338,7 @@
             const icon = document.getElementById('admin-audio-icon');
             const text = document.getElementById('admin-audio-text');
             if (icon && text) {
-                icon.textContent = isMuted ? '🔕' : '🔔';
+                icon.textContent = isMuted ? 'Âm thanh tắt' : 'Âm thanh bật';
                 text.textContent = isMuted ? 'Chuông: Tắt' : 'Chuông: Bật';
             }
         };

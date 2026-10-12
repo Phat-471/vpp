@@ -31,7 +31,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7">
                                 </path>
                             </svg>
-                            Tài khoản chính thức
+                            Tài khoản
                         </span>
                     </div>
                     <h1 class="text-xl sm:text-2xl font-black text-white tracking-tight">
@@ -65,7 +65,7 @@
                     <button type="submit"
                         class="px-4 py-3 bg-white/10 hover:bg-rose-600 text-white font-bold text-xs rounded-2xl border border-white/20 transition flex items-center space-x-1.5 shadow-sm active:scale-95">
                         <span>🚪</span>
-                        <span>Đăng Xuất</span>
+                        <span>Đăng xuất</span>
                     </button>
                 </form>
             </div>
@@ -125,7 +125,7 @@
                         class="tab-btn w-full flex items-center justify-between px-4 py-3.5 rounded-2xl font-bold text-xs transition text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900">
                         <div class="flex items-center space-x-3">
                             <span class="text-base">🖨️</span>
-                            <span>Sưa máy</span>
+                        <span>Sửa chữa</span>
                         </div>
                         <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-slate-100 text-slate-700">
                             {{ $repairTickets->count() }}
@@ -137,7 +137,7 @@
                         class="tab-btn w-full flex items-center justify-between px-4 py-3.5 rounded-2xl font-bold text-xs transition text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900">
                         <div class="flex items-center space-x-3">
                             <span class="text-base">👤</span>
-                            <span>Hồ Sơ & Địa Chỉ Nhận Hàng</span>
+                            <span>Thông tin cá nhân</span>
                         </div>
                         <span>→</span>
                     </button>
@@ -147,7 +147,7 @@
                         class="tab-btn w-full flex items-center justify-between px-4 py-3.5 rounded-2xl font-bold text-xs transition text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900">
                         <div class="flex items-center space-x-3">
                             <span class="text-base">🔒</span>
-                            <span>Đổi Mật Khẩu Bảo Mật</span>
+                            <span>Đổi mật khẩu</span>
                         </div>
                         <span>→</span>
                     </button>
@@ -178,7 +178,7 @@
                         <div>
                             <h2 class="text-base font-black text-slate-900 flex items-center space-x-2">
                                 <span>📦</span>
-                                <span>Danh Sách Đơn Hàng</span>
+                                <span>Đơn hàng</span>
                             </h2>
                             <p class="text-xs text-slate-500 mt-0.5">Theo dõi chi tiết các đơn văn phòng phẩm và mực in đã
                                 đặt mua</p>
@@ -324,7 +324,7 @@
                         <div>
                             <h2 class="text-base font-black text-slate-900 flex items-center space-x-2">
                                 <span>🖨️</span>
-                                <span>Tiến Độ Sửa Chữa & Nạp Mực</span>
+                                <span>Phiếu sửa chữa</span>
                             </h2>
                             <p class="text-xs text-slate-500 mt-0.5">Theo dõi quy trình kiểm tra, thay linh kiện và sửa chữa
                                 thiết bị của bạn</p>
@@ -415,7 +415,7 @@
                         <div class="border-b border-slate-100 pb-4">
                             <h2 class="text-base font-black text-slate-900 flex items-center space-x-2">
                                 <span>👤</span>
-                                <span>Hồ Sơ & Sổ Địa Chỉ Nhận Hàng</span>
+                                <span>Thông tin cá nhân</span>
                             </h2>
                             <p class="text-xs text-slate-500 mt-0.5">Cập nhật thông tin để hệ thống tự động điền khi bạn đặt
                                 hàng</p>
@@ -497,7 +497,7 @@
                         <div class="border-b border-slate-100 pb-4">
                             <h2 class="text-base font-black text-slate-900 flex items-center space-x-2">
                                 <span>🔒</span>
-                                <span>Đổi Mật Khẩu Bảo Mật</span>
+                                <span>Đổi mật khẩu</span>
                             </h2>
                             <p class="text-xs text-slate-500 mt-0.5">Đặt mật khẩu mạnh để bảo vệ tài khoản và lịch sử giao
                                 dịch của bạn</p>

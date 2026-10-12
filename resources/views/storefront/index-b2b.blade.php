@@ -67,25 +67,7 @@
 @endsection
 
 @section('content')
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-6 space-y-6 sm:space-y-10 w-full">
-
-    <!-- 0. THANH ĐIỀU HƯỚNG MẪU GIAO DIỆN (TEMPLATE PREVIEW SWITCHER PILL) -->
-    <div class="p-2 sm:p-2.5 rounded-2xl bg-indigo-950 text-white flex flex-wrap items-center justify-between gap-2 shadow-md border border-indigo-800 text-xs">
-        <div class="flex items-center space-x-2">
-            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-400 text-slate-950 uppercase tracking-wider">
-                ✓ MẪU 2 ACTIVE
-            </span>
-            <span class="font-bold text-slate-200">
-                Giao diện: <b>Doanh Nghiệp & Dịch Vụ Kỹ Thuật Máy In B2B</b>
-            </span>
-        </div>
-        <div class="flex items-center space-x-2 text-[11px]">
-            <span class="text-slate-400 hidden sm:inline">Chuyển mẫu xem thử:</span>
-            <a href="{{ route('storefront.index', ['template' => '1']) }}" class="px-2.5 py-1 rounded-lg bg-indigo-800 hover:bg-indigo-700 text-white font-bold transition">
-                Mẫu 1: Siêu Thị Bán Lẻ & Flash Sale →
-            </a>
-        </div>
-    </div>
+<main class="storefront-home max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-6 space-y-6 sm:space-y-10 w-full">
 
     <!-- 1. SPLIT HERO SECTION TỶ LỆ KÉP: B2B PROCUREMENT (TRÁI) & CỨU HỘ MÁY IN 30 PHÚT (PHẢI) -->
     <section class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch" aria-labelledby="b2b-hero-title">
@@ -188,7 +170,7 @@
                         @csrf
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-[10px] font-bold text-slate-700 mb-0.5">Họ tên của bạn *</label>
+                                <label class="block text-[10px] font-bold text-slate-700 mb-0.5">Họ và tên *</label>
                                 <input type="text" name="customer_name" required placeholder="Nguyễn Văn A" class="w-full text-xs px-2.5 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus-visible:outline-none bg-slate-50 font-medium" />
                             </div>
                             <div>
@@ -264,7 +246,7 @@
         <!-- Tab 1: Tra mã máy in lấy hộp mực tương thích -->
         <div x-show="activeTab === 'printers'" class="pt-4 space-y-3">
             <p class="text-xs text-slate-600">
-                Chọn dòng máy in của công ty bạn để xem ngay các loại <b>hộp mực tương thích, trống in, gạt mực</b> và giá nạp mực tận nơi:
+                Chọn dòng máy in để xem <b>hộp mực tương thích, trống in, gạt mực</b> và giá nạp mực:
             </p>
             <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
                 @foreach($printerModels as $pm)
@@ -647,7 +629,7 @@
                 Quy Trình 4 Bước Phục Vụ Tận Nơi Trong 30 Phút
             </h2>
             <p class="text-xs sm:text-sm text-slate-300">
-                Tối ưu hóa thời gian, không làm gián đoạn công việc in ấn của công ty bạn.
+                Tiết kiệm thời gian và không làm gián đoạn công việc in ấn.
             </p>
         </div>
 
@@ -671,7 +653,7 @@
                     <span class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center text-lg font-bold">🛵</span>
                     <strong class="text-sm font-black text-white block">Có Mặt Sau 15–30 Phút</strong>
                     <p class="text-xs text-slate-300 leading-relaxed">
-                        Kỹ thuật viên di chuyển ngay đến văn phòng của bạn với đầy đủ đồ nghề, mực nạp và linh kiện thay thế dự phòng.
+                        Kỹ thuật viên đến văn phòng với dụng cụ, mực và linh kiện cần thiết.
                     </p>
                 </div>
             </div>

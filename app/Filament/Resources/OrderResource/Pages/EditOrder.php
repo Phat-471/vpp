@@ -58,13 +58,6 @@ class EditOrder extends EditRecord
                 ->url(fn (Order $record) => url("/print/vat-invoice/{$record->id}"))
                 ->openUrlInNewTab(),
 
-            Actions\DeleteAction::make()
-                ->label('Xóa đơn hàng')
-                ->icon('heroicon-m-trash')
-                ->modalHeading('Xác nhận xóa đơn hàng')
-                ->modalDescription(fn (Order $record) => "Bạn có chắc chắn muốn xóa đơn hàng '{$record->order_code}'? Hành động này không thể hoàn tác.")
-                ->modalSubmitActionLabel('Xác nhận xóa')
-                ->modalCancelActionLabel('Hủy bỏ'),
         ];
     }
 

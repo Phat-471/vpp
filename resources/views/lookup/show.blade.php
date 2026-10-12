@@ -227,9 +227,9 @@
                 </div>
                 @else
                 <div class="bg-emerald-50 border border-emerald-200 text-emerald-900 p-6 rounded-3xl text-center shadow-sm">
-                    <span class="text-3xl block mb-2">🎉</span>
-                    <h3 class="text-base font-black">PHIẾU ĐÃ HOÀN TẤT THANH TOÁN</h3>
-                    <p class="text-xs text-emerald-700 mt-1">Cảm ơn Quý khách! Khi đến nhận máy vui lòng mang theo số điện thoại đã đăng ký.</p>
+                    <x-heroicon-o-check-circle class="w-8 h-8 mx-auto mb-2 text-emerald-700" aria-hidden="true" />
+                    <h3 class="text-base font-black">Đã thanh toán</h3>
+                    <p class="text-xs text-emerald-700 mt-1">Khi nhận máy, vui lòng mang theo số điện thoại đã đăng ký.</p>
                 </div>
                 @endif
 

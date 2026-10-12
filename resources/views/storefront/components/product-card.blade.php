@@ -10,11 +10,7 @@
         $discountPercent = round((($originalPrice - $displayPrice) / $originalPrice) * 100);
     } else {
         $displayPrice = (float) $p->retail_price;
-        $discountPercent = ($p->id * 13 + 7) % 20 + 10; // 10-29%
-        $originalPrice = $displayPrice * (1 + $discountPercent / 100);
     }
-    $soldCount = ($p->id * 37 + 123) % 900 + 100;
-    $soldPercent = min(95, ($p->id * 17 + 41) % 60 + 35);
     $isSlide = $isSlide ?? false;
 @endphp
 
@@ -35,9 +31,9 @@
     <div class="p-3.5 sm:p-4">
         <!-- Badges Header -->
         <div class="flex items-center justify-between gap-1 text-[10px] mb-2">
-            <span class="bg-gradient-to-r from-rose-500 to-orange-500 text-white font-black px-2 py-0.5 rounded-md shadow-xs tabular-nums">
-                -{{ $discountPercent }}%
-            </span>
+            @if($hasCustomSalePrice)
+            <span class="bg-rose-600 text-white font-bold px-2 py-0.5 rounded-md tabular-nums">Giảm {{ $discountPercent }}%</span>
+            @endif
             @if($p->stock_quantity > 0)
             <span class="bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded-md border border-emerald-200">● Còn hàng</span>
             @else
@@ -71,24 +67,17 @@
             {{ $p->name }}
         </h3>
 
-        <!-- Đánh giá sao + Đã bán -->
-        <div class="flex items-center justify-between text-[11px] mb-2">
-            <div class="flex items-center space-x-1 text-amber-400" aria-label="Đánh giá 5 sao">
-                <span aria-hidden="true">★★★★★</span>
-                <span class="text-[10px] text-slate-400 font-semibold tabular-nums">(5.0)</span>
-            </div>
-            <span class="text-[10px] text-slate-400 font-semibold tabular-nums">Đã bán {{ number_format($soldCount) }}</span>
-        </div>
-
         <!-- Giá sản phẩm -->
         <div class="space-y-1 mb-2.5">
             <div class="flex items-baseline space-x-2 flex-wrap">
-                <span class="text-sm sm:text-base font-black text-rose-600 font-mono tabular-nums">
+                <span class="text-sm sm:text-base font-black {{ $hasCustomSalePrice ? 'text-rose-600' : 'text-slate-900' }} font-mono tabular-nums">
                     {{ number_format($displayPrice, 0, ',', '.') }}&nbsp;₫
                 </span>
+                @if($hasCustomSalePrice)
                 <span class="text-[11px] text-slate-400 line-through font-mono tabular-nums">
                     {{ number_format($originalPrice, 0, ',', '.') }}&nbsp;₫
                 </span>
+                @endif
             </div>
 
             <!-- Quy cách đóng gói / Đơn vị tính -->
@@ -104,20 +93,6 @@
             @endif
         </div>
 
-        @if(!empty($showProgress))
-        <!-- Thanh tiến trình "Đã bán" Flash Sale -->
-        <div class="mb-1">
-            <div class="w-full h-3.5 bg-rose-100 rounded-full overflow-hidden relative" role="progressbar" aria-valuenow="{{ $soldPercent }}" aria-valuemin="0" aria-valuemax="100">
-                <div class="h-full bg-gradient-to-r from-rose-500 to-orange-400 rounded-full transition-all duration-500 flex items-center justify-end pr-1" style="width: {{ $soldPercent }}%">
-                    <span class="text-[8px] text-white font-black whitespace-nowrap">{{ $soldPercent }}%</span>
-                </div>
-            </div>
-            <div class="flex justify-between text-[9px] text-slate-400 mt-0.5 px-0.5">
-                <span>🔥 Đang bán chạy</span>
-                <span class="text-rose-500 font-bold tabular-nums">Còn {{ 100 - $soldPercent }}%</span>
-            </div>
-        </div>
-        @endif
     </div>
 
     <!-- Nút hành động -->
@@ -131,7 +106,7 @@
             aria-label="Thêm {{ $p->name }} vào giỏ hàng"
             class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs rounded-xl transition flex items-center justify-center space-x-1 shadow-xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
         >
-            <span aria-hidden="true">🛒</span>
+            <x-heroicon-o-shopping-bag class="w-4 h-4" aria-hidden="true" />
             <span>Mua</span>
         </button>
     </div>

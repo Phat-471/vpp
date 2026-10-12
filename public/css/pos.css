@@ -60,3 +60,9 @@
 .pos-grand-total{background:#ecfdf5}
 @media(max-width:480px){.pos-brand-mark{width:34px;height:34px;font-size:19px}}
 
+/* Accessible tap targets for POS controls on touch screens. */
+.pos-icon-button,.pos-remove,.pos-categories button,.pos-add-button,
+.pos-pagination .pos-button,.pos-inline-actions .pos-button,.pos-exact-cash{min-height:44px}
+.pos-icon-button,.pos-add-button{min-width:44px}
+.pos-remove{min-width:44px;min-height:44px}
+

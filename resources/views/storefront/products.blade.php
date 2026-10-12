@@ -63,13 +63,13 @@
         <div class="relative z-10 space-y-2 max-w-2xl">
             <div class="flex flex-wrap items-center gap-2">
                 <span class="px-2.5 py-0.5 bg-amber-400 text-slate-950 rounded-full text-[10px] font-black uppercase tracking-wider">
-                    ⭐ TỔNG KHO 1.000+ MẶT HÀNG
+                    Danh mục sản phẩm
                 </span>
                 <span class="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full text-[10px] font-bold">
-                    ⚡ Giao Hỏa Tốc 2 Giờ
+                    Giao hàng nhanh
                 </span>
                 <span class="px-2.5 py-0.5 bg-white/10 text-slate-200 border border-white/10 rounded-full text-[10px] font-bold">
-                    🧾 Hóa Đơn VAT Điện Tử
+                    Có hóa đơn điện tử
                 </span>
             </div>
             <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black text-white leading-tight">
@@ -81,7 +81,6 @@
         </div>
 
         <div class="relative z-10 flex items-center space-x-3 text-xs bg-white/10 px-5 py-3 rounded-2xl border border-white/15 shrink-0 backdrop-blur-md shadow-sm">
-            <span class="text-2xl">📦</span>
             <div>
                 <span class="text-amber-300 font-mono font-black text-lg block leading-none">{{ number_format($products->total()) }}</span>
                 <span class="text-slate-300 text-[11px]">sản phẩm khả dụng</span>
@@ -94,23 +93,11 @@
         <div class="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-0.5">
             <a href="{{ route('storefront.products', array_merge(request()->except(['category', 'page']))) }}" 
                class="shrink-0 px-4 py-2.5 rounded-xl text-xs font-black transition flex items-center space-x-1.5 {{ !request('category') ? 'bg-[#1e3a8a] text-white shadow-xs' : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200/80' }}">
-                <span>🌟 Tất Cả Ngành Hàng</span>
+                <span>Tất cả danh mục</span>
             </a>
             @foreach($categories as $cat)
-            @php
-                $catIcon = match ($cat->slug) {
-                    'giay-in-photo' => '📄',
-                    'hop-muc-may-in' => '🖨️',
-                    'but-viet-muc-viet' => '🖊️',
-                    'bia-ho-so-luu-tru', 'bia-file-ho-so' => '📁',
-                    'dung-cu-van-phong' => '✂️',
-                    'linh-kien-may-in' => '⚙️',
-                    default => '📦',
-                };
-            @endphp
             <a href="{{ route('storefront.products', array_merge(request()->except(['category', 'page']), ['category' => $cat->slug])) }}" 
                class="shrink-0 px-3.5 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 {{ request('category') == $cat->slug ? 'bg-[#1e3a8a] text-white shadow-xs' : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200/80' }}">
-                <span>{{ $catIcon }}</span>
                 <span>{{ $cat->name }}</span>
                 <span class="text-[10px] {{ request('category') == $cat->slug ? 'text-amber-300' : 'text-slate-500' }} font-mono font-semibold">({{ $cat->products_count }})</span>
             </a>
@@ -130,9 +117,9 @@
                         <input type="hidden" name="{{ $k }}" value="{{ $v }}">
                     @endforeach
                     <input type="text" name="q" value="{{ request('q') }}" 
-                           placeholder="Tìm tên sản phẩm, mã SKU, mã vạch..." 
+                           placeholder="Tìm tên hoặc mã sản phẩm..."
                            class="w-full text-xs pl-9 pr-8 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent bg-slate-50/70" />
-                    <span class="absolute left-3 top-2.5 text-slate-400 text-sm">🔍</span>
+                    <svg class="absolute left-3 top-3 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                     @if(request('q'))
                     <a href="{{ route('storefront.products', request()->except(['q', 'page'])) }}" class="absolute right-3 top-2.5 text-slate-400 hover:text-rose-500 text-xs font-bold">✕</a>
                     @endif
@@ -141,7 +128,7 @@
                 <!-- Nút Mở Bộ Lọc Mobile (Drawer Toggle) -->
                 <button type="button" onclick="toggleMobileFilter(true)" 
                         class="lg:hidden shrink-0 px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold border border-slate-200 flex items-center space-x-1.5 transition">
-                    <span>⚡ Bộ Lọc</span>
+                    <span>Bộ lọc</span>
                     @php
                         $activeFiltersCount = (request('category') ? 1 : 0) + (request('brand') ? 1 : 0) + (request('printer') ? 1 : 0) + (request('price_range') || request('min_price') || request('max_price') ? 1 : 0) + (request('in_stock') ? 1 : 0) + (request('flash_sale') ? 1 : 0) + (request('best_seller') ? 1 : 0);
                     @endphp
@@ -163,12 +150,12 @@
                         @endforeach
                         <select name="sort" onchange="document.getElementById('sortForm').submit()" 
                                 class="text-xs py-2 px-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-800 font-bold focus:outline-none focus:ring-2 focus:ring-[#1e3a8a]">
-                            <option value="popular" {{ request('sort', 'popular') == 'popular' ? 'selected' : '' }}>⭐ Phổ biến (Bán chạy)</option>
-                            <option value="discount" {{ request('sort') == 'discount' ? 'selected' : '' }}>🔥 Giảm giá nhiều nhất</option>
-                            <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>✨ Mới nhất về kho</option>
-                            <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>💰 Giá: Thấp đến Cao</option>
-                            <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>💎 Giá: Cao đến Thấp</option>
-                            <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>🔤 Tên: A đến Z</option>
+                            <option value="popular" {{ request('sort', 'popular') == 'popular' ? 'selected' : '' }}>Phổ biến</option>
+                            <option value="discount" {{ request('sort') == 'discount' ? 'selected' : '' }}>Giảm giá nhiều nhất</option>
+                            <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Mới nhất</option>
+                            <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Giá: thấp đến cao</option>
+                            <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Giá: cao đến thấp</option>
+                            <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Tên: A đến Z</option>
                         </select>
                     </form>
                 </div>
@@ -211,8 +198,7 @@
             
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div class="flex items-center space-x-2">
-                    <span class="text-base">⚡</span>
-                    <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider">Bộ Lọc Đa Chiều</h3>
+                    <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider">Bộ lọc</h3>
                 </div>
                 @if($activeFiltersCount > 0 || request('q'))
                 <a href="{{ route('storefront.products') }}" class="text-[11px] font-bold text-rose-600 hover:underline">
@@ -235,7 +221,7 @@
 
                 <!-- Nhóm 1: Ngành hàng sản phẩm -->
                 <div class="space-y-2">
-                    <h4 class="text-xs font-black text-slate-900 uppercase tracking-wider">Danh Mục Ngành Hàng</h4>
+                    <h4 class="text-xs font-black text-slate-900 uppercase tracking-wider">Danh mục</h4>
                     <div class="space-y-1 max-h-52 overflow-y-auto no-scrollbar text-xs">
                         <label class="flex items-center space-x-2 py-1 px-2 rounded-lg hover:bg-slate-50 cursor-pointer">
                             <input type="radio" name="category" value="" onchange="this.form.submit()" 
@@ -286,7 +272,7 @@
                         </label>
                     </div>
 
-                    <!-- Nhập khoảng giá Min - Max tuỳ chỉnh -->
+                    <!-- Nhập khoảng giá tùy chỉnh -->
                     <div class="pt-2 grid grid-cols-2 gap-2">
                         <input type="number" name="min_price" value="{{ request('min_price') }}" placeholder="Từ ₫" 
                                class="w-full text-[11px] p-2 rounded-lg border border-slate-300 bg-slate-50" />
@@ -331,12 +317,12 @@
                         <label class="flex items-center space-x-2 py-1 px-2 rounded-lg hover:bg-slate-50 cursor-pointer">
                             <input type="checkbox" name="flash_sale" value="1" onchange="this.form.submit()" 
                                    {{ request('flash_sale') ? 'checked' : '' }} class="rounded text-rose-600 focus:ring-rose-500">
-                            <span class="font-bold text-rose-600">⚡ Đang Flash Sale</span>
+                            <span class="font-bold text-rose-600">Đang ưu đãi</span>
                         </label>
                         <label class="flex items-center space-x-2 py-1 px-2 rounded-lg hover:bg-slate-50 cursor-pointer">
                             <input type="checkbox" name="best_seller" value="1" onchange="this.form.submit()" 
                                    {{ request('best_seller') ? 'checked' : '' }} class="rounded text-amber-600 focus:ring-amber-500">
-                            <span class="font-bold text-amber-800">🏆 Top Bán Chạy</span>
+                            <span class="font-bold text-amber-800">Bán chạy</span>
                         </label>
                         <label class="flex items-center space-x-2 py-1 px-2 rounded-lg hover:bg-slate-50 cursor-pointer">
                             <input type="checkbox" name="in_stock" value="1" onchange="this.form.submit()" 
@@ -363,10 +349,10 @@
             <!-- Card Báo Giá Sỉ Cho Doanh Nghiệp & Trường Học -->
             <div class="p-4 rounded-2xl bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border border-amber-300 text-xs space-y-2">
                 <div class="flex items-center space-x-1.5 text-amber-900 font-black">
-                    <span>⭐</span> <span>Báo Giá Sỉ B2B</span>
+                    <span>Báo giá sỉ</span>
                 </div>
                 <p class="text-amber-800 text-[11px] leading-relaxed">
-                    Chiết khấu tới 25% cho công ty, trường học đặt định kỳ theo tháng tại Đồng Nai. Xuất hóa đơn VAT đầy đủ.
+                    Nhận báo giá theo số lượng cho doanh nghiệp và trường học.
                 </p>
                 <a href="{{ route('storefront.wholesale') }}" class="inline-block text-[11px] font-black text-amber-900 underline hover:text-amber-700">
                     Nhận báo giá ngay →
@@ -429,14 +415,14 @@
 
                 @if(request('flash_sale'))
                 <span class="inline-flex items-center px-2.5 py-1 bg-rose-50 text-rose-700 rounded-lg font-bold space-x-1">
-                    <span>⚡ Flash Sale</span>
+                    <span>Ưu đãi</span>
                     <a href="{{ route('storefront.products', request()->except(['flash_sale', 'page'])) }}" class="text-rose-400 hover:text-rose-600">✕</a>
                 </span>
                 @endif
 
                 @if(request('best_seller'))
                 <span class="inline-flex items-center px-2.5 py-1 bg-amber-50 text-amber-800 rounded-lg font-bold space-x-1">
-                    <span>🏆 Top Bán Chạy</span>
+                    <span>Bán chạy</span>
                     <a href="{{ route('storefront.products', request()->except(['best_seller', 'page'])) }}" class="text-amber-400 hover:text-rose-600">✕</a>
                 </span>
                 @endif
@@ -532,10 +518,10 @@
                         </div>
                     @empty
                         <x-empty-state
-                            icon="🔍"
-                            title="Không tìm thấy sản phẩm phù hợp"
-                            description="Thử điều chỉnh lại các tiêu chí lọc giá, ngành hàng hoặc xóa từ khóa tìm kiếm để xem tất cả mặt hàng."
-                            actionText="Xem tất cả sản phẩm"
+                            icon="search"
+                            title="Chưa tìm thấy sản phẩm"
+                            description="Thử đổi từ khóa hoặc bộ lọc."
+                            actionText="Xem tất cả"
                             :actionHref="route('storefront.products')"
                         />
                     @endforelse
@@ -548,10 +534,10 @@
                     @empty
                         <div class="col-span-full">
                             <x-empty-state
-                                icon="🔍"
-                                title="Không tìm thấy sản phẩm phù hợp"
-                                description="Thử điều chỉnh lại các tiêu chí lọc giá, ngành hàng hoặc xóa từ khóa tìm kiếm để xem tất cả mặt hàng."
-                                actionText="Xem tất cả sản phẩm"
+                                icon="search"
+                                title="Chưa tìm thấy sản phẩm"
+                                description="Thử đổi từ khóa hoặc bộ lọc."
+                                actionText="Xem tất cả"
                                 :actionHref="route('storefront.products')"
                             />
                         </div>
@@ -581,8 +567,7 @@
             <!-- Drawer Header -->
             <div class="p-4 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white z-10">
                 <div class="flex items-center space-x-2">
-                    <span class="text-lg">⚡</span>
-                    <h3 id="filterDrawerTitle" class="text-sm font-black text-slate-900 uppercase tracking-wider">Bộ Lọc Đa Chiều</h3>
+                    <h3 id="filterDrawerTitle" class="text-sm font-black text-slate-900 uppercase tracking-wider">Bộ lọc</h3>
                 </div>
                 <button type="button" onclick="toggleMobileFilter(false)" class="p-1 rounded-lg text-slate-400 hover:text-slate-700 text-lg font-bold">
                     ✕
@@ -603,7 +588,7 @@
 
                 <!-- Ngành hàng -->
                 <div>
-                    <h4 class="text-xs font-black text-slate-900 uppercase tracking-wider mb-2">Danh Mục Ngành Hàng</h4>
+                    <h4 class="text-xs font-black text-slate-900 uppercase tracking-wider mb-2">Danh mục</h4>
                     <select name="category" class="w-full text-xs py-2 px-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-800 font-bold">
                         <option value="">-- Tất cả ngành hàng --</option>
                         @foreach($categories as $cat)
@@ -650,11 +635,11 @@
                 <div class="space-y-2 pt-2 border-t border-slate-100 text-xs">
                     <label class="flex items-center space-x-2">
                         <input type="checkbox" name="flash_sale" value="1" {{ request('flash_sale') ? 'checked' : '' }} class="rounded text-rose-600">
-                        <span class="font-bold text-rose-600">⚡ Đang Flash Sale</span>
+                        <span class="font-bold text-rose-600">Đang ưu đãi</span>
                     </label>
                     <label class="flex items-center space-x-2">
                         <input type="checkbox" name="best_seller" value="1" {{ request('best_seller') ? 'checked' : '' }} class="rounded text-amber-600">
-                        <span class="font-bold text-amber-800">🏆 Top Bán Chạy</span>
+                        <span class="font-bold text-amber-800">Bán chạy</span>
                     </label>
                     <label class="flex items-center space-x-2">
                         <input type="checkbox" name="in_stock" value="1" {{ request('in_stock') ? 'checked' : '' }} class="rounded text-emerald-600">

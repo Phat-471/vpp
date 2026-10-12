@@ -42,13 +42,14 @@
             Tra cứu đơn khác
         </a>
         <div class="flex items-center space-x-2">
-            <a href="{{ route('print.order', $order->id) }}" target="_blank" class="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs rounded-xl border border-indigo-200 shadow-2xs transition">
-                <span>🖨️</span>
+            <a href="{{ route('print.order', $order->uuid) }}" target="_blank" rel="noopener" class="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs rounded-xl border border-indigo-200 shadow-2xs transition">
+                <x-heroicon-o-printer class="w-4 h-4" aria-hidden="true" />
                 <span>In / Xem Hóa Đơn</span>
             </a>
             @if($order->is_vat_invoice)
-            <a href="{{ route('print.vat-invoice', $order->id) }}" target="_blank" class="inline-flex items-center space-x-1 px-3 py-2 bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs rounded-xl border border-amber-200 transition">
-                <span>📄 Hóa Đơn VAT</span>
+            <a href="{{ route('print.vat-invoice', $order->uuid) }}" target="_blank" rel="noopener" class="inline-flex items-center space-x-1 px-3 py-2 bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs rounded-xl border border-amber-200 transition">
+                <x-heroicon-o-document-text class="w-4 h-4" aria-hidden="true" />
+                <span>Hóa đơn VAT</span>
             </a>
             @endif
         </div>
@@ -85,10 +86,10 @@
         <!-- Timeline Tiến Độ Đơn Hàng -->
         @php
             $statuses = [
-                'pending' => ['label' => 'Đã tiếp nhận', 'icon' => '📝', 'desc' => 'Đơn hàng đã ghi nhận vào hệ thống'],
-                'processing' => ['label' => 'Đang chuẩn bị', 'icon' => '📦', 'desc' => 'Kho đang đóng gói sản phẩm'],
-                'shipping' => ['label' => 'Đang giao hàng', 'icon' => '🚚', 'desc' => 'Shipper đang trên đường giao'],
-                'delivered' => ['label' => 'Đã giao thành công', 'icon' => '🎉', 'desc' => 'Khách đã nhận được hàng'],
+                'pending' => ['label' => 'Đã tiếp nhận', 'desc' => 'Đơn hàng đã được ghi nhận'],
+                'processing' => ['label' => 'Đang chuẩn bị', 'desc' => 'Kho đang đóng gói đơn hàng'],
+                'shipping' => ['label' => 'Đang giao hàng', 'desc' => 'Đơn hàng đang được giao'],
+                'delivered' => ['label' => 'Đã giao', 'desc' => 'Khách đã nhận hàng'],
             ];
 
             $orderStatus = $order->status ?? 'pending';
@@ -119,7 +120,6 @@
                         @endphp
                         <div class="p-3.5 rounded-2xl border transition {{ $isCurrent ? 'bg-indigo-50/80 border-indigo-400 shadow-2xs' : ($isPassed ? 'bg-slate-50 border-slate-200' : 'bg-slate-50/50 border-slate-100 opacity-60') }}">
                             <div class="flex items-center space-x-2">
-                                <span class="text-lg">{{ $step['icon'] }}</span>
                                 <span class="font-black text-xs {{ $isCurrent ? 'text-indigo-900' : ($isPassed ? 'text-slate-800' : 'text-slate-400') }}">
                                     {{ $step['label'] }}
                                 </span>
@@ -180,7 +180,7 @@
                     </div>
 
                     <p class="text-[11px] text-slate-500 leading-relaxed">
-                        💡 <b>Lưu ý:</b> Giữ nguyên nội dung chuyển khoản là <b class="font-mono text-indigo-700">{{ $order->order_code }}</b> để hệ thống tự động gạch nợ ngay khi nhận tiền.
+                        <b>Lưu ý:</b> Giữ nguyên nội dung chuyển khoản <b class="font-mono text-indigo-700">{{ $order->order_code }}</b> để đối chiếu thanh toán.
                     </p>
                 </div>
             </div>
@@ -310,7 +310,7 @@
                 @endif
                 @if($order->is_vat_invoice)
                 <div class="pt-2 border-t border-slate-200">
-                    <span class="text-amber-800 font-bold block text-[11px]">🏢 Đã yêu cầu xuất Hóa Đơn VAT</span>
+                    <span class="text-amber-800 font-bold block text-[11px]">Đã yêu cầu xuất hóa đơn VAT</span>
                     <p class="text-[11px] text-slate-600">{{ $order->company_name }} - MST: {{ $order->company_tax_id }}</p>
                 </div>
                 @endif
@@ -321,11 +321,11 @@
     <!-- Action Buttons Footer -->
     <div class="flex flex-col sm:flex-row gap-3 pt-2">
         <a href="{{ route('storefront.products') }}" class="flex-1 py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs sm:text-sm rounded-2xl shadow-xs transition text-center flex items-center justify-center space-x-1.5">
-            <span>🛍️</span>
+            <x-heroicon-o-shopping-bag class="w-4 h-4" aria-hidden="true" />
             <span>Tiếp Tục Mua Hàng</span>
         </a>
         <a href="https://zalo.me/{{ $storefrontSettings['zalo'] ?? '' }}" target="_blank" class="py-3 px-6 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm rounded-2xl transition text-center flex items-center justify-center space-x-1.5">
-            <span>💬</span>
+            <x-heroicon-o-chat-bubble-left-right class="w-4 h-4" aria-hidden="true" />
             <span>Hỗ Trợ Zalo</span>
         </a>
     </div>

@@ -104,8 +104,8 @@ body.fi-body {
 }
 
 .fi-sidebar-item-button {
-    min-height: 34px !important;
-    height: 34px !important;
+    min-height: 44px !important;
+    height: auto !important;
     border-radius: 9px !important;
     margin: 0 !important;
     padding: 0.35rem 0.6rem !important;
@@ -201,7 +201,8 @@ body.fi-body {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    padding: 0.35rem 0.75rem;
+    min-height: 44px;
+    padding: 0.55rem 0.75rem;
     border-radius: 9px;
     font-size: 0.75rem;
     font-weight: 700;
@@ -251,6 +252,37 @@ body.fi-body {
 
 .fi-main {
     background: var(--admin-canvas) !important;
+}
+
+/* Keep Filament controls comfortable on touch screens and keyboard accessible. */
+.fi-body :is(.fi-btn, .fi-icon-btn, .fi-input-wrp, .fi-select-input, .fi-ta-search-field, button) {
+    min-height: 44px;
+}
+
+.fi-body :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+    min-height: 44px;
+}
+
+.fi-body :is(button, a, input, select, textarea):focus-visible {
+    outline: 3px solid rgba(79, 70, 229, 0.55);
+    outline-offset: 2px;
+}
+
+.fi-ta-content {
+    scrollbar-width: thin;
+}
+
+@media (max-width: 640px) {
+    .fi-section-content-ctn,
+    .fi-ta-ctn {
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+    .fi-page-header-heading {
+        font-size: 1.25rem !important;
+        line-height: 1.35 !important;
+    }
 }
 
 /* ========================================================
@@ -584,4 +616,36 @@ body.fi-body {
 /* File Upload Dropzone gọn */
 .fi-fo-file-upload {
     padding: 0.5rem !important;
+}
+
+/* Shared responsive polish for all Filament resource pages and modals. */
+.fi-page-header-heading { text-wrap: balance; letter-spacing: -.025em; }
+.fi-page-header-description { max-width: 72ch; line-height: 1.55 !important; }
+.fi-ta-content { overflow-x: auto; }
+.fi-ta-table { min-width: 42rem; }
+.fi-modal-window { max-height: min(90dvh, 56rem); overflow-y: auto; }
+.fi-modal-footer-actions { position: sticky; bottom: 0; z-index: 2; background: #fff; }
+.fi-btn:focus-visible,
+.fi-icon-btn:focus-visible,
+.fi-sidebar-item a:focus-visible,
+.fi-tabs-item:focus-visible {
+    outline: 3px solid rgba(79, 70, 229, .3) !important;
+    outline-offset: 2px !important;
+}
+
+@media (max-width: 767px) {
+    .fi-main { padding-inline: .85rem !important; }
+    .fi-page-header { gap: .65rem !important; }
+    .fi-page-header-heading { font-size: 1.25rem !important; }
+    .fi-page-header-actions { flex-wrap: wrap; }
+    .fi-page-header-actions .fi-btn { min-height: 2.75rem; }
+    .fi-ta-ctn { border-radius: 10px !important; }
+    .fi-ta-cell, .fi-ta-header-cell { padding: .55rem .65rem !important; }
+    .fi-section-header, .fi-section-content { padding-inline: .75rem !important; }
+    .fi-modal-window { width: calc(100vw - 1rem) !important; margin-inline: .5rem !important; }
+    .fi-tabs { scrollbar-width: thin; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fi-btn, .fi-ta-row, .fi-wi-stats-overview-stat { transition-duration: .01ms !important; }
 }

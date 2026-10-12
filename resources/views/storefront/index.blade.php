@@ -47,26 +47,7 @@
 @endsection
 
 @section('content')
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-6 space-y-6 sm:space-y-8 w-full">
-
-        <!-- 0. THANH ĐIỀU HƯỚNG MẪU GIAO DIỆN (TEMPLATE PREVIEW SWITCHER PILL) -->
-        <div class="p-2 sm:p-2.5 rounded-2xl bg-slate-900 text-white flex flex-wrap items-center justify-between gap-2 shadow-md border border-slate-800 text-xs">
-            <div class="flex items-center space-x-2">
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-400 text-slate-950 uppercase tracking-wider">
-                    ✓ MẪU 1 ACTIVE
-                </span>
-                <span class="font-bold text-slate-200">
-                    Giao diện: <b>Đại Siêu Thị Bán Lẻ & Flash Sale (Mega E-Commerce)</b>
-                </span>
-            </div>
-            <div class="flex items-center space-x-2 text-[11px]">
-                <span class="text-slate-400 hidden sm:inline">Chuyển mẫu xem thử:</span>
-                <a href="{{ route('storefront.index', ['template' => '2']) }}" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition">
-                    Mẫu 2: Doanh Nghiệp & Dịch Vụ Máy In B2B →
-                </a>
-            </div>
-        </div>
-
+<main class="storefront-home max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-6 space-y-6 sm:space-y-8 w-full">
         <!-- 0. TICKER TIN KHUYẾN MÃI NÓNG HỔI (MEGA DEALS ANNOUNCEMENT) -->
         <div class="bg-gradient-to-r from-amber-500 via-rose-500 to-emerald-600 rounded-2xl p-0.5 shadow-sm overflow-hidden">
             <div class="bg-slate-900/95 backdrop-blur-md rounded-[14px] px-3 sm:px-4 py-2 flex items-center justify-between text-white text-xs">
@@ -110,7 +91,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch">
 
             <!-- Main Banner Lớn (lg:col-span-8) -->
-            <div class="lg:col-span-8 relative overflow-hidden rounded-3xl text-white p-6 sm:p-9 shadow-xl border border-slate-700/60 group flex flex-col justify-between min-h-[400px]">
+            <div class="home-hero lg:col-span-8 relative overflow-hidden rounded-3xl text-white p-6 sm:p-9 shadow-xl border border-slate-700/60 group flex flex-col justify-between min-h-[400px]">
                 <!-- Background Image & Gradient Overlays -->
                 <div class="absolute inset-0 z-0">
                     <img src="{{ asset('images/banners/stationery_store_bright.jpg') }}"
@@ -131,39 +112,39 @@
                     <!-- Badges Row -->
                     <div class="flex flex-wrap items-center gap-2">
                         <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-black bg-amber-400 text-slate-950 shadow-xs uppercase tracking-wider">
-                            ⭐ TỔNG KHO SỈ & LẺ CHÍNH HÃNG
+                            Tổng kho văn phòng phẩm
                         </span>
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                            ⚡ Giao Siêu Tốc 2 Giờ
+                            Giao nhanh trong 2 giờ
                         </span>
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-white/10 text-slate-200 border border-white/10">
-                            🧾 Hóa Đơn VAT Điện Tử
+                            Hỗ trợ hóa đơn điện tử
                         </span>
                     </div>
 
                     <!-- Main Headline -->
                     <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight">
-                        Văn Phòng Phẩm & Hộp Mực Máy In <br />
+                        Văn phòng phẩm và mực in<br />
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-200 to-amber-300">
-                            Giá Sỉ Tận Gốc - Giao Siêu Tốc 2H
+                            Giá tốt, giao nhanh
                         </span>
                     </h1>
 
                     <!-- Subtitle -->
                     <p class="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl">
-                        Hơn 1.000+ sản phẩm sẵn kho tại Đồng Nai: Giấy Double A, PaperOne, bút Thiên Long, mực Canon 2900, Brother. Chiết khấu tới 25% cho cơ quan, trường học & doanh nghiệp.
+                        Chọn mua giấy in, bút viết, mực máy in và nhiều mặt hàng văn phòng phẩm. Có giá sỉ cho cơ quan, trường học và doanh nghiệp.
                     </p>
 
                     <!-- Action CTA Buttons -->
                     <div class="pt-2 flex flex-wrap gap-3 items-center">
                         <a href="#flash-sale-section"
                             class="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600 text-white font-extrabold text-xs sm:text-sm shadow-lg shadow-rose-900/30 transition transform hover:-translate-y-0.5 flex items-center space-x-2">
-                            <span>⚡ Săn Flash Sale Giờ Vàng</span>
+                            <span>Xem ưu đãi</span>
                             <span>→</span>
                         </a>
                         <a href="{{ route('storefront.wholesale') }}"
                             class="px-5 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm border border-white/20 backdrop-blur-xs transition flex items-center space-x-1.5">
-                            <span>⭐ Bảng Báo Giá Sỉ B2B</span>
+                            <span>Nhận báo giá sỉ</span>
                         </a>
                     </div>
                 </div>
@@ -172,16 +153,16 @@
                 <div class="relative z-10 pt-4 mt-4 border-t border-slate-700/60 flex flex-wrap items-center justify-between gap-4 text-[11px] text-slate-300 font-semibold">
                     <div class="flex flex-wrap items-center gap-4">
                         <span class="flex items-center space-x-1 text-emerald-400">
-                            <span>✓</span> <span>100% Chính hãng</span>
+                            <span aria-hidden="true">✓</span> <span>Hàng chính hãng</span>
                         </span>
                         <span class="flex items-center space-x-1 text-emerald-400">
-                            <span>✓</span> <span>Đổi mới 7 ngày</span>
+                            <span aria-hidden="true">✓</span> <span>Đổi mới trong 7 ngày</span>
                         </span>
                         <span class="flex items-center space-x-1 text-emerald-400">
-                            <span>✓</span> <span>Công nợ 30 ngày</span>
+                            <span aria-hidden="true">✓</span> <span>Công nợ cho doanh nghiệp</span>
                         </span>
                         <span class="flex items-center space-x-1 text-emerald-400">
-                            <span>✓</span> <span>Thợ có mặt 30 phút</span>
+                            <span aria-hidden="true">✓</span> <span>Kỹ thuật viên tận nơi</span>
                         </span>
                     </div>
                     <div class="text-slate-400 text-[10px]">
@@ -691,17 +672,12 @@
                 </a>
             </div>
 
-            <!-- Grid 8 sản phẩm bán chạy nhất với huy chương Top 1, Top 2, Top 3 -->
+            <!-- Sản phẩm bán chạy -->
             <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 @foreach($bestSellerProducts as $p)
                     @php
                         $rank = $loop->iteration;
-                        $rankBadge = match ($rank) {
-                            1 => '🥇 TOP 1 BÁN CHẠY',
-                            2 => '🥈 TOP 2 BÁN CHẠY',
-                            3 => '🥉 TOP 3 BÁN CHẠY',
-                            default => '🎖️ TOP BÁN CHẠY',
-                        };
+                        $rankBadge = 'Bán chạy';
                         $rankClass = match ($rank) {
                             1 => 'bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-black',
                             2 => 'bg-gradient-to-r from-slate-400 to-slate-300 text-slate-900 font-black',

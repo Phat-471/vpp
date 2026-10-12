@@ -150,19 +150,18 @@
     <div class="bg-slate-950 text-slate-300 text-xs py-2 border-b border-slate-800 hidden sm:block">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center text-[11px]">
             <div class="flex items-center space-x-2 text-slate-300">
-                <span>⏰ Giờ làm việc: <b>{{ $storefrontSettings['opening_hours'] }}</b></span>
+                <span>Giờ mở cửa: <b>{{ $storefrontSettings['opening_hours'] }}</b></span>
             </div>
             <div class="flex items-center space-x-3">
                 <a href="{{ route('lookup.index') }}" class="text-sky-300 hover:text-white font-bold transition flex items-center space-x-1 hover:underline">
-                    <span>🔍</span>
-                    <span>Tra cứu phiếu sửa</span>
+                    <span>Tra cứu sửa chữa</span>
                 </a>
             </div>
         </div>
     </div>
 
     <!-- 2. UNIFIED MAIN HEADER (Executive White & Royal Navy Style - Đồng bộ toàn hệ thống) -->
-    <header class="bg-white/95 backdrop-blur-md text-slate-900 sticky top-0 z-40 shadow-xs border-b border-slate-200">
+    <header class="shop-site-header bg-white/95 backdrop-blur-md text-slate-900 sticky top-0 z-40 shadow-xs border-b border-slate-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16 sm:h-20 gap-3 lg:gap-8">
 
@@ -189,9 +188,9 @@
                 <div class="hidden md:flex flex-1 max-w-2xl lg:max-w-3xl mx-2 lg:mx-4">
                     <form action="{{ route('storefront.products') }}" method="GET" class="relative flex items-center w-full">
                         <input type="text" name="q" value="{{ request('q') }}"
-                            placeholder="Tìm giấy Double A, bút Thiên Long, mực Canon 2900..."
+                            placeholder="Tìm sản phẩm..."
                             class="w-full text-xs sm:text-sm pl-4 pr-12 py-2.5 rounded-2xl border border-slate-300 bg-slate-50/70 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 focus:bg-white shadow-2xs transition" />
-                        <button type="submit" class="absolute right-1 px-4 py-2 bg-[#1e3a8a] hover:bg-blue-900 active:bg-blue-950 text-white rounded-xl transition flex items-center justify-center font-bold text-xs shadow-xs">
+                        <button type="submit" aria-label="Tìm kiếm" class="absolute right-1 px-4 py-2 bg-[#1e3a8a] hover:bg-blue-900 active:bg-blue-950 text-white rounded-xl transition flex items-center justify-center font-bold text-xs shadow-xs">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </button>
                     </form>
@@ -201,11 +200,11 @@
                 <div class="flex items-center space-x-2.5 sm:space-x-4 shrink-0">
                     <!-- Hotline Box -->
                     <a href="{{ $storefrontSettings['hotline_url'] }}" class="hidden xl:flex items-center space-x-2.5 px-3 py-1.5 rounded-2xl hover:bg-slate-50 transition border border-transparent hover:border-slate-200">
-                        <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-base">
-                            📞
+                        <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a2 2 0 011.9 1.37l1.2 3.6a2 2 0 01-.5 2.1l-1.6 1.6a11 11 0 005.05 5.05l1.6-1.6a2 2 0 012.1-.5l3.6 1.2A2 2 0 0123 17.72V21a2 2 0 01-2 2h-1C10.06 23 1 13.94 1 3V3" /></svg>
                         </div>
                         <div class="text-left text-xs leading-tight">
-                            <span class="text-[10px] text-slate-400 font-semibold block uppercase">Hotline tư vấn</span>
+                            <span class="text-[10px] text-slate-400 font-semibold block uppercase">Tư vấn</span>
                             <span class="font-mono font-black text-slate-900">{{ $storefrontSettings['hotline'] }}</span>
                         </div>
                     </a>
@@ -213,20 +212,20 @@
                     <!-- Nút Giỏ Hàng Nổi Bật -->
                     <a href="{{ route('storefront.cart') }}" class="relative inline-flex items-center space-x-2 bg-[#1e3a8a] hover:bg-blue-900 text-white px-4 py-2.5 rounded-2xl text-xs font-extrabold transition shadow-sm">
                         <svg class="w-4 h-4 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
-                        <span class="hidden sm:inline">Giỏ Hàng</span>
+                        <span class="hidden sm:inline">Giỏ hàng</span>
                         <span id="global-cart-badge" class="px-2 py-0.5 bg-rose-500 text-white rounded-full text-[10px] font-black shadow-xs">0</span>
                     </a>
 
                     <!-- User Account / Login -->
                     @if(auth('customer')->check())
                     <a href="{{ route('customer.profile') }}" class="inline-flex items-center space-x-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 px-3.5 py-2.5 rounded-2xl text-xs font-bold transition border border-slate-200">
-                        <span>👤</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                         <span class="hidden sm:inline">{{ Str::limit(auth('customer')->user()->name, 10) }}</span>
                     </a>
                     @else
                     <a href="{{ route('customer.login') }}" class="inline-flex items-center space-x-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 px-3.5 py-2.5 rounded-2xl text-xs font-bold transition border border-slate-200">
-                        <span>👤</span>
-                        <span class="hidden sm:inline">Đăng Nhập</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                        <span class="hidden sm:inline">Đăng nhập</span>
                     </a>
                     @endif
                 </div>
@@ -237,9 +236,9 @@
             <div class="pb-3 md:hidden">
                 <form action="{{ route('storefront.products') }}" method="GET" class="relative flex items-center">
                     <input type="text" name="q" value="{{ request('q') }}"
-                        placeholder="Tìm giấy Double A, bút, mực in..."
+                        placeholder="Tìm sản phẩm..."
                         class="w-full text-xs pl-3.5 pr-10 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:bg-white" />
-                    <button type="submit" class="absolute right-1 px-3 py-1.5 bg-[#1e3a8a] text-white rounded-lg text-xs font-bold">
+                    <button type="submit" aria-label="Tìm kiếm" class="absolute right-1 px-3 py-1.5 bg-[#1e3a8a] text-white rounded-lg text-xs font-bold">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </button>
                 </form>
@@ -254,35 +253,34 @@
                 <div class="flex items-center space-x-1">
                     <a href="{{ route('storefront.products') }}" class="flex items-center space-x-2 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 font-extrabold text-white transition">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                        <span>TẤT CẢ SẢN PHẨM</span>
+                        <span>Sản phẩm</span>
                     </a>
                     <a href="{{ route('storefront.products', ['category' => 'giay-in-photo']) }}" class="py-2.5 px-3 hover:text-amber-300 font-semibold transition flex items-center space-x-1">
-                        <span>📄 Giấy In Photo</span>
+                        <span>Giấy in</span>
                     </a>
                     <a href="{{ route('storefront.products', ['category' => 'but-viet-muc-viet']) }}" class="py-2.5 px-3 hover:text-amber-300 font-semibold transition flex items-center space-x-1">
-                        <span>🖊️ Bút Viết & Dụng Cụ</span>
+                        <span>Bút & dụng cụ</span>
                     </a>
                     <a href="{{ route('storefront.products', ['category' => 'hop-muc-may-in']) }}" class="py-2.5 px-3 hover:text-amber-300 font-semibold transition flex items-center space-x-1">
-                        <span>🖨️ Hộp Mực Máy In</span>
+                        <span>Hộp mực</span>
                     </a>
                     <a href="{{ route('storefront.products', ['category' => 'linh-kien-may-in']) }}" class="py-2.5 px-3 hover:text-amber-300 font-semibold transition flex items-center space-x-1">
-                        <span>⚙️ Trống Drum & Linh Kiện</span>
+                        <span>Linh kiện máy in</span>
                     </a>
                     <a href="{{ route('storefront.index') }}#dich-vu-may-in" class="py-2.5 px-3 hover:text-amber-300 font-semibold transition flex items-center space-x-1">
-                        <span>🛠️ Sửa Máy In 30P</span>
+                        <span>Sửa máy in</span>
                     </a>
                     <a href="{{ route('storefront.wholesale') }}" class="py-2.5 px-3.5 text-amber-300 font-black hover:text-amber-200 transition flex items-center space-x-1">
-                        <span class="animate-pulse">🔥</span>
-                        <span>BÁO GIÁ SỈ DOANH NGHIỆP</span>
+                        <span>Báo giá sỉ</span>
                     </a>
                 </div>
                 <!-- Right Quick Links -->
                 <div class="flex items-center space-x-4 text-[11px] text-blue-200">
                     <a href="{{ route('lookup.index') }}" class="hover:text-amber-300 transition flex items-center space-x-1 font-semibold">
-                        <span>🔍 Tra cứu phiếu sửa</span>
+                        <span>Tra cứu sửa chữa</span>
                     </a>
                     <a href="{{ route('storefront.about') }}" class="hover:text-amber-300 transition flex items-center space-x-1 font-semibold">
-                        <span>🏢 Về chúng tôi</span>
+                        <span>Giới thiệu</span>
                     </a>
                 </div>
             </div>
@@ -293,7 +291,7 @@
     <div id="toastContainer" class="fixed top-5 right-5 z-[99999] flex flex-col space-y-3 pointer-events-none max-w-sm sm:max-w-md w-full px-4 sm:px-0"></div>
 
     <!-- 3. PAGE BODY CONTENT -->
-    <div class="flex-1 w-full">
+    <div class="storefront-page flex-1 w-full">
         @yield('content')
     </div>
 
@@ -306,55 +304,54 @@
                     Tổng kho phân phối sỉ & lẻ văn phòng phẩm, giấy in photo Double A, PaperOne, hộp mực và linh kiện máy in Canon, Brother, HP chính hãng tại Đồng Nai. Hỗ trợ nạp mực & sửa chữa máy in tận nơi trong 30 phút.
                 </p>
                 <div class="text-xs text-slate-300 space-y-1">
-                    <p>📍 Địa chỉ: {{ $storefrontSettings['address'] }}</p>
-                    <p>📞 Hotline: {{ $storefrontSettings['hotline'] }} | Zalo: {{ $storefrontSettings['zalo'] }}</p>
+                    <p>Địa chỉ: {{ $storefrontSettings['address'] }}</p>
+                    <p>Hotline: {{ $storefrontSettings['hotline'] }} · Zalo: {{ $storefrontSettings['zalo'] }}</p>
                     @if(!empty($storefrontSettings['technical_hotline']))
-                        <p>🛠️ Kỹ thuật 24/7: <a href="{{ $storefrontSettings['technical_hotline_url'] }}" class="text-emerald-400 hover:underline">{{ $storefrontSettings['technical_hotline'] }}</a></p>
+                        <p>Kỹ thuật: <a href="{{ $storefrontSettings['technical_hotline_url'] }}" class="text-emerald-400 hover:underline">{{ $storefrontSettings['technical_hotline'] }}</a></p>
                     @endif
                     <p>Email: {{ $storefrontSettings['email'] }}</p>
-                    <p>⏰ Mở cửa: {{ $storefrontSettings['opening_hours'] }}</p>
+                    <p>Giờ mở cửa: {{ $storefrontSettings['opening_hours'] }}</p>
                     @if(!empty($storefrontSettings['facebook_url']))
-                        <p>🌐 Fanpage: <a href="{{ $storefrontSettings['facebook_url'] }}" target="_blank" rel="noopener noreferrer" class="text-sky-400 hover:underline">Facebook Cửa Hàng</a></p>
+                        <p>Facebook: <a href="{{ $storefrontSettings['facebook_url'] }}" target="_blank" rel="noopener noreferrer" class="text-sky-400 hover:underline">Trang cửa hàng</a></p>
                     @endif
-                    <p>🚀 Miễn phí giao hàng cho đơn từ {{ $storefrontSettings['freeship_label'] }}</p>
+                    <p>Miễn phí giao hàng từ {{ $storefrontSettings['freeship_label'] }}</p>
                 </div>
             </div>
 
             <div>
-                <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3">Ngành Hàng Chính</h4>
+                <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3">Danh mục</h4>
                 <ul class="space-y-2 text-xs">
-                    <li><a href="{{ route('storefront.products', ['category' => 'giay-in-photo']) }}" class="hover:text-white transition">Giấy In Double A / PaperOne / IK Plus</a></li>
-                    <li><a href="{{ route('storefront.products', ['category' => 'but-viet-muc-viet']) }}" class="hover:text-white transition">Bút Bi & Bút Gel Thiên Long</a></li>
-                    <li><a href="{{ route('storefront.products', ['category' => 'hop-muc-may-in']) }}" class="hover:text-white transition">Hộp Mực Máy In Canon 2900 & Brother</a></li>
-                    <li><a href="{{ route('storefront.products', ['category' => 'bia-file-ho-so']) }}" class="hover:text-white transition">Bìa Còng Kokuyo & Bìa Nút My Clear</a></li>
-                    <li><a href="{{ route('storefront.products', ['category' => 'dung-cu-van-phong']) }}" class="hover:text-white transition">Bấm Kim Plus & Băng Keo Dán Thùng</a></li>
+                    <li><a href="{{ route('storefront.products', ['category' => 'giay-in-photo']) }}" class="hover:text-white transition">Giấy in</a></li>
+                    <li><a href="{{ route('storefront.products', ['category' => 'but-viet-muc-viet']) }}" class="hover:text-white transition">Bút viết</a></li>
+                    <li><a href="{{ route('storefront.products', ['category' => 'hop-muc-may-in']) }}" class="hover:text-white transition">Hộp mực máy in</a></li>
+                    <li><a href="{{ route('storefront.products', ['category' => 'bia-file-ho-so']) }}" class="hover:text-white transition">Bìa hồ sơ</a></li>
+                    <li><a href="{{ route('storefront.products', ['category' => 'dung-cu-van-phong']) }}" class="hover:text-white transition">Dụng cụ văn phòng</a></li>
                 </ul>
             </div>
 
             <div>
-                <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3">Dịch Vụ & Đại Lý</h4>
+                <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3">Dịch vụ</h4>
                 <ul class="space-y-2 text-xs">
-                    <li><a href="{{ route('storefront.wholesale') }}" class="text-amber-400 font-bold hover:underline">⭐ Báo Giá Sỉ Cho Doanh Nghiệp & Đại Lý</a></li>
-                    <li><a href="{{ route('lookup.index') }}" class="hover:text-white transition">Tra Cứu Phiếu Sửa Chữa Máy In Online</a></li>
-                    <li><a href="{{ $storefrontSettings['zalo_url'] }}" target="_blank" class="hover:text-white transition">Tư Vấn Nạp Mực Tận Nơi Qua Zalo</a></li>
-                    <li><a href="{{ route('customer.login') }}" class="hover:text-white transition">Tài Khoản & Lịch Sử Đơn Hàng</a></li>
+                    <li><a href="{{ route('storefront.wholesale') }}" class="text-amber-400 font-bold hover:underline">Báo giá sỉ</a></li>
+                    <li><a href="{{ route('lookup.index') }}" class="hover:text-white transition">Tra cứu sửa chữa</a></li>
+                    <li><a href="{{ $storefrontSettings['zalo_url'] }}" target="_blank" rel="noopener noreferrer" class="hover:text-white transition">Tư vấn qua Zalo</a></li>
+                    <li><a href="{{ route('customer.login') }}" class="hover:text-white transition">Đơn hàng của tôi</a></li>
                     <li><a href="{{ route('pos.index') }}" class="hover:text-white transition">Quầy bán hàng POS</a></li>
                 </ul>
             </div>
 
             <div>
-                <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3">Chính Sách Khách Hàng</h4>
+                <h4 class="text-white font-bold text-xs uppercase tracking-wider mb-3">Thông tin</h4>
                 <ul class="space-y-2 text-xs">
-                    <li><a href="{{ route('storefront.terms') }}" class="hover:text-white transition">Chính Sách Giao Hàng Siêu Tốc 2 Giờ</a></li>
-                    <li><a href="{{ route('storefront.terms') }}" class="hover:text-white transition">Chính Sách Đổi Trả & Bảo Hành 1-Đổi-1</a></li>
-                    <li><a href="{{ route('storefront.privacy') }}" class="hover:text-white transition text-emerald-400 font-bold">🛡️ Bảo Mật Dữ Liệu Khách Hàng (100%)</a></li>
-                    <li><a href="{{ route('storefront.about') }}" class="hover:text-white transition">Giới Thiệu Về Chúng Tôi</a></li>
+                    <li><a href="{{ route('storefront.terms') }}" class="hover:text-white transition">Điều khoản & đổi trả</a></li>
+                    <li><a href="{{ route('storefront.privacy') }}" class="hover:text-white transition text-emerald-400 font-bold">Quyền riêng tư</a></li>
+                    <li><a href="{{ route('storefront.about') }}" class="hover:text-white transition">Giới thiệu</a></li>
                 </ul>
             </div>
         </div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-2">
-            <p>© 2026 {{ $storefrontSettings['site_name'] }}. Hệ thống thương mại văn phòng phẩm & dịch vụ máy in chuyên nghiệp.</p>
+            <p>© 2026 {{ $storefrontSettings['site_name'] }}. Văn phòng phẩm và dịch vụ máy in.</p>
             <div class="flex items-center space-x-3 text-slate-400 text-[11px]">
                 <a href="{{ route('storefront.about') }}" class="hover:text-white">Giới Thiệu</a>
                 <span>•</span>
@@ -374,30 +371,30 @@
                 ✓
             </div>
             <div>
-                <h3 class="text-xl font-black text-slate-900">Đặt Hàng Thành Công!</h3>
-                <p class="text-xs text-slate-500 mt-1">Cảm ơn quý khách. Đơn hàng đã được tiếp nhận vào hệ thống.</p>
+                <h3 class="text-xl font-black text-slate-900">Đặt hàng thành công</h3>
+                <p class="text-xs text-slate-500 mt-1">Cửa hàng đã nhận được đơn hàng.</p>
             </div>
 
             <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 text-left space-y-2 text-xs">
                 <div class="flex justify-between">
-                    <span class="text-slate-500">Mã đơn hàng:</span>
+                    <span class="text-slate-500">Mã đơn:</span>
                     <span id="success-order-code" class="font-mono font-bold text-slate-900 text-sm"></span>
                 </div>
                 <div class="flex justify-between border-t border-slate-200 pt-2 text-sm">
-                    <span class="font-bold text-slate-700">Tổng thanh toán:</span>
+                    <span class="font-bold text-slate-700">Tổng tiền:</span>
                     <span id="success-grand-total" class="font-black font-mono text-rose-600"></span>
                 </div>
             </div>
 
             <div id="success-vietqr-container" class="hidden bg-slate-50 p-3 rounded-2xl border border-slate-200">
-                <p class="text-xs font-bold text-slate-700 mb-2">Mở app Ngân hàng quét mã VietQR để thanh toán:</p>
+                <p class="text-xs font-bold text-slate-700 mb-2">Quét mã VietQR để thanh toán:</p>
                 <img id="success-vietqr-img" src="" alt="Mã VietQR" class="w-44 h-44 mx-auto rounded-xl object-contain border border-slate-200 bg-white p-1" />
-                <p class="text-[10px] text-slate-400 mt-1.5">Hệ thống sẽ tự động cập nhật trạng thái đã thanh toán sau 3 giây</p>
+                <p class="text-[10px] text-slate-400 mt-1.5">Trạng thái thanh toán sẽ tự cập nhật.</p>
             </div>
 
             <div class="pt-2">
                 <button type="button" onclick="closeSuccessModal()" class="w-full py-2.5 px-4 bg-[#059669] hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition">
-                    Tiếp Tục Mua Sắm
+                    Tiếp tục mua sắm
                 </button>
             </div>
         </div>
@@ -613,9 +610,9 @@
             if (cart.length === 0) {
                 container.innerHTML = `
                     <div class="py-12 text-center text-slate-400 space-y-2">
-                        <span class="text-4xl block">🛒</span>
-                        <p class="text-sm font-semibold">Giỏ hàng của bạn đang trống</p>
-                        <p class="text-xs">Hãy chọn mua các mặt hàng văn phòng phẩm & mực in để thêm vào giỏ</p>
+                    <svg class="w-10 h-10 mx-auto text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l2.1 11.2a2 2 0 002 1.6h8.8a2 2 0 002-1.6L21 8H6M10 20a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z" /></svg>
+                    <p class="text-sm font-semibold">Chưa có sản phẩm</p>
+                    <p class="text-xs">Thêm sản phẩm để bắt đầu đặt hàng.</p>
                     </div>
                 `;
                 document.getElementById('drawer-subtotal').textContent = '0 VNĐ';

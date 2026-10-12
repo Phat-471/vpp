@@ -46,12 +46,12 @@ class ProductResource extends Resource
 
     public static function canDelete(Model $record): bool
     {
-        return auth()->user()?->isAdmin() ?? false;
+        return false;
     }
 
     public static function canDeleteAny(): bool
     {
-        return auth()->user()?->isAdmin() ?? false;
+        return false;
     }
 
     public static function form(Form $form): Form
@@ -405,17 +405,18 @@ class ProductResource extends Resource
                     ->relationship('category', 'name'),
             ])
             ->actions([
+                Tables\Actions\Action::make('deactivate')
+                    ->label('Ngừng kinh doanh')
+                    ->icon('heroicon-o-no-symbol')
+                    ->color('gray')
+                    ->visible(fn (Product $record) => $record->is_active && (auth()->user()?->isAdmin() ?? false))
+                    ->requiresConfirmation()
+                    ->action(fn (Product $record) => $record->update(['is_active' => false])),
+
                 Tables\Actions\EditAction::make()
                     ->label('Sửa')
                     ->icon('heroicon-m-pencil-square'),
 
-                Tables\Actions\DeleteAction::make()
-                    ->label('Xóa')
-                    ->icon('heroicon-m-trash')
-                    ->modalHeading(fn (Product $record) => "Xác nhận xóa sản phẩm: {$record->name}")
-                    ->modalDescription('Bạn có chắc chắn muốn xóa sản phẩm này khỏi kho? Hành động này không thể hoàn tác.')
-                    ->modalSubmitActionLabel('Đồng ý xóa')
-                    ->modalCancelActionLabel('Hủy bỏ'),
 
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('view_storefront')
@@ -463,6 +464,16 @@ class ProductResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('deactivate')
+                        ->label('Ngừng kinh doanh sản phẩm đã chọn')
+                        ->icon('heroicon-o-no-symbol')
+                        ->visible(fn () => auth()->user()?->isAdmin())
+                        ->requiresConfirmation()
+                        ->action(fn ($records) => $records->each->update(['is_active' => false]))
+                        ->deselectRecordsAfterCompletion(),
+
+
+
                     Tables\Actions\BulkAction::make('set_flash_sale')
                         ->label('Bật Flash Sale đã chọn')
                         ->icon('heroicon-o-bolt')
@@ -486,7 +497,7 @@ class ProductResource extends Resource
                         ->deselectRecordsAfterCompletion(),
 
                     Tables\Actions\BulkAction::make('set_best_seller')
-                        ->label('🏆 Đánh dấu Bán chạy đã chọn')
+                        ->label('Đánh dấu bán chạy')
                         ->icon('heroicon-o-trophy')
                         ->color('warning')
                         ->requiresConfirmation()
@@ -518,12 +529,6 @@ class ProductResource extends Resource
                         })
                         ->deselectRecordsAfterCompletion(),
 
-                    Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn () => auth()->user()?->isAdmin())
-                        ->modalHeading('Xóa các sản phẩm đã chọn')
-                        ->modalDescription('Bạn có chắc chắn muốn xóa tất cả các sản phẩm đã chọn?')
-                        ->modalSubmitActionLabel('Xóa tất cả')
-                        ->modalCancelActionLabel('Hủy'),
                 ]),
             ])
             ->headerActions([

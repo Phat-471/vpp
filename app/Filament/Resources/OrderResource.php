@@ -52,12 +52,12 @@ class OrderResource extends Resource
 
     public static function canDelete(Model $record): bool
     {
-        return auth()->user()?->isAdmin() ?? false;
+        return false;
     }
 
     public static function canDeleteAny(): bool
     {
-        return auth()->user()?->isAdmin() ?? false;
+        return false;
     }
 
     public static function form(Form $form): Form
@@ -142,6 +142,7 @@ class OrderResource extends Resource
                                                     'cancelled' => 'Đã hủy đơn',
                                                 ])
                                                 ->default('completed')
+                                                ->disabled(fn (?\App\Models\Order $record) => $record !== null)
                                                 ->required(),
 
                                             Forms\Components\TextInput::make('customer_address')
@@ -371,6 +372,7 @@ class OrderResource extends Resource
                                         ->numeric()
                                         ->prefix('₫')
                                         ->default(0)
+                                        ->disabled(fn (?\App\Models\Order $record) => $record !== null)
                                         ->live(),
 
                                     Forms\Components\Actions::make([
@@ -438,6 +440,7 @@ class OrderResource extends Resource
                                             'unpaid' => 'Chưa thanh toán / Ghi nợ',
                                         ])
                                         ->default('paid')
+                                        ->disabled(fn (?\App\Models\Order $record) => $record !== null)
                                         ->required(),
 
                                     Forms\Components\Select::make('payment_method')
@@ -619,14 +622,6 @@ class OrderResource extends Resource
                                 'cancelled' => 'Hủy đơn & Hoàn trả kho',
                             ])
                             ->required(),
-                        Forms\Components\Select::make('payment_status')
-                            ->label('Trạng thái thanh toán *')
-                            ->options([
-                                'paid' => 'Đã thanh toán đủ',
-                                'partially_paid' => 'Trả một phần / Đặt cọc',
-                                'unpaid' => 'Chưa thanh toán / Ghi nợ',
-                            ])
-                            ->required(),
                         Forms\Components\Select::make('payment_method')
                             ->label('Hình thức thanh toán')
                             ->options([
@@ -640,7 +635,6 @@ class OrderResource extends Resource
                     ])
                     ->fillForm(fn (Order $record): array => [
                         'status' => $record->status,
-                        'payment_status' => $record->payment_status,
                         'payment_method' => $record->payment_method,
                         'notes' => $record->notes,
                     ])
@@ -649,10 +643,8 @@ class OrderResource extends Resource
                             $record,
                             $data['status'],
                             [
-                                'payment_status' => $data['payment_status'],
                                 'payment_method' => $data['payment_method'] ?? $record->payment_method,
                                 'notes' => $data['notes'] ?? $record->notes,
-                                'paid_amount' => $data['payment_status'] === 'paid' ? $record->grand_total : $record->paid_amount,
                             ]
                         );
 
@@ -732,13 +724,6 @@ class OrderResource extends Resource
                     ->label('Sửa')
                     ->icon('heroicon-m-pencil-square'),
 
-                Tables\Actions\DeleteAction::make()
-                    ->label('Xóa')
-                    ->icon('heroicon-m-trash')
-                    ->modalHeading('Xác nhận xóa đơn hàng')
-                    ->modalDescription(fn (Order $record) => "Bạn có chắc chắn muốn xóa đơn hàng '{$record->order_code}' trị giá " . number_format($record->grand_total, 0, ',', '.') . "đ? Hành động này không thể hoàn tác.")
-                    ->modalSubmitActionLabel('Xác nhận xóa')
-                    ->modalCancelActionLabel('Hủy bỏ'),
             ])
             ->emptyStateHeading('Chưa có đơn hàng nào')
             ->emptyStateDescription('Bấm Tạo mới đơn hàng hoặc mở Quầy POS để ghi nhận giao dịch bán văn phòng phẩm đầu tiên.')

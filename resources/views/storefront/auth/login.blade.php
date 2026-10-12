@@ -1,7 +1,7 @@
 @extends('layouts.storefront')
 
 @section('title', 'Đăng Nhập Khách Hàng | ' . ($storefrontSettings['site_name'] ?? 'VPP & Dịch Vụ Máy In'))
-@section('meta_description', 'Đăng nhập để theo dõi đơn hàng và tra cứu lịch sử sửa máy in của bạn tại ' . ($storefrontSettings['site_name'] ?? 'VPP & Dịch Vụ Máy In'))
+@section('meta_description', 'Đăng nhập để theo dõi đơn hàng và tra cứu lịch sử sửa chữa tại ' . ($storefrontSettings['site_name'] ?? 'VPP & Dịch Vụ Máy In'))
 
 @section('content')
     <div class="max-w-md mx-auto px-4 py-8 sm:py-16 space-y-6">
@@ -84,7 +84,7 @@
                         </a>
                     </div>
                     <input type="password" id="loginPassword" name="password" required
-                        placeholder="Nhập mật khẩu của bạn..."
+                        placeholder="Nhập mật khẩu"
                         class="w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-600 focus:outline-none font-medium transition" />
                 </div>
 
@@ -100,7 +100,7 @@
                 <!-- Nút submit -->
                 <button type="submit" id="btnLoginSubmit"
                     class="w-full py-3.5 px-4 bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 text-white font-black text-xs sm:text-sm rounded-xl shadow-md shadow-indigo-500/20 transition flex items-center justify-center space-x-2 active:scale-98">
-                    <span>ĐĂNG NHẬP NGAY</span>
+                    <span>Đăng nhập</span>
                     <span>→</span>
                 </button>
             </form>
@@ -118,7 +118,7 @@
         <div class="p-4 rounded-2xl bg-blue-50/80 border border-blue-200/60 text-center space-y-1">
             <p class="text-xs font-bold text-blue-900">🔍 Cần tra cứu tiến độ sửa chữa?</p>
             <p class="text-[11px] text-blue-700">
-                Bạn không cần đăng nhập. <a href="{{ route('lookup.index') }}"
+                Anh/chị có thể tra cứu mà không cần đăng nhập. <a href="{{ route('lookup.index') }}"
                     class="font-black underline hover:text-blue-900">Tra cứu nhanh tại đây</a> với Mã phiếu và SĐT.
             </p>
         </div>

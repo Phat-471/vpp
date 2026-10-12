@@ -47,10 +47,10 @@
 
         <div class="relative z-10 max-w-3xl space-y-4">
             <span class="inline-block px-3 py-1 bg-amber-400 text-slate-950 font-black text-xs rounded-full uppercase tracking-wider shadow-xs">
-                ⭐ CHÍNH SÁCH ĐỐI TÁC DOANH NGHIỆP & ĐẠI LÝ 2026
+                Chính sách dành cho doanh nghiệp và đại lý
             </span>
             <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black text-white leading-tight">
-                Cung Ứng Văn Phòng Phẩm Tận Gốc & Dịch Vụ Máy In Doanh Nghiệp
+                Cung ứng văn phòng phẩm và dịch vụ máy in
             </h1>
             <p class="text-xs sm:text-base text-slate-300 leading-relaxed font-normal">
                 Chúng tôi chuyên cung cấp trọn gói cho hơn <b>1.000+ công ty, ngân hàng, trường học và đại lý bán lẻ</b> tại Đồng Nai và các tỉnh lân cận với bảng giá chiết khấu đặc biệt theo sản lượng.
@@ -72,32 +72,28 @@
     <!-- 4 Quyền Lợi Cốt Lõi Cho Đại Lý -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs space-y-2">
-            <span class="text-2xl">🏷️</span>
-            <h3 class="font-bold text-slate-900 text-sm">Giá Sỉ Tận Kho</h3>
+            <h3 class="font-bold text-slate-900 text-sm">Giá sỉ</h3>
             <p class="text-xs text-slate-500 leading-relaxed">
                 Phân phối trực tiếp từ nhà máy Double A, PaperOne, Thiên Long, Kokuyo, Plus không qua trung gian.
             </p>
         </div>
 
         <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs space-y-2">
-            <span class="text-2xl">💳</span>
-            <h3 class="font-bold text-slate-900 text-sm">Hỗ Trợ Công Nợ 30 Ngày</h3>
+            <h3 class="font-bold text-slate-900 text-sm">Công nợ theo hợp đồng</h3>
             <p class="text-xs text-slate-500 leading-relaxed">
                 Hỗ trợ công nợ gối đầu linh hoạt theo hợp đồng cung cấp định kỳ hàng tháng cho doanh nghiệp.
             </p>
         </div>
 
         <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs space-y-2">
-            <span class="text-2xl">⚡</span>
-            <h3 class="font-bold text-slate-900 text-sm">Ưu Tiên Thợ Máy In 15P</h3>
+            <h3 class="font-bold text-slate-900 text-sm">Dịch vụ máy in</h3>
             <p class="text-xs text-slate-500 leading-relaxed">
                 Kỹ thuật viên có mặt xử lý kẹt giấy, nạp mực hoặc sửa chữa trong 15-30 phút không làm gián đoạn công việc.
             </p>
         </div>
 
         <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs space-y-2">
-            <span class="text-2xl">🧾</span>
-            <h3 class="font-bold text-slate-900 text-sm">Hóa Đơn VAT Điện Tử</h3>
+            <h3 class="font-bold text-slate-900 text-sm">Hóa đơn điện tử</h3>
             <p class="text-xs text-slate-500 leading-relaxed">
                 Xuất hóa đơn GTGT điện tử chuẩn xác trong ngày theo quy định của Tổng Cục Thuế.
             </p>
@@ -111,13 +107,13 @@
         <div class="lg:col-span-7 bg-white p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-xs space-y-6">
             <div>
                 <span class="text-[11px] font-bold text-indigo-600 uppercase tracking-wider block mb-1">
-                    GỬI YÊU CẦU BÁO GIÁ ĐẠI LÝ
+                    Đăng ký nhận báo giá
                 </span>
                 <h2 class="text-xl sm:text-2xl font-black text-slate-900">
-                    Điền Thông Tin Doanh Nghiệp Của Bạn
+                    Thông tin doanh nghiệp
                 </h2>
                 <p class="text-xs text-slate-500 mt-1">
-                    Chuyên viên phụ trách khách hàng doanh nghiệp sẽ liên hệ lại gửi bảng báo giá chiết khấu trong vòng 15-30 phút:
+                    Nhân viên sẽ liên hệ để trao đổi nhu cầu và báo giá.
                 </p>
             </div>
 
@@ -133,25 +129,25 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Tên đơn vị / Doanh nghiệp *</label>
-                        <input type="text" name="company_name" required value="{{ old('company_name') }}" placeholder="VD: Công ty TNHH Phát Triển Á Châu" class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 bg-slate-50 font-medium" />
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Tên doanh nghiệp *</label>
+                        <input type="text" name="company_name" required value="{{ old('company_name') }}" placeholder="Tên công ty hoặc đơn vị" class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 bg-slate-50 font-medium" />
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Người đại diện liên hệ *</label>
-                        <input type="text" name="contact_name" required value="{{ old('contact_name') }}" placeholder="VD: Anh Minh (Phòng Mua Hàng)" class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 bg-slate-50 font-medium" />
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Người liên hệ *</label>
+                        <input type="text" name="contact_name" required value="{{ old('contact_name') }}" placeholder="Họ và tên" class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 bg-slate-50 font-medium" />
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Số điện thoại liên hệ (Zalo) *</label>
-                        <input type="tel" name="phone" required value="{{ old('phone') }}" placeholder="VD: 0901 234 567" class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 bg-slate-50 font-medium" />
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Số điện thoại *</label>
+                        <input type="tel" name="phone" required value="{{ old('phone') }}" placeholder="Số điện thoại liên hệ" class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 bg-slate-50 font-medium" />
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">Email nhận báo giá</label>
-                        <input type="email" name="email" value="{{ old('email') }}" placeholder="VD: contact@achau.com" class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 bg-slate-50 font-medium" />
+                        <input type="email" name="email" value="{{ old('email') }}" placeholder="Email nhận báo giá" class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 bg-slate-50 font-medium" />
                     </div>
                 </div>
 
@@ -185,7 +181,7 @@
 
                 <!-- Checkbox các ngành hàng quan tâm -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Ngành hàng quý công ty quan tâm chính:</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Sản phẩm quan tâm:</label>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                         <label class="flex items-center space-x-1.5 p-2 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer">
                             <input type="checkbox" name="interested_categories[]" value="Giấy in A4/A3 theo Thùng" checked class="accent-indigo-600" />
@@ -207,12 +203,12 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Ghi chú cụ thể hoặc yêu cầu danh mục hàng</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Ghi chú</label>
                     <textarea name="notes" rows="3" placeholder="VD: Công ty đang sử dụng máy in Canon 2900 và HP 1020, mỗi tháng cần 30 thùng giấy Double A và 5 hộp mực..." class="w-full text-xs px-3.5 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 bg-slate-50"></textarea>
                 </div>
 
                 <button type="submit" class="w-full py-3.5 px-6 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs sm:text-sm shadow-md transition transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
-                    <span>GỬI ĐĂNG KÝ NHẬN BÁO GIÁ ĐẠI LÝ</span>
+                    <span>Gửi yêu cầu</span>
                     <span>→</span>
                 </button>
             </form>
@@ -224,28 +220,27 @@
             <!-- Direct Manager Hotline Box -->
             <div class="bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-sm space-y-4">
                 <span class="px-2.5 py-0.5 bg-amber-400 text-slate-950 font-black text-[10px] rounded-full uppercase tracking-wider">
-                    HOTLINE KINH DOANH DOANH NGHIỆP
+                    Tư vấn doanh nghiệp
                 </span>
                 <h3 class="text-lg sm:text-xl font-black text-white">
-                    Cần Báo Giá Gấp Trong 10 Phút?
+                    Cần báo giá nhanh?
                 </h3>
                 <p class="text-xs text-slate-300 leading-relaxed">
-                    Quý khách có thể gửi trực tiếp danh mục file Excel qua Zalo của Giám đốc kinh doanh để nhận báo giá chiết khấu kèm mẫu hợp đồng:
+                    Gửi danh mục sản phẩm qua Zalo hoặc gọi hotline để được tư vấn.
                 </p>
                 <div class="pt-2 space-y-2">
                     <a href="{{ $storefrontSettings['zalo_url'] }}" target="_blank" class="w-full py-3 px-4 bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs rounded-xl flex items-center justify-center space-x-2 shadow-xs transition">
-                        <span>💬</span>
-                        <span>Nhắn Zalo Gửi Danh Mục Báo Giá</span>
+                        <span>Nhắn Zalo</span>
                     </a>
                     <a href="{{ $storefrontSettings['hotline_url'] }}" class="w-full py-3 px-4 bg-white text-slate-900 hover:bg-slate-100 font-bold text-xs rounded-xl flex items-center justify-center space-x-2 transition">
-                        <span>📞 Hotline: {{ $storefrontSettings['hotline'] }}</span>
+                        <span>Gọi {{ $storefrontSettings['hotline'] }}</span>
                     </a>
                 </div>
             </div>
 
             <!-- FAQs Box -->
             <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-xs space-y-3 text-xs">
-                <h4 class="font-bold text-slate-900 text-sm">Câu Hỏi Thường Gặp Về Đại Lý:</h4>
+                <h4 class="font-bold text-slate-900 text-sm">Câu hỏi thường gặp</h4>
                 <div class="space-y-2 text-slate-600">
                     <div>
                         <p class="font-bold text-slate-800">• Mua bao nhiêu thì được tính giá sỉ?</p>

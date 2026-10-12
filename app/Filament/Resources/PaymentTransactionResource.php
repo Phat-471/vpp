@@ -35,12 +35,12 @@ class PaymentTransactionResource extends Resource
 
     public static function canDelete(Model $record): bool
     {
-        return auth()->user()?->isAdmin() ?? false;
+        return false;
     }
 
     public static function canDeleteAny(): bool
     {
-        return auth()->user()?->isAdmin() ?? false;
+        return false;
     }
 
     public static function form(Form $form): Form
@@ -148,6 +148,7 @@ class PaymentTransactionResource extends Resource
                     ->label('Thử nghiệm tiền vào')
                     ->icon('heroicon-o-bolt')
                     ->color('warning')
+                    ->visible(fn () => app()->environment(['local', 'testing']) && auth()->user()?->isAdmin())
                     ->form([
                         Forms\Components\Select::make('gateway')
                             ->label('Cổng thanh toán')

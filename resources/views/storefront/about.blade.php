@@ -46,7 +46,7 @@
     <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-slate-900 to-blue-950 text-white p-6 sm:p-12 shadow-2xl border border-indigo-800/80">
         <div class="relative z-10 max-w-3xl space-y-4">
             <div class="inline-flex items-center space-x-2 bg-amber-400 text-slate-950 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider shadow">
-                <span>🏢 ĐỐI TÁC VĂN PHÒNG & THIẾT BỊ IN ẤN TIN CẬY</span>
+                <span>Đối tác văn phòng và thiết bị in ấn</span>
             </div>
             <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black text-white leading-tight">
                 Giải Pháp Toàn Diện Cho Văn Phòng & Dịch Vụ Máy In Doanh Nghiệp
@@ -98,13 +98,13 @@
         <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-4 flex flex-col justify-between">
             <div class="space-y-3">
                 <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-2xl">
-                    📚
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 19.5A2.5 2.5 0 016.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" /></svg>
                 </div>
                 <h3 class="text-lg sm:text-xl font-black text-slate-900">
                     1. Nhà Cung Cấp Văn Phòng Phẩm Tận Gốc
                 </h3>
                 <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                    Phân phối chính hãng trực tiếp từ các thương hiệu hàng đầu: <b>Double A, PaperOne, IK Plus, Thiên Long, Kokuyo, Plus, Kingjim</b>. Hệ thống kho quy mô lớn sẵn sàng cung ứng trọn gói:
+                    Phân phối sản phẩm từ các thương hiệu: <b>Double A, PaperOne, IK Plus, Thiên Long, Kokuyo, Plus, Kingjim</b>. Hệ thống kho cung ứng:
                 </p>
                 <ul class="text-xs text-slate-600 space-y-2 pl-4 list-disc">
                     <li><b>Giấy in photo văn phòng:</b> Khổ A4, A3, A5 định lượng 70gsm, 80gsm bán lẻ theo Ram và chiết khấu cực sâu theo Thùng.</li>
@@ -123,7 +123,7 @@
         <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-4 flex flex-col justify-between">
             <div class="space-y-3">
                 <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-2xl">
-                    🖨️
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-12-4h12v8H6v-8z" /></svg>
                 </div>
                 <h3 class="text-lg sm:text-xl font-black text-slate-900">
                     2. Dịch Vụ Kỹ Thuật Máy In Chuyên Nghiệp
@@ -151,7 +151,7 @@
         <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-100 pb-5">
             <div>
                 <span class="inline-block px-3 py-1 bg-indigo-100 text-indigo-700 font-bold rounded-full text-xs">
-                    📍 VỊ TRÍ CỬA HÀNG & LIÊN HỆ
+                    Cửa hàng và liên hệ
                 </span>
                 <h3 class="text-xl sm:text-2xl font-black text-slate-900 mt-2">
                     Trung Tâm Cung Ứng & Kỹ Thuật Tại Đồng Nai
@@ -159,7 +159,7 @@
             </div>
             <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($storefrontSettings['address'] ?? '30 Bình Hòa, Đồng Nai') }}" target="_blank" rel="noopener noreferrer"
                class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs shadow transition flex items-center space-x-2">
-                <span>🗺️ Mở Bản Đồ Chỉ Đường</span>
+                <span>Mở bản đồ</span>
                 <span>→</span>
             </a>
         </div>
@@ -169,36 +169,35 @@
             <div class="lg:col-span-5 space-y-4 text-xs sm:text-sm">
                 <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
                     <p class="flex items-start space-x-2">
-                        <span class="text-indigo-600 font-bold shrink-0">🏢 Địa chỉ:</span>
+                        <span class="text-indigo-600 font-bold shrink-0">Địa chỉ:</span>
                         <span class="text-slate-800 font-medium">{{ $storefrontSettings['address'] }}</span>
                     </p>
                     <p class="flex items-start space-x-2">
-                        <span class="text-indigo-600 font-bold shrink-0">⏰ Giờ mở cửa:</span>
+                        <span class="text-indigo-600 font-bold shrink-0">Giờ mở cửa:</span>
                         <span class="text-slate-800 font-medium">{{ $storefrontSettings['opening_hours'] }}</span>
                     </p>
                     <p class="flex items-start space-x-2">
-                        <span class="text-indigo-600 font-bold shrink-0">📞 Hotline bán hàng:</span>
+                        <span class="text-indigo-600 font-bold shrink-0">Hotline bán hàng:</span>
                         <a href="{{ $storefrontSettings['hotline_url'] }}" class="text-rose-600 font-bold hover:underline">{{ $storefrontSettings['hotline'] }}</a>
                     </p>
                     @if(!empty($storefrontSettings['technical_hotline']))
                     <p class="flex items-start space-x-2">
-                        <span class="text-indigo-600 font-bold shrink-0">🛠️ Hotline kỹ thuật:</span>
+                        <span class="text-indigo-600 font-bold shrink-0">Hotline kỹ thuật:</span>
                         <a href="{{ $storefrontSettings['technical_hotline_url'] }}" class="text-emerald-600 font-bold hover:underline">{{ $storefrontSettings['technical_hotline'] }}</a>
                     </p>
                     @endif
                     <p class="flex items-start space-x-2">
-                        <span class="text-indigo-600 font-bold shrink-0">💬 Zalo đặt hàng:</span>
+                        <span class="text-indigo-600 font-bold shrink-0">Zalo đặt hàng:</span>
                         <a href="{{ $storefrontSettings['zalo_url'] }}" target="_blank" class="text-sky-600 font-bold hover:underline">{{ $storefrontSettings['zalo'] }}</a>
                     </p>
                     <p class="flex items-start space-x-2">
-                        <span class="text-indigo-600 font-bold shrink-0">✉️ Email:</span>
+                        <span class="text-indigo-600 font-bold shrink-0">Email:</span>
                         <span class="text-slate-800 font-medium">{{ $storefrontSettings['email'] }}</span>
                     </p>
                 </div>
 
                 <div class="p-4 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 text-xs text-emerald-900 space-y-1">
                     <p class="font-bold flex items-center space-x-1 text-emerald-800">
-                        <span>🚚</span>
                         <span>Phục vụ giao hàng & Kỹ thuật tận nơi tại:</span>
                     </p>
                     <p class="text-slate-600 leading-relaxed text-[11px]">

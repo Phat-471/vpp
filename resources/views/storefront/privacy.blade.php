@@ -39,7 +39,7 @@
     <!-- Title Banner Box -->
     <div class="bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-900 text-white p-6 sm:p-10 rounded-3xl shadow-xl border border-indigo-800 space-y-3">
         <div class="inline-flex items-center space-x-2 bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border border-emerald-400/30">
-            <span>🛡️ TIÊU CHUẨN AN TOÀN DỮ LIỆU TỐI CAO</span>
+            <span>Chính sách quyền riêng tư</span>
         </div>
         <h1 class="text-2xl sm:text-4xl font-black text-white leading-tight">
             Chính Sách Bảo Mật Thông Tin & Dữ Liệu Máy In Doanh Nghiệp

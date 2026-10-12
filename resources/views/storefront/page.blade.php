@@ -27,7 +27,7 @@
 @endsection
 
 @section('content')
-<div class="bg-slate-50 min-h-screen py-10">
+<div class="cms-page bg-slate-50 min-h-screen py-10">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <!-- Breadcrumbs -->

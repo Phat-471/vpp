@@ -54,12 +54,12 @@ class RepairTicketResource extends Resource
 
     public static function canDelete(Model $record): bool
     {
-        return auth()->user()?->isAdmin() ?? false;
+        return false;
     }
 
     public static function canDeleteAny(): bool
     {
-        return auth()->user()?->isAdmin() ?? false;
+        return false;
     }
 
     public static function form(Form $form): Form
@@ -465,7 +465,8 @@ class RepairTicketResource extends Resource
                                             'delivered' => '6. Đã bàn giao cho khách',
                                             'cancelled' => '7. Đã hủy & Hoàn trả linh kiện',
                                         ])
-                                        ->required()
+                                        ->disabled(fn (?\App\Models\RepairTicket $record) => $record !== null)
+                                                ->required()
                                         ->default('received'),
 
                                     Forms\Components\Radio::make('intake_flow')
@@ -530,6 +531,7 @@ class RepairTicketResource extends Resource
                                         ->numeric()
                                         ->prefix('₫')
                                         ->default(0)
+                                        ->disabled(fn (?\App\Models\RepairTicket $record) => $record !== null)
                                         ->live()
                                         ->disabled(fn () => auth()->user()?->role === 'technician')
                                         ->dehydrated(),
@@ -692,22 +694,14 @@ class RepairTicketResource extends Resource
                                 'delivered' => '6. Đã bàn giao cho khách',
                                 'cancelled' => '7. Đã hủy & Hoàn trả linh kiện',
                             ])
-                            ->required(),
-                        Forms\Components\Select::make('payment_status')
-                            ->label('Trạng thái thanh toán')
-                            ->options([
-                                'unpaid' => 'Chưa thanh toán',
-                                'partially_paid' => 'Đã đặt cọc / Trả một phần',
-                                'paid' => 'Đã thanh toán đủ',
-                            ])
-                            ->visible(fn () => auth()->user()?->isAdmin() || auth()->user()?->isCashier()),
+                            ->disabled(fn (?\App\Models\RepairTicket $record) => $record !== null || auth()->user()?->role === 'technician')
+                                        ->required(),
                         Forms\Components\Textarea::make('technician_diagnosis')
                             ->label('Ghi chú tình trạng / Bệnh lý')
                             ->rows(2),
                     ])
                     ->fillForm(fn (RepairTicket $record): array => [
                         'status' => $record->status,
-                        'payment_status' => $record->payment_status,
                         'technician_diagnosis' => $record->technician_diagnosis,
                     ])
                     ->action(function (RepairTicket $record, array $data): void {
@@ -715,7 +709,6 @@ class RepairTicketResource extends Resource
                             'technician_diagnosis' => $data['technician_diagnosis'] ?? $record->technician_diagnosis,
                         ];
                         if (auth()->user()?->isAdmin() || auth()->user()?->isCashier()) {
-                            $updateData['payment_status'] = $data['payment_status'] ?? $record->payment_status;
                         }
 
                         app(\App\Services\InventoryService::class)->updateTicketStatus(
@@ -764,13 +757,6 @@ class RepairTicketResource extends Resource
                     ->label('Sửa')
                     ->icon('heroicon-m-pencil-square'),
 
-                Tables\Actions\DeleteAction::make()
-                    ->label('Xóa')
-                    ->icon('heroicon-m-trash')
-                    ->modalHeading('Xác nhận xóa phiếu sửa chữa')
-                    ->modalDescription(fn (RepairTicket $record) => "Bạn có chắc chắn muốn xóa phiếu sửa chữa '{$record->ticket_code}' của khách {$record->customer_name}? Hành động này không thể hoàn tác.")
-                    ->modalSubmitActionLabel('Xác nhận xóa')
-                    ->modalCancelActionLabel('Hủy bỏ'),
             ])
             ->emptyStateHeading('Chưa có phiếu sửa chữa nào')
             ->emptyStateDescription('Bấm Tạo phiếu mới để tiếp nhận máy in khách mang đến bảo hành hoặc sửa chữa.')

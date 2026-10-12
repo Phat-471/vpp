@@ -71,7 +71,7 @@
                         value="{{ old('phone') }}" placeholder="0901234567"
                         class="w-full text-xs sm:text-sm pl-16 pr-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-600 focus:outline-none font-mono font-medium transition" />
                 </div>
-                <span class="text-[10px] text-slate-400 mt-1 block">Nhập đủ 10 số di động của bạn</span>
+                <span class="text-[10px] text-slate-400 mt-1 block">Nhập đủ 10 chữ số.</span>
             </div>
 
             <!-- Mật khẩu mới -->
@@ -97,7 +97,7 @@
             <!-- Nút Submit -->
             <button type="submit" id="btnForgotSubmit"
                 class="w-full py-3.5 px-4 bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 text-white font-black text-xs sm:text-sm rounded-xl shadow-md shadow-indigo-500/20 transition flex items-center justify-center space-x-2 active:scale-98">
-                <span>LƯU MẬT KHẨU MỚI & ĐĂNG NHẬP</span>
+                <span>Đặt lại mật khẩu</span>
                 <span>→</span>
             </button>
         </form>
@@ -120,7 +120,7 @@
             <span>Cần hỗ trợ đặt lại mật khẩu khẩn cấp?</span>
         </div>
         <p class="text-[11px] text-amber-800 leading-relaxed">
-            Nếu bạn không nhớ số điện thoại hoặc cần nhân viên kỹ thuật hỗ trợ trực tiếp, vui lòng liên hệ hotline hoặc Zalo để được cấp lại mật khẩu ngay trong 30 giây:
+            Không truy cập được số điện thoại đã đăng ký? Liên hệ cửa hàng để được hỗ trợ.
         </p>
         <div class="flex flex-wrap gap-2 pt-1">
             <a href="{{ $storefrontSettings['zalo_url'] ?? 'https://zalo.me/0974194305' }}" target="_blank"

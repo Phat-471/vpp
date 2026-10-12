@@ -39,7 +39,7 @@
     <!-- Title Banner Box -->
     <div class="bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-900 text-white p-6 sm:p-10 rounded-3xl shadow-xl border border-indigo-800 space-y-3">
         <div class="inline-flex items-center space-x-2 bg-amber-400 text-slate-950 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider">
-            <span>📦 QUY TRÌNH MUA HÀNG & BẢO HÀNH MINH BẠCH</span>
+            <span>Thông tin mua hàng và bảo hành</span>
         </div>
         <h1 class="text-2xl sm:text-4xl font-black text-white leading-tight">
             Chính Sách Mua Hàng, Vận Chuyển & Đổi Trả Bảo Hành

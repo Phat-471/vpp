@@ -78,7 +78,7 @@ class ProductsRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\AttachAction::make()
-                    ->label('➕ Gắn thêm linh kiện / Hộp mực từ kho')
+                    ->label('Gắn linh kiện hoặc hộp mực')
                     ->preloadRecordSelect()
                     ->form(fn (Tables\Actions\AttachAction $action): array => [
                         $action->getRecordSelect()

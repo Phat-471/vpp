@@ -115,7 +115,7 @@
                     </div>
                     @empty
                     <div class="col-span-full py-12 text-center bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700">
-                        <span class="text-3xl block mb-2">📦</span>
+                        <x-heroicon-o-cube class="w-8 h-8 mx-auto mb-2 text-slate-400" aria-hidden="true" />
                         <p class="text-sm font-bold text-gray-600 dark:text-gray-300">Không tìm thấy sản phẩm nào phù hợp</p>
                         <p class="text-xs text-gray-400 mt-1">Vui lòng thử gõ từ khóa khác hoặc quét mã vạch.</p>
                     </div>
@@ -265,7 +265,7 @@
                             wire:click="$set('paymentMethod', 'cash')"
                             class="py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 border {{ $paymentMethod === 'cash' ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm' : 'bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700' }}"
                         >
-                            <span>💵</span>
+                            <x-heroicon-o-banknotes class="w-4 h-4" aria-hidden="true" />
                             <span>Tiền mặt</span>
                         </button>
                         <button
@@ -273,7 +273,7 @@
                             wire:click="$set('paymentMethod', 'vietqr')"
                             class="py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 border {{ $paymentMethod === 'vietqr' ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm' : 'bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700' }}"
                         >
-                            <span>📱</span>
+                            <x-heroicon-o-device-phone-mobile class="w-4 h-4" aria-hidden="true" />
                             <span>Chuyển khoản VietQR</span>
                         </button>
                     </div>
@@ -407,7 +407,7 @@
                     target="_blank"
                     class="py-2.5 px-4 rounded-xl bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 text-xs font-bold transition flex items-center justify-center space-x-1.5"
                 >
-                    <span>🖨️</span>
+                    <x-heroicon-o-printer class="w-4 h-4" aria-hidden="true" />
                     <span>In hóa đơn A5</span>
                 </a>
 
@@ -416,7 +416,7 @@
                     wire:click="resetAndNewSale"
                     class="py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition flex items-center justify-center space-x-1.5 shadow-md shadow-indigo-200 dark:shadow-none"
                 >
-                    <span>➕</span>
+                    <x-heroicon-o-plus class="w-4 h-4" aria-hidden="true" />
                     <span>Tạo đơn mới (F2)</span>
                 </button>
             </div>

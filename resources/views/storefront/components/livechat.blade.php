@@ -15,11 +15,11 @@
             <div class="lc-header-brand">
                 <div class="lc-avatar-wrap">
                     <span class="lc-avatar" aria-hidden="true">👨‍💼</span>
-                    <span class="lc-online-pulse" title="Trực tuyến 24/7"></span>
+                    <span class="lc-online-pulse" title="Kênh hỗ trợ"></span>
                 </div>
                 <div class="lc-header-titles">
                     <strong>{{ $storefrontSettings['site_name'] }}</strong>
-                    <p id="chat-session-status">Phản hồi thường trong 1-3 phút</p>
+                    <p id="chat-session-status">Nhắn tin cho cửa hàng</p>
                 </div>
             </div>
             <div class="lc-header-actions">
@@ -28,23 +28,23 @@
             </div>
         </header>
         <div class="lc-contact">
-            <span>Cần hỗ trợ gấp?</span>
+            <span>Liên hệ nhanh</span>
             <a href="{{ $storefrontSettings['hotline_url'] }}">📞 {{ $storefrontSettings['hotline'] }}</a>
             <a href="{{ $storefrontSettings['zalo_url'] }}" target="_blank" rel="noopener noreferrer">💬 Zalo</a>
         </div>
         <div id="chat-connection" role="status" class="lc-connection">Đang kết nối…</div>
         <button type="button" id="chat-connect-retry" class="lc-history" hidden>Thử kết nối lại</button>
-        <button type="button" id="chat-history" class="lc-history" hidden>Xem tin nhắn trước</button>
+        <button type="button" id="chat-history" class="lc-history" hidden>Xem tin cũ</button>
         
         <div id="live-chat-messages" class="lc-messages" role="log" aria-label="Nội dung trò chuyện" aria-live="polite" aria-relevant="additions"></div>
         <button type="button" id="chat-scroll-bottom" class="lc-scroll-bottom" hidden aria-label="Cuộn xuống tin mới nhất">↓ Tin mới</button>
 
         <div class="lc-suggestions" aria-label="Câu hỏi gợi ý nhanh">
-            <button type="button" data-chat-suggestion="Tôi cần tư vấn hộp mực phù hợp với máy in: ">🖨️ Tư vấn mực máy in</button>
-            <button type="button" data-chat-suggestion="Máy in của tôi đang bị lỗi cần sửa chữa: ">🛠️ Báo lỗi máy in</button>
-            <button type="button" data-chat-suggestion="Tôi muốn tra cứu tiến độ đơn hàng: ">📦 Tra cứu đơn hàng</button>
-            <button type="button" data-chat-suggestion="Tôi muốn hỏi giá giấy in mua theo thùng: ">🚚 Giấy in mua sỉ</button>
-            <button type="button" data-chat-suggestion="Tôi cần hỗ trợ xuất hóa đơn VAT cho đơn hàng: ">🧾 Hỗ trợ hóa đơn VAT</button>
+            <button type="button" data-chat-suggestion="Tôi cần tư vấn hộp mực cho máy in: ">🖨️ Chọn hộp mực</button>
+            <button type="button" data-chat-suggestion="Máy in của tôi đang bị lỗi: ">🛠️ Báo lỗi máy in</button>
+            <button type="button" data-chat-suggestion="Tôi muốn tra cứu đơn hàng: ">📦 Tra cứu đơn</button>
+            <button type="button" data-chat-suggestion="Tôi muốn hỏi giá giấy in mua theo thùng: ">🚚 Giá giấy mua sỉ</button>
+            <button type="button" data-chat-suggestion="Tôi cần hỗ trợ hóa đơn VAT: ">🧾 Hỏi về hóa đơn</button>
         </div>
 
         <!-- Thanh xem trước ảnh đính kèm trước khi gửi -->

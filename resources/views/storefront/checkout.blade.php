@@ -1,6 +1,6 @@
 @extends('layouts.storefront')
 
-@section('title', 'Giỏ Hàng & Thanh Toán | VPP & Dịch Vụ Máy In')
+@section('title', 'Thanh toán | VPP & Dịch vụ máy in')
 @section('meta_description', 'Trang giỏ hàng và thanh toán trực tuyến. Xem lại sản phẩm, điều chỉnh số lượng và đặt hàng tiện lợi.')
 
 @section('content')
@@ -12,36 +12,32 @@
         <span>/</span>
         <a href="{{ route('storefront.products') }}" class="hover:text-indigo-600">Sản phẩm</a>
         <span>/</span>
-        <span class="text-slate-900 font-bold">Giỏ hàng & Thanh toán</span>
+        <span class="text-slate-900 font-bold">Thanh toán</span>
     </nav>
 
     <!-- Header Box -->
     <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-3xl p-6 sm:p-8 flex items-center justify-between border border-indigo-900 shadow-sm">
         <div>
             <span class="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-300 rounded-full text-[10px] font-black uppercase tracking-wider border border-emerald-400/30">
-                GIAO HÀNG TẬN NƠI • ĐỒNG KIỂM TRƯỚC KHI TRẢ TIỀN
+                Giao tận nơi • Kiểm hàng trước khi trả tiền
             </span>
             <h1 class="text-xl sm:text-3xl font-black text-white mt-1">
-                Giỏ Hàng & Hoàn Tất Đặt Hàng
+                Hoàn tất đơn hàng
             </h1>
             <p class="text-xs text-slate-300 mt-1">
-                Xem lại danh sách sản phẩm, điều chỉnh số lượng và điền thông tin giao nhận hàng tận nơi.
+                Kiểm tra sản phẩm và nhập thông tin giao hàng.
             </p>
-        </div>
-        <div class="text-3xl hidden sm:block">
-            🛍️
         </div>
     </div>
 
     <!-- Empty Cart Notice (Hidden by default, shown via JS if empty) -->
     <div id="checkout-empty-cart-state" class="hidden bg-white p-12 text-center rounded-3xl border border-slate-200 shadow-xs space-y-4">
-        <span class="text-5xl block">🛒</span>
-        <h2 class="text-lg font-bold text-slate-800">Giỏ hàng của bạn đang trống!</h2>
+        <h2 class="text-lg font-bold text-slate-800">Chưa có sản phẩm</h2>
         <p class="text-xs text-slate-500 max-w-sm mx-auto">
-            Bạn chưa chọn sản phẩm nào để thanh toán. Hãy dạo một vòng cửa hàng để chọn thêm giấy in, bút viết hoặc hộp mực nhé.
+            Thêm sản phẩm vào giỏ để tiếp tục thanh toán.
         </p>
         <a href="{{ route('storefront.products') }}" class="inline-block px-5 py-2.5 bg-indigo-600 text-white text-xs font-bold rounded-xl shadow-xs hover:bg-indigo-700 transition">
-            Khám phá 1.000+ sản phẩm →
+            Xem sản phẩm →
         </a>
     </div>
 
@@ -63,7 +59,7 @@
                     <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                         <h2 class="text-sm sm:text-base font-black text-slate-900 flex items-center space-x-2">
                             <span class="w-6 h-6 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-black">1</span>
-                            <span>Thông Tin Nhận Hàng</span>
+                            <span>Thông tin giao hàng</span>
                         </h2>
                         @if(auth('customer')->check())
                         <span class="text-xs text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-lg">
@@ -71,14 +67,14 @@
                         </span>
                         @else
                         <a href="{{ route('customer.login') }}" class="text-xs text-indigo-600 hover:underline font-bold">
-                            Đăng nhập để tự điền thông tin →
+                            Đăng nhập để điền nhanh →
                         </a>
                         @endif
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label for="chk-name" class="block text-xs font-bold text-slate-700 mb-1">Họ và tên người nhận *</label>
+                            <label for="chk-name" class="block text-xs font-bold text-slate-700 mb-1">Người nhận *</label>
                             <input type="text" id="chk-name" name="customer_name" required 
                                    value="{{ auth('customer')->user()->name ?? '' }}"
                                    autocomplete="name"
@@ -87,7 +83,7 @@
                         </div>
 
                         <div>
-                            <label for="chk-phone" class="block text-xs font-bold text-slate-700 mb-1">Số điện thoại nhận hàng *</label>
+                        <label for="chk-phone" class="block text-xs font-bold text-slate-700 mb-1">Số điện thoại *</label>
                             <input type="tel" id="chk-phone" name="customer_phone" required 
                                    value="{{ auth('customer')->user()->phone ?? '' }}"
                                    autocomplete="tel" inputmode="tel"
@@ -97,7 +93,7 @@
                     </div>
 
                     <div>
-                        <label for="chk-address" class="block text-xs font-bold text-slate-700 mb-1">Địa chỉ giao hàng cụ thể *</label>
+                        <label for="chk-address" class="block text-xs font-bold text-slate-700 mb-1">Địa chỉ nhận hàng *</label>
                         <input type="text" id="chk-address" name="shipping_address" required 
                                value="{{ auth('customer')->user()->address ?? '' }}"
                                autocomplete="street-address"
@@ -106,7 +102,7 @@
                     </div>
 
                     <div>
-                        <label for="chk-notes" class="block text-xs font-bold text-slate-700 mb-1">Ghi chú giao hàng (nếu có)</label>
+                        <label for="chk-notes" class="block text-xs font-bold text-slate-700 mb-1">Ghi chú (không bắt buộc)</label>
                         <input type="text" id="chk-notes" name="notes" 
                                placeholder="VD: Giao trong giờ hành chính, gọi trước 15 phút…" 
                                class="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus-visible:outline-none bg-slate-50 font-medium" />
@@ -117,7 +113,7 @@
                 <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-4">
                     <h2 class="text-sm sm:text-base font-black text-slate-900 flex items-center space-x-2 border-b border-slate-100 pb-3">
                         <span class="w-6 h-6 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-black">2</span>
-                        <span>Phương Thức Thanh Toán</span>
+                        <span>Thanh toán</span>
                     </h2>
 
                     <div class="space-y-3">
@@ -125,10 +121,9 @@
                         <label class="flex items-start space-x-3 p-3.5 rounded-2xl border-2 border-indigo-600 bg-indigo-50/40 cursor-pointer transition payment-radio-label">
                             <input type="radio" name="payment_method" value="cod" checked onchange="onPaymentChange(this)" class="mt-1 accent-indigo-600" />
                             <div class="flex-1">
-                                <span class="font-bold text-xs text-slate-900 block">Tiền mặt khi nhận hàng (COD)</span>
-                                <span class="text-[11px] text-slate-500">Thanh toán cho nhân viên giao hàng sau khi đã đồng kiểm đủ hàng.</span>
+                                <span class="font-bold text-xs text-slate-900 block">Tiền mặt khi nhận hàng</span>
+                                <span class="text-[11px] text-slate-500">Thanh toán sau khi kiểm tra hàng.</span>
                             </div>
-                            <span class="text-lg">💵</span>
                         </label>
 
                         <!-- VietQR -->
@@ -136,21 +131,19 @@
                             <label class="flex items-start space-x-3 p-3.5 rounded-2xl border-2 border-slate-200 hover:border-indigo-400 bg-white cursor-pointer transition payment-radio-label">
                                 <input type="radio" name="payment_method" value="vietqr" onchange="onPaymentChange(this)" class="mt-1 accent-indigo-600" />
                                 <div class="flex-1">
-                                    <span class="font-bold text-xs text-slate-900 block">Chuyển khoản VietQR Tự Động (Napas 24/7)</span>
-                                    <span class="text-[11px] text-slate-500">Quét mã QR từ mọi App ngân hàng, hệ thống tự động nhận diện tiền về sau 3 giây.</span>
+                                    <span class="font-bold text-xs text-slate-900 block">Chuyển khoản VietQR</span>
+                                    <span class="text-[11px] text-slate-500">Quét mã bằng ứng dụng ngân hàng.</span>
                                 </div>
-                                <span class="text-lg">📱</span>
                             </label>
 
                             <!-- VietQR Bank Info Hint (Hiện khi chọn VietQR) -->
                             <div id="vietqr-bank-hint" class="hidden p-3 rounded-2xl bg-indigo-50/70 border border-indigo-200 text-[11px] text-slate-700 space-y-1.5 animate-in fade-in">
                                 <div class="flex items-center space-x-1.5 font-bold text-indigo-950">
-                                    <span>🏦</span>
                                     <span>{{ $bankName }} ({{ $bankCode }})</span>
                                 </div>
                                 <div class="flex flex-wrap items-center justify-between gap-1 text-[11px]">
-                                    <span class="text-slate-600">STK: <b class="font-mono text-slate-900">{{ $accountNumber }}</b></span>
-                                    <span class="text-slate-600">Chủ TK: <b class="uppercase text-slate-900">{{ $accountName }}</b></span>
+                                    <span class="text-slate-600">Số tài khoản: <b class="font-mono text-slate-900">{{ $accountNumber }}</b></span>
+                                    <span class="text-slate-600">Chủ tài khoản: <b class="uppercase text-slate-900">{{ $accountName }}</b></span>
                                 </div>
                                 <p class="text-[10px] text-emerald-700 font-semibold pt-0.5">
                                     ✓ Mã QR tự động điền sẵn số tiền chính xác và nội dung đơn hàng ngay sau khi bấm Xác nhận.
@@ -165,7 +158,7 @@
                 <div id="checkout-error-alert" class="hidden p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-2xl text-xs font-bold"></div>
 
                 <button type="submit" id="btn-submit-checkout" class="w-full py-4 px-6 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-black text-sm rounded-2xl shadow-lg transition transform hover:-translate-y-0.5 flex items-center justify-center space-x-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 focus-visible:ring-offset-2 min-h-[48px] touch-target cursor-pointer">
-                    <span id="btn-submit-text">XÁC NHẬN ĐẶT HÀNG NGAY</span>
+                    <span id="btn-submit-text">Đặt hàng</span>
                     <span aria-hidden="true">→</span>
                 </button>
 
@@ -178,7 +171,7 @@
             
             <div class="bg-white p-6 sm:p-7 rounded-3xl border border-slate-200 shadow-xs space-y-4">
                 <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                    <h3 class="font-black text-slate-900 text-sm">Sản Phẩm Trong Đơn</h3>
+                    <h3 class="font-black text-slate-900 text-sm">Đơn hàng</h3>
                     <span id="checkout-total-items-badge" class="text-xs text-indigo-600 font-bold">0 món</span>
                 </div>
 
@@ -200,7 +193,7 @@
                 <!-- Price summary -->
                 <div class="pt-4 border-t border-slate-100 space-y-2 text-xs">
                     <div class="flex justify-between text-slate-500">
-                        <span>Tạm tính tiền hàng:</span>
+                        <span>Tạm tính:</span>
                         <span id="chk-subtotal-val" class="font-mono font-bold text-slate-800">0₫</span>
                     </div>
                     <div class="flex justify-between text-slate-500">
@@ -212,7 +205,7 @@
                         <span id="chk-vat-val" class="font-mono font-bold text-slate-800">0₫</span>
                     </div>
                     <div class="flex justify-between text-base font-black text-slate-900 pt-2 border-t border-slate-200">
-                        <span>Tổng Thanh Toán:</span>
+                        <span>Tổng cộng:</span>
                         <span id="chk-grand-total-val" class="font-mono text-lg text-indigo-700">0₫</span>
                     </div>
                 </div>
@@ -242,19 +235,19 @@
             </div>
             
             <div class="space-y-1">
-                <h3 class="text-xl sm:text-2xl font-black text-slate-900">Đặt Hàng Thành Công!</h3>
+                <h3 class="text-xl sm:text-2xl font-black text-slate-900">Đặt hàng thành công</h3>
                 <p class="text-xs text-slate-500">
-                    Cảm ơn Quý khách! Đơn hàng của bạn đã được ghi nhận trên hệ thống.
+                    Cửa hàng đã nhận được đơn hàng.
                 </p>
             </div>
 
             <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs space-y-1.5 text-left">
                 <div class="flex justify-between">
-                    <span class="text-slate-500">Mã đơn hàng:</span>
+                    <span class="text-slate-500">Mã đơn:</span>
                     <span class="font-mono font-black text-indigo-700" id="succ-order-code">#ORD-XXXX</span>
                 </div>
                 <div class="flex justify-between">
-                    <span class="text-slate-500">Tổng thanh toán:</span>
+                    <span class="text-slate-500">Tổng tiền:</span>
                     <span class="font-mono font-black text-slate-900 text-sm" id="succ-order-total">0₫</span>
                 </div>
             </div>
@@ -265,23 +258,22 @@
                 <!-- Thanh trạng thái thanh toán thời gian thực -->
                 <div id="succ-status-waiting" class="flex items-center justify-center space-x-2 p-2.5 bg-amber-50 border border-amber-300 rounded-2xl text-amber-950 text-xs shadow-2xs">
                     <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping shrink-0"></span>
-                    <span class="font-bold">Đang chờ bạn quét mã thanh toán... (Tự động nhận diện)</span>
+                    <span class="font-bold">Đang chờ thanh toán</span>
                 </div>
 
                 <div id="succ-status-paid" class="hidden p-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-2xl text-center space-y-1 shadow-md">
-                    <span class="text-3xl block">🎉</span>
-                    <span class="font-black text-sm block uppercase tracking-wide">ĐÃ NHẬN THANH TOÁN VIETQR THÀNH CÔNG!</span>
-                    <p class="text-[11px] text-emerald-100 font-medium">Hệ thống đã khớp đúng số tiền và tự động chuyển đơn sang trạng thái Đang chuẩn bị giao hàng.</p>
+                    <span class="font-black text-sm block">Đã nhận thanh toán VietQR</span>
+                    <p class="text-[11px] text-emerald-100 font-medium">Đơn hàng đang được chuẩn bị.</p>
                 </div>
 
                 <div id="succ-qr-media-container" class="space-y-3">
                     <div class="inline-flex items-center space-x-1.5 px-3 py-1 bg-indigo-600 text-white rounded-full text-[10px] font-black uppercase tracking-wider shadow-xs">
-                        <span>⚡ QUÉT MÃ VIETQR ĐỂ HOÀN TẤT</span>
+                        <span>Quét mã VietQR để thanh toán</span>
                     </div>
 
                 <div class="bg-white p-3 rounded-2xl inline-block shadow-md border border-slate-200">
-                    <img id="succ-vietqr-img" src="" alt="VietQR Thanh Toán" class="w-52 h-52 mx-auto object-contain rounded-lg" />
-                    <p class="text-[10px] text-slate-400 mt-1">Mở App ngân hàng bất kỳ để quét mã QR</p>
+                    <img id="succ-vietqr-img" src="" alt="Mã VietQR thanh toán" class="w-52 h-52 mx-auto object-contain rounded-lg" />
+                    <p class="text-[10px] text-slate-400 mt-1">Quét bằng ứng dụng ngân hàng.</p>
                 </div>
 
                 <!-- Chi tiết chuyển khoản & Nút sao chép -->
@@ -329,26 +321,24 @@
 
                 <!-- Action Button: Download QR Image -->
                 <button type="button" onclick="downloadQrImage()" class="w-full py-2.5 px-4 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5">
-                    <span>📥</span>
-                    <span>Tải ảnh mã QR về máy để quét trong App</span>
+                    <span>Tải mã QR</span>
                 </button>
 
                 <p class="text-[10px] text-slate-500 leading-tight">
-                    💡 Quý khách giữ nguyên nội dung chuyển khoản để hệ thống xác nhận thanh toán tự động trong 3 giây.
+                    Giữ nguyên nội dung chuyển khoản để hệ thống xác nhận thanh toán.
                 </p>
                 </div>
             </div>
 
             <div class="pt-2 flex flex-col sm:flex-row gap-2">
                 <a id="succ-print-btn" href="#" target="_blank" class="hidden flex-1 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition text-center flex items-center justify-center space-x-1.5">
-                    <span>🖨️</span>
-                    <span>In Hóa Đơn</span>
+                    <span>In hóa đơn</span>
                 </a>
                 <a href="{{ route('storefront.products') }}" class="flex-1 py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition text-center">
-                    Tiếp Tục Mua Sắm
+                    Tiếp tục mua sắm
                 </a>
                 <a href="{{ route('storefront.index') }}" class="flex-1 py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-xs transition text-center">
-                    Về Trang Chủ
+                    Về trang chủ
                 </a>
             </div>
         </div>
@@ -399,7 +389,7 @@
                 <div class="pt-3 flex items-center justify-between text-xs">
                     <div class="flex items-center space-x-3 max-w-[65%]">
                         <div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0 border border-slate-200">
-                            ${item.image_url ? `<img src="${item.image_url}" class="max-h-full object-contain p-1" />` : `<span>📦</span>`}
+                            ${item.image_url ? `<img src="${item.image_url}" class="max-h-full object-contain p-1" />` : `<svg class="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 7.5L12 3l8 4.5v9L12 21l-8-4.5v-9zM4 7.5l8 4.5m0 9v-9m0 0l8-4.5" /></svg>`}
                         </div>
                         <div>
                             <h4 class="font-bold text-slate-900 line-clamp-1">${item.name}</h4>
@@ -409,9 +399,9 @@
                     <div class="flex flex-col items-end space-y-1">
                         <span class="font-mono font-bold text-slate-900">${formatMoney(itemTotal)}</span>
                         <div class="flex items-center space-x-1 bg-slate-100 rounded-lg p-0.5">
-                            <button type="button" onclick="updateItemQuantity(${index}, -1)" class="w-5 h-5 flex items-center justify-center bg-white rounded font-bold hover:bg-slate-200">-</button>
+                            <button type="button" aria-label="Giảm số lượng" onclick="updateItemQuantity(${index}, -1)" class="w-11 h-11 flex items-center justify-center bg-white rounded-lg font-bold hover:bg-slate-200">-</button>
                             <span class="w-6 text-center font-bold font-mono">${item.quantity}</span>
-                            <button type="button" onclick="updateItemQuantity(${index}, 1)" class="w-5 h-5 flex items-center justify-center bg-white rounded font-bold hover:bg-slate-200">+</button>
+                            <button type="button" aria-label="Tăng số lượng" onclick="updateItemQuantity(${index}, 1)" class="w-11 h-11 flex items-center justify-center bg-white rounded-lg font-bold hover:bg-slate-200">+</button>
                         </div>
                         <button type="button" onclick="removeCheckoutItem(${index})" class="text-[10px] text-rose-500 hover:underline">Xóa</button>
                     </div>
@@ -435,14 +425,14 @@
                 freeshipBanner.classList.remove('hidden');
                 if (subtotal >= freeshipLimit) {
                     freeshipBanner.className = 'p-3 rounded-2xl border text-xs space-y-1.5 transition bg-emerald-50 border-emerald-200 text-emerald-800';
-                    freeshipText.innerHTML = '<span class="font-bold flex items-center space-x-1"><span>🎉</span><span>Chúc mừng! Bạn được MIỄN PHÍ VẬN CHUYỂN</span></span>';
+                    freeshipText.innerHTML = '<span class="font-bold">Đơn hàng được miễn phí vận chuyển.</span>';
                     freeshipBar.style.width = '100%';
                     freeshipBar.className = 'h-1.5 rounded-full bg-emerald-500 transition-all duration-300';
                 } else {
                     const diff = freeshipLimit - subtotal;
                     const percent = Math.min(100, Math.round((subtotal / freeshipLimit) * 100));
                     freeshipBanner.className = 'p-3 rounded-2xl border text-xs space-y-1.5 transition bg-indigo-50/70 border-indigo-200 text-slate-700';
-                    freeshipText.innerHTML = `<span>Mua thêm <b class="text-indigo-700 font-mono">${formatMoney(diff)}</b> để được <b>Freeship</b></span><span class="font-mono font-bold text-slate-400 text-[10px]">${percent}%</span>`;
+                    freeshipText.innerHTML = `<span>Mua thêm <b class="text-indigo-700 font-mono">${formatMoney(diff)}</b> để được <b>miễn phí giao hàng</b></span><span class="font-mono font-bold text-slate-400 text-[10px]">${percent}%</span>`;
                     freeshipBar.style.width = percent + '%';
                     freeshipBar.className = 'h-1.5 rounded-full bg-indigo-600 transition-all duration-300';
                 }
@@ -606,7 +596,7 @@
         if (qrMedia) qrMedia.classList.add('hidden');
 
         if (typeof showToast === 'function') {
-            showToast('🎉 Đã nhận thanh toán VietQR thành công! Đơn hàng đang được chuẩn bị.', 'success');
+            showToast('Đã nhận thanh toán VietQR. Đơn hàng đang được chuẩn bị.', 'success');
         }
     }
 
@@ -616,7 +606,7 @@
         if (!window.CheckoutValidation.validate(checkoutForm)) return;
         const cart = getCart();
         if (cart.length === 0) {
-            alert('Giỏ hàng của bạn đang trống!');
+            alert('Giỏ hàng đang trống.');
             return;
         }
 
@@ -720,7 +710,7 @@
             errBox.classList.remove('hidden');
         } finally {
             btn.disabled = false;
-            btn.innerHTML = '<span>XÁC NHẬN ĐẶT HÀNG NGAY</span><span>→</span>';
+            btn.innerHTML = '<span>Đặt hàng</span><span aria-hidden="true">→</span>';
         }
     }
 

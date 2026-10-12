@@ -1,7 +1,7 @@
 @extends('layouts.storefront')
 
 @section('title', $product->name . ' chính hãng giá sỉ | ' . ($storefrontSettings['site_name'] ?? 'VPP & Dịch Vụ Máy In'))
-@section('meta_description', 'Mua ' . $product->name . ' chính hãng giá sỉ tốt nhất tại Đồng Nai. Mã: ' . $product->sku . '. Giao hỏa tốc 2 giờ, xuất hóa đơn VAT điện tử.')
+@section('meta_description', 'Thông tin và giá bán ' . $product->name . ' tại Đồng Nai. Mã: ' . $product->sku . '. Hỗ trợ giao hàng và xuất hóa đơn VAT.')
 
 @section('schema_extra')
 <script type="application/ld+json">
@@ -99,10 +99,7 @@
 
     <!-- 1. Breadcrumb dẫn đường -->
     <nav class="flex items-center space-x-2 text-xs text-slate-500 font-medium overflow-x-auto no-scrollbar py-1">
-        <a href="{{ route('storefront.index') }}" class="hover:text-indigo-600 whitespace-nowrap flex items-center space-x-1">
-            <span>🏠</span>
-            <span>Trang chủ</span>
-        </a>
+        <a href="{{ route('storefront.index') }}" class="hover:text-indigo-600 whitespace-nowrap">Trang chủ</a>
         <span>/</span>
         <a href="{{ route('storefront.products') }}" class="hover:text-indigo-600 whitespace-nowrap">Sản phẩm</a>
         @if($product->category)
@@ -134,7 +131,7 @@
 
                 @if($isFlashSaleActive)
                 <div class="absolute top-4 left-4 flex items-center space-x-1 px-3 py-1 bg-gradient-to-r from-rose-600 to-orange-500 text-white font-black text-xs rounded-full shadow-md animate-pulse">
-                    <span>⚡ FLASH SALE</span>
+                    <span>Ưu đãi</span>
                 </div>
                 @else
                 <span class="absolute top-4 left-4 px-3 py-1 bg-[#1e3a8a] text-white font-black text-xs rounded-full shadow-xs">
@@ -152,18 +149,15 @@
             <!-- Cam kết dịch vụ & Giao nhận -->
             <div class="grid grid-cols-3 gap-2 text-center text-[11px] pt-1">
                 <div class="p-2.5 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col items-center justify-center">
-                    <span class="text-base mb-0.5">🚚</span>
-                    <span class="font-bold text-slate-800 leading-tight">Giao 2 Giờ</span>
+                    <span class="font-bold text-slate-800 leading-tight">Giao trong 2 giờ</span>
                     <span class="text-slate-400 text-[10px]">Khu vực Đồng Nai</span>
                 </div>
                 <div class="p-2.5 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col items-center justify-center">
-                    <span class="text-base mb-0.5">🔄</span>
-                    <span class="font-bold text-emerald-700 leading-tight">Đổi Trả 7 Ngày</span>
+                    <span class="font-bold text-emerald-700 leading-tight">Đổi trả trong 7 ngày</span>
                     <span class="text-slate-400 text-[10px]">Lỗi 1-đổi-1</span>
                 </div>
                 <div class="p-2.5 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col items-center justify-center">
-                    <span class="text-base mb-0.5">🧾</span>
-                    <span class="font-bold text-indigo-700 leading-tight">Xuất VAT 100%</span>
+                    <span class="font-bold text-indigo-700 leading-tight">Hóa đơn điện tử</span>
                     <span class="text-slate-400 text-[10px]">Hóa đơn điện tử</span>
                 </div>
             </div>
@@ -215,8 +209,7 @@
                 @if($isFlashSaleActive)
                 <div class="flex items-center justify-between pb-1 border-b border-rose-100 text-xs">
                     <span class="font-black text-rose-700 flex items-center space-x-1">
-                        <span>🔥</span>
-                        <span>GIÁ FLASH SALE ĐẶC BIỆT</span>
+                        <span>Giá ưu đãi</span>
                     </span>
                     <span class="text-[11px] text-rose-600 font-bold bg-white px-2 py-0.5 rounded-full border border-rose-200 shadow-2xs">
                         Tiết kiệm {{ $discountPercent }}%
@@ -247,8 +240,7 @@
             <div class="space-y-2.5">
                 <div class="flex items-center justify-between">
                     <label class="block text-xs font-black text-slate-900 uppercase tracking-wider flex items-center space-x-1.5">
-                        <span>📦</span>
-                        <span>Chọn Quy Cách Mua & Bảng Giá:</span>
+                        <span>Quy cách và giá</span>
                     </label>
                     <span class="text-[11px] text-indigo-700 font-bold">Chọn để tự động cập nhật đơn giá</span>
                 </div>
@@ -317,8 +309,7 @@
             <div class="rounded-2xl border border-slate-200/90 bg-slate-50/70 p-3.5 space-y-2">
                 <div class="flex items-center justify-between text-xs">
                     <span class="font-black text-slate-900 flex items-center space-x-1.5">
-                        <span>🏢</span>
-                        <span>Chính Sách Chiết Khấu Số Lượng & Khách Doanh Nghiệp:</span>
+                        <span>Giá theo số lượng</span>
                     </span>
                     <a href="{{ route('storefront.wholesale') }}" class="text-[11px] text-indigo-700 font-bold hover:underline">Xem hợp đồng sỉ →</a>
                 </div>
@@ -385,8 +376,7 @@
                 <!-- Thanh Điều Kiện Miễn Phí Vận Chuyển (Freeship Progress Meter) -->
                 <div id="freeship-banner" class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 flex items-center justify-between">
                     <div class="flex items-center space-x-2">
-                        <span class="text-base" id="freeship-icon">🚚</span>
-                        <span id="freeship-text">Cần mua thêm <b>431.000₫</b> để được <b>MIỄN PHÍ GIAO HÀNG TẬN NƠI</b></span>
+                        <span id="freeship-text">Cần mua thêm <b>431.000₫</b> để được <b>miễn phí giao hàng</b></span>
                     </div>
                     <span class="font-mono font-bold text-[11px] text-emerald-700 shrink-0">Mốc 500k</span>
                 </div>
@@ -398,8 +388,7 @@
                         onclick="submitAddToCart()"
                         class="flex-1 py-3.5 px-6 rounded-2xl bg-emerald-50 hover:bg-emerald-100 active:scale-98 text-emerald-800 border-2 border-emerald-600 font-black text-xs sm:text-sm shadow-xs transition flex items-center justify-center space-x-2 cursor-pointer min-h-[46px]"
                     >
-                        <span class="text-base">🛒</span>
-                        <span>THÊM VÀO GIỎ HÀNG</span>
+                        <span>Thêm vào giỏ</span>
                     </button>
 
                     <button
@@ -407,8 +396,7 @@
                         onclick="submitBuyNow()"
                         class="flex-1 py-3.5 px-6 rounded-2xl bg-[#1e3a8a] hover:bg-blue-900 active:scale-98 text-white font-black text-xs sm:text-sm shadow-md transition transform hover:-translate-y-0.5 flex items-center justify-center space-x-2 cursor-pointer min-h-[46px]"
                     >
-                        <span class="text-base">⚡</span>
-                        <span>MUA NGAY (THANH TOÁN)</span>
+                        <span>Mua ngay</span>
                     </button>
                 </div>
             </div>
@@ -416,8 +404,7 @@
             <!-- Khối Hotline Tư Vấn Doanh Nghiệp -->
             <div class="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-3 flex items-center justify-between text-xs text-amber-950">
                 <div class="flex items-center space-x-2">
-                    <span class="text-base">📞</span>
-                    <span>Cần tư vấn báo giá hợp đồng trường học, cơ quan, doanh nghiệp?</span>
+                    <span>Cần tư vấn giá sỉ?</span>
                 </div>
                 <a href="{{ $storefrontSettings['hotline_url'] }}" class="font-black text-amber-900 hover:underline shrink-0 ml-2">
                     Gọi: {{ $storefrontSettings['hotline'] }}
@@ -428,8 +415,7 @@
             @if($product->compatiblePrinters->count() > 0)
             <div class="pt-3 border-t border-slate-100 space-y-2">
                 <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center space-x-1.5">
-                    <span>🖨️</span>
-                    <span>Tương Thích Tuyệt Đối Với Các Dòng Máy In:</span>
+                    <span>Dùng được với các dòng máy in:</span>
                 </h4>
                 <div class="flex flex-wrap gap-1.5">
                     @foreach($product->compatiblePrinters as $cp)
@@ -448,8 +434,7 @@
     <!-- 3. Mô Tả Chi Tiết & Bảng Thông Số Kỹ Thuật -->
     <div class="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-xs space-y-6">
         <h2 class="text-lg sm:text-xl font-black text-slate-900 border-b border-slate-100 pb-3 flex items-center space-x-2">
-            <span>📋</span>
-            <span>Mô Tả & Thông Số Kỹ Thuật Sản Phẩm</span>
+            <span>Mô tả và thông số sản phẩm</span>
         </h2>
 
         <div class="prose max-w-none text-xs sm:text-sm text-slate-700 leading-relaxed space-y-4">
@@ -603,7 +588,7 @@
             aria-label="Thêm sản phẩm vào giỏ hàng"
             class="flex-1 min-h-[44px] py-2 px-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 active:scale-95 text-emerald-800 border border-emerald-500 font-bold text-xs flex flex-col items-center justify-center transition shadow-2xs leading-tight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer"
         >
-            <span class="text-xs">🛒 Thêm Giỏ</span>
+            <span class="text-xs">Thêm vào giỏ</span>
             <span class="text-[10px] font-mono font-bold text-emerald-700 tabular-nums" id="mobile-btn-price">{{ number_format($initialPrice, 0, ',', '.') }}&nbsp;₫</span>
         </button>
 
@@ -614,8 +599,7 @@
             aria-label="Mua ngay và chuyển đến trang thanh toán"
             class="flex-1 min-h-[44px] py-2 px-3 rounded-xl bg-[#1e3a8a] hover:bg-blue-900 active:scale-95 text-white font-black text-xs flex items-center justify-center space-x-1 transition shadow-md leading-tight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 cursor-pointer"
         >
-            <span aria-hidden="true">⚡</span>
-            <span>MUA NGAY</span>
+            <span>Mua ngay</span>
         </button>
 
     </div>
@@ -699,17 +683,13 @@
         // Cập nhật thanh cước vận chuyển Freeship
         const freeshipBanner = document.getElementById('freeship-banner');
         const freeshipText = document.getElementById('freeship-text');
-        const freeshipIcon = document.getElementById('freeship-icon');
-
         if (subtotal >= freeshipThreshold) {
             freeshipBanner.className = 'p-2.5 rounded-xl bg-emerald-50 border border-emerald-300 text-xs text-emerald-900 flex items-center justify-between shadow-2xs';
-            freeshipIcon.textContent = '🎉';
-            freeshipText.innerHTML = 'Đơn hàng <b>đủ điều kiện MIỄN PHÍ VẬN CHUYỂN</b> toàn tỉnh Đồng Nai!';
+            freeshipText.innerHTML = 'Đơn hàng <b>đủ điều kiện miễn phí giao hàng</b>.';
         } else {
             const remaining = freeshipThreshold - subtotal;
             freeshipBanner.className = 'p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 flex items-center justify-between';
-            freeshipIcon.textContent = '🚚';
-            freeshipText.innerHTML = 'Mua thêm <b>' + formatMoney(remaining) + '</b> để được <b>MIỄN PHÍ GIAO HỎA TỐC</b>';
+            freeshipText.innerHTML = 'Mua thêm <b>' + formatMoney(remaining) + '</b> để được <b>miễn phí giao hàng</b>.';
         }
     }
 
