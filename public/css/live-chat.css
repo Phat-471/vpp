@@ -563,6 +563,204 @@
     border: 0;
 }
 
+/* Image Attachment & Preview Styles */
+.lc-attach-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 54px;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 12px;
+    background: #f1f5f9;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+    border: 1px solid #cbd5e1;
+    font-size: 20px;
+}
+
+.lc-attach-btn:hover {
+    background: #e2e8f0;
+    color: #059669;
+    border-color: #059669;
+}
+
+.lc-attach-icon {
+    line-height: 1;
+}
+
+.lc-image-preview-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: #f0fdf4;
+    border-top: 1px solid #bbf7d0;
+    flex-shrink: 0;
+    animation: lc-preview-slide 0.2s ease-out;
+}
+
+@keyframes lc-preview-slide {
+    from { transform: translateY(6px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.lc-preview-thumb-wrap {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.lc-preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #86efac;
+    display: block;
+}
+
+.lc-preview-remove {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    min-height: 20px !important;
+    border-radius: 9999px;
+    background: #e11d48 !important;
+    color: #ffffff !important;
+    border: 1.5px solid #ffffff !important;
+    font-size: 10px !important;
+    font-weight: 900;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.lc-preview-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+}
+
+.lc-preview-filename {
+    font-size: 11px;
+    font-weight: 700;
+    color: #166534;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.lc-preview-hint {
+    font-size: 10px;
+    color: #15803d;
+}
+
+/* Chat Message Image Bubble */
+.lc-message-image-wrap {
+    margin: 4px 0 6px 0;
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.03);
+    max-width: 220px;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+.lc-message-image-wrap:hover {
+    opacity: 0.92;
+    transform: scale(1.02);
+}
+
+.lc-message-image {
+    display: block;
+    width: 100%;
+    max-height: 180px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Lightbox Modal */
+.lc-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.lc-lightbox[hidden] {
+    display: none !important;
+}
+
+.lc-lightbox-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(4px);
+    cursor: pointer;
+}
+
+.lc-lightbox-box {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: lc-box-open 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lc-lightbox-img {
+    max-width: 90vw;
+    max-height: 85vh;
+    border-radius: 12px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    object-fit: contain;
+    background: #000000;
+}
+
+.lc-lightbox-close {
+    position: absolute;
+    top: -14px;
+    right: -14px;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+    border-radius: 9999px;
+    background: #1e293b !important;
+    color: #ffffff !important;
+    border: 2px solid #ffffff !important;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.lc-lightbox-close:hover {
+    background: #e11d48 !important;
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 640px) {
     .lc-widget {

@@ -20,7 +20,8 @@ class LiveChatController extends Controller
         $session = $chat->browserSession($request);
         abort_unless($session, 403, 'Phiên hỗ trợ đã hết hạn. Hãy tải lại trang để kết nối lại.');
         $data = $request->validated();
-        $message = $chat->sendCustomer($session, $data['message'], $data['request_id']);
+        $messageText = !empty($data['message']) ? $data['message'] : ($request->hasFile('image') ? '[Hình ảnh đính kèm]' : '');
+        $message = $chat->sendCustomer($session, $messageText, $data['request_id'], $request->file('image'));
 
         return $this->respond(['success' => true, 'message' => $chat->publicMessage($message)]);
     }

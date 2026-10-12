@@ -50,10 +50,16 @@ Mọi trang giao diện (Storefront, Tra cứu, Hóa đơn in ấn, Admin POS) p
 1. **100% TIẾNG VIỆT CHUẨN MỰC:**
    * Toàn bộ giao diện, nhãn trường, nút bấm, thông báo toast, modal xác nhận, thông báo lỗi phải là tiếng Việt rõ ràng, chuẩn ngữ pháp, thân thiện với người dùng Việt Nam.
    * Không dùng từ ngữ nửa Anh nửa Việt (VD: dùng "Đã thanh toán" thay vì "Status: Paid", "Hủy bỏ" thay vì "Cancel", "Lưu thay đổi" thay vì "Save changes").
-2. **Thiết kế Mobile-First:**
+2. **Thiết kế Mobile-First & Bố cục Nút nổi (Floating Action Layout):**
    * Giao diện phải thao tác mượt mà bằng một tay trên điện thoại di động (Thumb-friendly). Nút bấm có chiều cao tối thiểu 44px.
-   * Thanh Bottom Navigation luôn cố định ở đáy màn hình trên thiết bị di động.
-   * Nút gọi Hotline và Zalo luôn ghim cố định góc phải màn hình.
+   * **Nguyên tắc Single Bottom Bar trên Mobile:** Tại mọi thời điểm trên viewport mobile, chỉ được hiển thị **DUY NHẤT 1 thanh cố định ở đáy**. Nếu trang có thanh mua hàng riêng biệt (`custom_bottom_bar`), layout chính BẮT BUỘC phải ẩn thanh Bottom Navigation mặc định để tránh lỗi lặp 2 menu.
+   * **Bố cục các nút liên hệ nổi (Tách 2 bên đối xứng, chống chồng đè):**
+     * **Bên TRÁI (Bottom-Left):** Nút liên hệ **Zalo** (màu xanh Zalo đặc trưng, icon SVG chuẩn, bo tròn).
+     * **Bên PHẢI (Bottom-Right):** Nút **Hotline** nằm dưới cùng; nút **Live Chat (Hỗ trợ trực tuyến)** nằm xếp chồng ngay phía trên Hotline với khoảng cách an toàn (tối thiểu 12px), tuyệt đối không để Live Chat che mất nút gọi điện thoại.
+     * Khi xuất hiện thanh `custom_bottom_bar` trên mobile, các nút nổi phải tự động ẩn hoặc nâng cao độ đáy tương ứng để không che khuất nút thao tác mua hàng.
+   * **Quy chuẩn nền đặc & Icon Vector (Anti-Transparency & SVG Only):**
+     * Mọi nút nổi (Floating buttons, badge) BẮT BUỘC sử dụng màu nền đặc (`solid background` với gradient/màu thương hiệu), có viền trắng tinh tế (`border-2 border-white`) và đổ bóng rõ ràng (`shadow-lg`). Tuyệt đối không dùng nền trong suốt gây hiện tượng chữ nổi đè lem lên thẻ sản phẩm hay văn bản bên dưới.
+     * 100% sử dụng icon vector SVG tinh gọn. CẤM dùng emoji hệ điều hành (như 💬, 📞, 📦) làm icon chính vì gây sai lệch giao diện giữa Android/iOS/Windows.
 3. **Phối màu & Typography hiện đại (Không dùng màu cơ bản chói gắt):**
    * Font chữ: `Plus Jakarta Sans` hoặc `Inter`.
    * Bảng màu chủ đạo: Nền Slate (`#f8fafc`), Màu chính Indigo/Navy (`#312e81`, `#4f46e5`), Màu thành công Emerald (`#059669`), Màu cảnh báo Amber (`#d97706`), Màu nguy hiểm Rose/Red (`#e11d48`).
@@ -89,3 +95,19 @@ resources/views/
 ├── print/                # Template in ấn A4/A5 (@media print)
 └── filament/modals/      # Modal giao diện Filament (VietQR động)
 ```
+
+---
+
+## 8. QUY TRÌNH TRIỂN KHAI VPS & QUẢN LÝ VITE BUILD ASSETS
+* **Không bỏ sót Vite Assets:**
+  * Thư mục `/public/build` (chứa `manifest.json`, CSS, JS và font đã bundle) **BẮT BUỘC PHẢI ĐƯỢC THEO DÕI TRONG GIT** (không được đưa vào `.gitignore`), trừ khi server đã thiết lập CI/CD runner riêng.
+  * Trước khi tạo commit và push lên remote repo, nếu có thay đổi CSS/JS/Giao diện, AI **BẮT BUỘC chạy `npm run build`** để đảm bảo file `public/build/manifest.json` luôn mới nhất, triệt tiêu lỗi `ViteManifestNotFoundException` trên môi trường Production.
+* **Lệnh cập nhật chuẩn trên VPS (aaPanel / Terminal):**
+  * Mỗi khi deploy phiên bản mới lên VPS, quy trình chuẩn gồm 3 bước:
+    ```bash
+    cd /www/wwwroot/vpp
+    git pull origin master
+    php artisan migrate --force
+    php artisan optimize:clear
+    ```
+

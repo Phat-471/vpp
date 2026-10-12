@@ -33,6 +33,89 @@ export function mountLiveChat(root) {
     const soundBtn = find('chat-sound-toggle');
     const scrollBottomBtn = find('chat-scroll-bottom');
     const charCounter = find('chat-char-counter');
+    const fileInput = find('live-chat-file-input');
+    const previewBar = find('chat-image-preview-bar');
+    const previewImg = find('chat-preview-img');
+    const previewFilename = find('chat-preview-filename');
+    const removeImageBtn = find('chat-remove-image-btn');
+    const lightbox = find('live-chat-lightbox');
+    const lightboxImg = find('chat-lightbox-img');
+    const lightboxClose = find('chat-lightbox-close');
+    const lightboxBackdrop = find('chat-lightbox-backdrop');
+
+    let selectedFile = null;
+    let previewObjectUrl = null;
+
+    function clearSelectedFile() {
+        selectedFile = null;
+        if (fileInput) fileInput.value = '';
+        if (previewObjectUrl) {
+            try { URL.revokeObjectURL(previewObjectUrl); } catch { /* ignore */ }
+            previewObjectUrl = null;
+        }
+        if (previewBar) previewBar.hidden = true;
+        if (previewImg) previewImg.src = '';
+        if (previewFilename) previewFilename.textContent = '';
+    }
+
+    function setSelectedFile(file) {
+        if (!file) return;
+        const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+        if (!validTypes.includes(file.type)) {
+            showError('Định dạng tệp không được hỗ trợ. Hãy chọn ảnh JPG, PNG hoặc WEBP.');
+            return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+            showError('Dung lượng ảnh vượt quá 5MB. Hãy chụp lại hoặc giảm kích thước ảnh.');
+            return;
+        }
+        showError('');
+        selectedFile = file;
+        if (previewObjectUrl) {
+            try { URL.revokeObjectURL(previewObjectUrl); } catch { /* ignore */ }
+        }
+        try {
+            previewObjectUrl = URL.createObjectURL(file);
+            if (previewImg) previewImg.src = previewObjectUrl;
+        } catch { /* object url fallback */ }
+        if (previewFilename) previewFilename.textContent = file.name || 'Ảnh đã chọn';
+        if (previewBar) previewBar.hidden = false;
+        input.focus();
+    }
+
+    if (fileInput) {
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files && fileInput.files[0]) {
+                setSelectedFile(fileInput.files[0]);
+            }
+        });
+    }
+
+    if (removeImageBtn) {
+        removeImageBtn.addEventListener('click', () => {
+            clearSelectedFile();
+        });
+    }
+
+    function openLightbox(url) {
+        if (!lightbox || !lightboxImg) return;
+        lightboxImg.src = url;
+        lightbox.hidden = false;
+    }
+
+    function closeLightbox() {
+        if (!lightbox) return;
+        lightbox.hidden = true;
+        if (lightboxImg) lightboxImg.src = '';
+    }
+
+    if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+    if (lightboxBackdrop) lightboxBackdrop.addEventListener('click', closeLightbox);
+    if (lightbox) {
+        lightbox.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeLightbox();
+        });
+    }
 
     let messages = [];
     let cursor = 0;
@@ -104,11 +187,19 @@ export function mountLiveChat(root) {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 12000);
         try {
+            const isFormData = typeof FormData !== 'undefined' && payload instanceof FormData;
+            const headers = {
+                Accept: 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+            };
+            if (!isFormData) {
+                headers['Content-Type'] = 'application/json';
+            }
             const response = await fetch(url, {
                 method: payload === null ? 'GET' : 'POST', credentials: 'same-origin', cache: 'no-store',
-                headers: { Accept: 'application/json', 'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' },
-                body: payload === null ? undefined : JSON.stringify(payload), signal: controller.signal,
+                headers,
+                body: payload === null ? undefined : (isFormData ? payload : JSON.stringify(payload)),
+                signal: controller.signal,
             });
             const data = await response.json().catch(() => ({}));
             if (!response.ok || !data.success) throw new Error(requestError(response.status, data));
@@ -151,12 +242,31 @@ export function mountLiveChat(root) {
             if (message.id) row.dataset.messageId = String(message.id);
             const author = document.createElement('strong');
             author.textContent = message.sender_type === 'customer' ? 'Bạn' : message.sender_name;
-            const text = document.createElement('p');
-            text.textContent = message.message;
+            row.append(author);
+
+            if (message.image_url) {
+                const imgWrap = document.createElement('div');
+                imgWrap.className = 'lc-message-image-wrap';
+                const img = document.createElement('img');
+                img.src = message.image_url;
+                img.alt = 'Ảnh đính kèm';
+                img.className = 'lc-message-image';
+                img.loading = 'lazy';
+                img.addEventListener('click', () => openLightbox(message.image_url));
+                imgWrap.append(img);
+                row.append(imgWrap);
+            }
+
+            if (message.message && message.message !== '[Hình ảnh đính kèm]') {
+                const text = document.createElement('p');
+                text.textContent = message.message;
+                row.append(text);
+            }
+
             const meta = document.createElement('span');
             meta.className = 'lc-meta';
             meta.textContent = `${messageTime(message.created_at)}${message.request_id ? (message.failed ? ' · Chưa xác nhận gửi' : ' · Đang gửi…') : message.sender_type === 'customer' ? ' · Đã gửi' : ''}`;
-            row.append(author, text, meta);
+            row.append(meta);
             if (message.failed) {
                 const again = document.createElement('button');
                 again.type = 'button';
@@ -282,7 +392,16 @@ export function mountLiveChat(root) {
         render(true);
         try {
             await initialize();
-            const data = await api(root.dataset.sendUrl, { message: pending.message, request_id: pending.request_id });
+            let payload;
+            if (pending.file_payload) {
+                payload = new FormData();
+                payload.append('request_id', pending.request_id);
+                payload.append('message', pending.message || '');
+                payload.append('image', pending.file_payload);
+            } else {
+                payload = { message: pending.message, request_id: pending.request_id };
+            }
+            const data = await api(root.dataset.sendUrl, payload);
             messages = mergeMessages(messages, [data.message]);
             pending = null;
             updateStatus('active');
@@ -294,13 +413,47 @@ export function mountLiveChat(root) {
         event.preventDefault();
         if (pending) { showError('Tin trước chưa được xác nhận. Hãy bấm Thử lại trước khi gửi tin tiếp theo.'); return; }
         const text = input.value.trim();
-        if (!text || [...text].length > 2000 || /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/u.test(text)) {
-            showError('Nhập tin nhắn hợp lệ, tối đa 2.000 ký tự.'); return;
+        const file = selectedFile;
+        if (!text && !file) {
+            showError('Nhập câu hỏi hoặc chọn ảnh máy in bị lỗi trước khi gửi.');
+            return;
         }
-        pending = { request_id: crypto.randomUUID(), message: text, sender_type: 'customer', created_at: new Date().toISOString() };
+        if (text && ([...text].length > 2000 || /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/u.test(text))) {
+            showError('Nhập tin nhắn hợp lệ, tối đa 2.000 ký tự.');
+            return;
+        }
+        let localImgUrl = null;
+        if (file) {
+            try { localImgUrl = URL.createObjectURL(file); } catch { /* ignore */ }
+        }
+        pending = {
+            request_id: crypto.randomUUID(),
+            message: text || '[Hình ảnh đính kèm]',
+            image_url: localImgUrl,
+            file_payload: file,
+            sender_type: 'customer',
+            created_at: new Date().toISOString()
+        };
         input.value = '';
         if (charCounter) charCounter.textContent = '0/2000';
+        clearSelectedFile();
         submitPending();
+    });
+
+    // Paste image from clipboard directly into the chat input
+    input.addEventListener('paste', event => {
+        const items = event.clipboardData?.items;
+        if (!items) return;
+        for (const item of items) {
+            if (item.type && item.type.startsWith('image/')) {
+                const file = item.getAsFile();
+                if (file) {
+                    setSelectedFile(file);
+                    event.preventDefault();
+                    break;
+                }
+            }
+        }
     });
 
     // Enter to submit, Shift+Enter for newline

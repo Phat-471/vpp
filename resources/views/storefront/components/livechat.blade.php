@@ -47,10 +47,26 @@
             <button type="button" data-chat-suggestion="Tôi cần hỗ trợ xuất hóa đơn VAT cho đơn hàng: ">🧾 Hỗ trợ hóa đơn VAT</button>
         </div>
 
+        <!-- Thanh xem trước ảnh đính kèm trước khi gửi -->
+        <div id="chat-image-preview-bar" class="lc-image-preview-bar" hidden>
+            <div class="lc-preview-thumb-wrap">
+                <img id="chat-preview-img" src="" alt="Ảnh xem trước" class="lc-preview-img">
+                <button type="button" id="chat-remove-image-btn" class="lc-preview-remove" aria-label="Hủy ảnh đã chọn" title="Xóa ảnh">✕</button>
+            </div>
+            <div class="lc-preview-info">
+                <span id="chat-preview-filename" class="lc-preview-filename"></span>
+                <span class="lc-preview-hint">Đã chọn ảnh máy in / bản in</span>
+            </div>
+        </div>
+
         <form id="live-chat-form" class="lc-form">
             <label class="lc-sr" for="live-chat-input">Nội dung tin nhắn</label>
+            <label for="live-chat-file-input" class="lc-attach-btn" title="Đính kèm ảnh bản in / lỗi máy in (Tối đa 5MB)" aria-label="Đính kèm ảnh máy in lỗi">
+                <input type="file" id="live-chat-file-input" accept="image/jpeg,image/png,image/webp,image/jpg" class="lc-sr">
+                <span class="lc-attach-icon" aria-hidden="true">📷</span>
+            </label>
             <div class="lc-input-wrapper">
-                <textarea id="live-chat-input" rows="2" required maxlength="2000" placeholder="Nhập câu hỏi (Enter để gửi, Shift+Enter xuống dòng)…" aria-describedby="chat-input-help chat-error"></textarea>
+                <textarea id="live-chat-input" rows="2" maxlength="2000" placeholder="Nhập câu hỏi hoặc gửi ảnh máy in bị lỗi…" aria-describedby="chat-input-help chat-error"></textarea>
                 <span id="chat-char-counter" class="lc-char-count">0/2000</span>
             </div>
             <button type="submit" id="chat-send-btn" aria-label="Gửi tin nhắn">
@@ -59,7 +75,16 @@
             </button>
         </form>
         <p id="chat-error" class="lc-error" role="alert" hidden></p>
-        <p id="chat-input-help" class="lc-help">Tối đa 2.000 ký tự. Không gửi mật khẩu hoặc mã OTP.</p>
+        <p id="chat-input-help" class="lc-help">Hỗ trợ gửi ảnh chụp bản in lỗi, máy in kẹt giấy (Tối đa 5MB). Không gửi mật khẩu hoặc OTP.</p>
     </section>
+
+    <!-- Modal phóng to ảnh trong chat (Lightbox) -->
+    <div id="live-chat-lightbox" class="lc-lightbox" hidden aria-label="Xem ảnh phóng to" role="dialog" aria-modal="true">
+        <div class="lc-lightbox-backdrop" id="chat-lightbox-backdrop"></div>
+        <div class="lc-lightbox-box">
+            <button type="button" id="chat-lightbox-close" class="lc-lightbox-close" aria-label="Đóng xem ảnh" title="Đóng">✕</button>
+            <img id="chat-lightbox-img" src="" alt="Ảnh chi tiết máy in" class="lc-lightbox-img">
+        </div>
+    </div>
 </div>
 <script type="module" src="{{ asset('js/live-chat.js') }}"></script>

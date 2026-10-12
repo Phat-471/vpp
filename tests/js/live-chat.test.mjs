@@ -137,3 +137,15 @@ test('Sending does not advance the poll cursor past an intervening admin reply',
     assert.equal(polls.at(-1).url, '/messages?after_id=1');
     assert.deepEqual(nodes['live-chat-messages'].children.map(row => row.dataset.messageId), ['1', '2', '3']);
 });
+
+test('Messages with image_url render image container with thumbnail', async t => {
+    const imgMsg = { ...welcome, id: 2, message: 'Ảnh bản in bị mờ', image_url: '/storage/chat_images/test.jpg' };
+    const responses = [{ data: packet([welcome, imgMsg]).data }];
+    const { nodes } = fixture(t, responses);
+    await flush();
+    assert.equal(nodes['live-chat-messages'].children.length, 2);
+    const msgEl = nodes['live-chat-messages'].children[1];
+    const imgWrap = msgEl.children.find(c => c.className === 'lc-message-image-wrap');
+    assert.ok(imgWrap, 'Image wrapper should exist in message row');
+    assert.equal(imgWrap.children[0].src, '/storage/chat_images/test.jpg');
+});

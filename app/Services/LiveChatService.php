@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Support\ChatContent;
 use App\Support\StorefrontSettings;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -86,52 +87,71 @@ final class LiveChatService
 
     public function publicMessage(ChatMessage $message): array
     {
-        return $message->only(['id', 'sender_type', 'sender_name', 'message', 'is_read', 'created_at']);
+        return [
+            ...$message->only(['id', 'sender_type', 'sender_name', 'message', 'is_read', 'created_at']),
+            'image_url' => $message->image_url,
+        ];
     }
 
-    public function sendCustomer(ChatSession $session, string $text, string $requestId): ChatMessage
+    public function sendCustomer(ChatSession $session, string $text, string $requestId, ?UploadedFile $image = null): ChatMessage
     {
         // A retry reuses its UUID. Cache contains only an ID, never message content.
         $key = 'live-chat-send:'.$session->id.':'.hash('sha256', $requestId);
 
-        return Cache::lock($key.':lock', 10)->block(3, function () use ($session, $text, $key) {
+        return Cache::lock($key.':lock', 10)->block(3, function () use ($session, $text, $key, $image) {
             if ($id = Cache::get($key)) {
                 if ($message = $session->messages()->find($id)) {
                     return $message;
                 }
             }
-            $message = $this->write($session, 'customer', $session->customer_name, $text);
+            $imagePath = null;
+            if ($image) {
+                $imagePath = $image->store('chat_images/'.$session->id, 'public');
+            }
+            $message = $this->write($session, 'customer', $session->customer_name, $text, $imagePath);
             Cache::put($key, $message->id, now()->addDay());
 
             return $message;
         });
     }
 
-    public function reply(User $user, ChatSession $session, string $text): ChatMessage
+    public function reply(User $user, ChatSession $session, string $text, ?UploadedFile $image = null): ChatMessage
     {
         Gate::forUser($user)->authorize('manage-live-chat');
         $this->limitStaff($user);
 
-        return $this->write($session, 'admin', Str::limit($user->name, 100, ''), $text);
+        $imagePath = null;
+        if ($image) {
+            $imagePath = $image->store('chat_images/'.$session->id, 'public');
+        }
+
+        return $this->write($session, 'admin', Str::limit($user->name, 100, ''), $text, $imagePath);
     }
 
-    private function write(ChatSession $session, string $sender, string $name, string $text): ChatMessage
+    private function write(ChatSession $session, string $sender, string $name, string $text, ?string $imagePath = null): ChatMessage
     {
         $text = trim($text);
+        if (empty($text) && $imagePath) {
+            $text = '[Hình ảnh đính kèm]';
+        }
         Validator::make(['replyMessage' => $text], [
             'replyMessage' => ChatContent::rules(),
         ], ChatContent::messages('replyMessage'))->validate();
 
-        return DB::transaction(function () use ($session, $sender, $name, $text) {
+        return DB::transaction(function () use ($session, $sender, $name, $text, $imagePath) {
             $locked = ChatSession::whereKey($session->id)->lockForUpdate()->firstOrFail();
             if ($sender === 'admin' && $locked->status === ChatStatus::Closed->value) {
                 throw ValidationException::withMessages(['replyMessage' => 'Hội thoại đã đóng. Mở lại hội thoại trước khi trả lời.']);
             }
             $message = $locked->messages()->create([
-                'sender_type' => $sender, 'sender_name' => $name, 'message' => $text, 'is_read' => false,
+                'sender_type' => $sender,
+                'sender_name' => $name,
+                'message' => $text,
+                'image_path' => $imagePath,
+                'is_read' => false,
             ]);
             $locked->status = ChatStatus::Active->value;
-            $locked->last_message = Str::limit($text, 80);
+            $locked->last_message = $imagePath ? '📷 '.Str::limit($text, 76) : Str::limit($text, 80);
             $locked->last_message_at = now();
             $this->syncUnread($locked);
 

@@ -8,10 +8,12 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Locked;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
 class LiveChatPage extends Page
 {
+    use WithFileUploads;
     use WithPagination;
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
@@ -30,6 +32,8 @@ class LiveChatPage extends Page
     public ?int $selectedSessionId = null;
 
     public string $replyMessage = '';
+
+    public $attachment = null;
 
     public string $filter = 'all';
 
@@ -106,10 +110,28 @@ class LiveChatPage extends Page
 
             return;
         }
-        app(LiveChatService::class)->reply(auth()->user(), $session, $this->replyMessage);
+
+        $this->validate([
+            'replyMessage' => $this->attachment ? ['nullable', 'string', 'max:2000'] : ['required', 'string', 'max:2000'],
+            'attachment' => ['nullable', 'image', 'mimes:jpeg,png,webp,jpg', 'max:5120'],
+        ], [
+            'replyMessage.required' => 'Nhập nội dung trả lời trước khi gửi.',
+            'attachment.image' => 'Tệp tải lên phải là hình ảnh.',
+            'attachment.mimes' => 'Hình ảnh phải có định dạng JPG, PNG, WEBP.',
+            'attachment.max' => 'Dung lượng ảnh tối đa là 5MB.',
+        ]);
+
+        $text = !empty($this->replyMessage) ? $this->replyMessage : '[Hình ảnh đính kèm]';
+        app(LiveChatService::class)->reply(auth()->user(), $session, $text, $this->attachment);
         $this->replyMessage = '';
+        $this->attachment = null;
         $this->resetPage('messagesPage');
         $this->dispatch('chat-reply-sent');
+    }
+
+    public function removeAttachment(): void
+    {
+        $this->attachment = null;
     }
 
     public function getQuickRepliesProperty(): array

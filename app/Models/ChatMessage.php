@@ -12,12 +12,22 @@ class ChatMessage extends Model
         'sender_type',
         'sender_name',
         'message',
+        'image_path',
         'is_read',
     ];
 
     protected $casts = [
         'is_read' => 'boolean',
     ];
+
+    protected $appends = [
+        'image_url',
+    ];
+
+    public function getImageUrlAttribute(): ?string
+    {
+        return $this->image_path ? asset('storage/'.$this->image_path) : null;
+    }
 
     public function chatSession(): BelongsTo
     {

@@ -272,7 +272,16 @@
                             </div>
                             <div class="msg-bubble">
                                 <strong class="msg-sender">{{ $msg->sender_name }}</strong>
-                                <p class="msg-text">{{ $msg->message }}</p>
+                                @if($msg->image_path)
+                                    <div class="msg-image-wrap" style="margin: 6px 0;">
+                                        <a href="{{ $msg->image_url }}" target="_blank" rel="noopener noreferrer" title="Bấm để xem ảnh phóng to trong tab mới">
+                                            <img src="{{ $msg->image_url }}" alt="Hình ảnh từ {{ $msg->sender_name }}" style="max-width: 260px; max-height: 200px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.1); object-fit: cover; display: block; box-shadow: 0 2px 6px rgba(0,0,0,0.06);" loading="lazy">
+                                        </a>
+                                    </div>
+                                @endif
+                                @if($msg->message && $msg->message !== '[Hình ảnh đính kèm]')
+                                    <p class="msg-text">{{ $msg->message }}</p>
+                                @endif
                                 <div class="msg-meta">
                                     <span>{{ $msg->created_at->format('H:i, d/m/Y') }}</span>
                                     @if($isAdmin)
@@ -322,9 +331,20 @@
 
                 {{-- Reply Composer Form --}}
                 <form wire:submit="sendReply" class="chat-reply-form">
+                    @if($attachment)
+                        <div class="admin-attachment-preview" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; margin-bottom: 8px;">
+                            <img src="{{ $attachment->temporaryUrl() }}" style="width: 44px; height: 44px; border-radius: 8px; object-fit: cover; border: 1px solid #86efac;">
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="font-size: 12px; font-weight: bold; color: #166534;">Ảnh đính kèm chuẩn bị gửi</div>
+                                <div style="font-size: 11px; color: #15803d; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $attachment->getClientOriginalName() }}</div>
+                            </div>
+                            <button type="button" wire:click="removeAttachment" style="color: #e11d48; font-weight: bold; background: none; border: none; cursor: pointer; padding: 4px 8px;" title="Xóa ảnh">✕ Xóa</button>
+                        </div>
+                    @endif
+
                     <div class="reply-textarea-wrap">
-                        <textarea id="admin-chat-reply" wire:model="replyMessage" rows="3" required maxlength="2000"
-                            placeholder="Nhập nội dung trả lời (Nhấn phím Ctrl + Enter để gửi nhanh)..."
+                        <textarea id="admin-chat-reply" wire:model="replyMessage" rows="3" maxlength="2000"
+                            placeholder="Nhập nội dung trả lời hoặc gửi ảnh hướng dẫn (Ctrl + Enter để gửi nhanh)..."
                             wire:keydown.ctrl.enter="sendReply"
                             wire:keydown.cmd.enter="sendReply"
                             aria-describedby="chat-reply-error"
@@ -333,20 +353,28 @@
                         @error('replyMessage')
                             <p id="chat-reply-error" role="alert" class="chat-form-error">{{ $message }}</p>
                         @enderror
+                        @error('attachment')
+                            <p role="alert" class="chat-form-error">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    <div class="reply-footer">
-                        <div class="reply-hint">
+                    <div class="reply-footer" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+                        <div class="reply-hint" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                            <label class="btn-attach" style="cursor: pointer; display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 8px; background: #f8fafc; border: 1px solid #cbd5e1; font-size: 12px; font-weight: 600; color: #334155;" title="Đính kèm ảnh minh họa hoặc hướng dẫn">
+                                <span>📷 Đính kèm ảnh</span>
+                                <input type="file" wire:model="attachment" accept="image/jpeg,image/png,image/webp,image/jpg" style="display: none;">
+                            </label>
+
                             @if($this->currentSession->status === 'closed')
                                 <span class="hint-closed">⚠️ Hội thoại đang đóng. Bấm "Mở lại hội thoại" ở trên để tiếp tục trò chuyện.</span>
                             @else
-                                <span>⚡ Nhấn <b>Ctrl + Enter</b> để gửi nhanh · Tối đa 2.000 ký tự</span>
+                                <span class="hidden sm:inline text-xs text-slate-500">⚡ Nhấn <b>Ctrl + Enter</b> để gửi nhanh</span>
                             @endif
                         </div>
 
-                        <button type="submit" wire:loading.attr="disabled" wire:target="sendReply" @disabled($this->currentSession->status === 'closed')" class="btn-send">
-                            <span wire:loading.remove wire:target="sendReply">Gửi trả lời ➔</span>
-                            <span wire:loading wire:target="sendReply">Đang gửi…</span>
+                        <button type="submit" wire:loading.attr="disabled" wire:target="sendReply, attachment" @disabled($this->currentSession->status === 'closed')" class="btn-send">
+                            <span wire:loading.remove wire:target="sendReply, attachment">Gửi trả lời ➔</span>
+                            <span wire:loading wire:target="sendReply, attachment">Đang xử lý…</span>
                         </button>
                     </div>
                 </form>

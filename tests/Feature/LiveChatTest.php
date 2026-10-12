@@ -10,7 +10,9 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Services\LiveChatService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -198,5 +200,84 @@ class LiveChatTest extends TestCase
         $this->assertSame(5, $session->fresh()->unread_admin);
         $component->call('setPage', 2, 'messagesPage')->assertSee('Tin kiểm thử 0')->assertDontSee('Tin kiểm thử 54');
         $this->assertSame(0, $session->fresh()->unread_admin);
+    }
+
+    public function test_customer_can_send_image_attachment(): void
+    {
+        Storage::fake('public');
+        $session = $this->conversation();
+        $file = UploadedFile::fake()->image('printer_issue.jpg', 600, 600);
+
+        $response = $this->browser($session)->postJson(route('chat.send'), [
+            'message' => 'Máy in bị sọc đen như trong ảnh',
+            'request_id' => (string) Str::uuid(),
+            'image' => $file,
+        ]);
+
+        $response->assertOk()->assertJsonPath('success', true);
+        $this->assertNotNull($response->json('message.image_url'));
+
+        $msg = ChatMessage::latest()->first();
+        $this->assertNotNull($msg->image_path);
+        $this->assertSame('Máy in bị sọc đen như trong ảnh', $msg->message);
+        Storage::disk('public')->assertExists($msg->image_path);
+    }
+
+    public function test_customer_can_send_image_without_text(): void
+    {
+        Storage::fake('public');
+        $session = $this->conversation();
+        $file = UploadedFile::fake()->image('error_code.png', 400, 400);
+
+        $response = $this->browser($session)->postJson(route('chat.send'), [
+            'request_id' => (string) Str::uuid(),
+            'image' => $file,
+        ]);
+
+        $response->assertOk()->assertJsonPath('success', true);
+        $msg = ChatMessage::latest()->first();
+        $this->assertSame('[Hình ảnh đính kèm]', $msg->message);
+        $this->assertNotNull($msg->image_path);
+    }
+
+    public function test_image_validation_rejects_oversized_or_invalid_file(): void
+    {
+        Storage::fake('public');
+        $session = $this->conversation();
+        $oversized = UploadedFile::fake()->create('big_file.jpg', 6000, 'image/jpeg');
+
+        $this->browser($session)->postJson(route('chat.send'), [
+            'message' => 'Ảnh quá lớn',
+            'request_id' => (string) Str::uuid(),
+            'image' => $oversized,
+        ])->assertStatus(422)->assertJsonValidationErrors(['image']);
+
+        $pdf = UploadedFile::fake()->create('doc.pdf', 500, 'application/pdf');
+        $this->browser($session)->postJson(route('chat.send'), [
+            'message' => 'Tệp sai định dạng',
+            'request_id' => (string) Str::uuid(),
+            'image' => $pdf,
+        ])->assertStatus(422)->assertJsonValidationErrors(['image']);
+    }
+
+    public function test_admin_can_reply_with_image_attachment(): void
+    {
+        Storage::fake('public');
+        $this->actingAs(User::factory()->create(['role' => 'admin']));
+        $session = $this->conversation();
+        $file = UploadedFile::fake()->image('guide.jpg', 500, 500);
+
+        Livewire::test(LiveChatPage::class)
+            ->call('selectSession', $session->id)
+            ->set('attachment', $file)
+            ->set('replyMessage', 'Anh/chị tháo hộp mực theo hình này nhé')
+            ->call('sendReply')
+            ->assertHasNoErrors();
+
+        $msg = ChatMessage::latest()->first();
+        $this->assertSame('admin', $msg->sender_type);
+        $this->assertSame('Anh/chị tháo hộp mực theo hình này nhé', $msg->message);
+        $this->assertNotNull($msg->image_path);
+        Storage::disk('public')->assertExists($msg->image_path);
     }
 }
