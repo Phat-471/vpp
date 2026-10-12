@@ -140,4 +140,34 @@ resources/views/
 * **Hỗ trợ quản trị CLI khẩn cấp:**
   * Hệ thống luôn duy trì lệnh `php artisan admin:update` để đổi mật khẩu/email trực tiếp từ SSH/terminal VPS khi quên mật khẩu hoặc không vào được web.
 
+---
+
+## 10. QUY TRÌNH PHỐI HỢP 4 VAI TRÒ (ARCHITECT ➔ DEVELOPER ➔ REVIEWER ➔ QA)
+Mọi yêu cầu phát triển tính năng, sửa lỗi hoặc tái cấu trúc trong dự án BẮT BUỘC phải thực hiện và báo cáo tuần tự theo 4 vai trò độc lập, trả kết quả minh bạch cho nhau và cho người dùng:
+
+1. **🏛️ ARCHITECT (Quản lý & Kiến trúc sư):**
+   * **Nhiệm vụ:** Tiếp nhận yêu cầu của người dùng, phân tích phạm vi nghiệp vụ và kiến trúc hệ thống.
+   * **Đầu ra:** Bản kế hoạch triển khai súc tích, xác định các file cần can thiệp, đánh giá tác động phụ. Nếu yêu cầu có điểm mơ hồ $\rightarrow$ kích hoạt ngay **Nguyên tắc 1: Không rõ phải hỏi**.
+
+2. **💻 DEVELOPER (Lập trình viên):**
+   * **Nhiệm vụ:** Thực thi viết code dựa trên đúng kế hoạch của Architect.
+   * **Đầu ra:** Triển khai code chính xác, tuân thủ nghiêm ngặt **DRY, Lean dependencies, Strict validation, UI-UX Pro Max (100% tiếng Việt, icon SVG, không dùng emoji trên giao diện admin/buttons), DB Transactions và Eager Loading**.
+
+3. **🔍 REVIEWER (Thẩm định & Phản biện mã nguồn):**
+   * **Nhiệm vụ:** Kiểm tra chéo độc lập dựa trên **Git diff thực tế** (không chỉ nghe theo mô tả của Developer).
+   * **Đầu ra:** Đánh giá bảo mật (chống SQLi, XSS, IDOR, rò rỉ credential), kiểm tra chuẩn giao diện tiếng Việt, kiểm tra tính toàn vẹn rollback DB. Nếu phát hiện vi phạm hoặc nguy cơ bug $\rightarrow$ **Yêu cầu Developer sửa lại ngay**.
+
+4. **🧪 QA (Kiểm thử viên):**
+   * **Nhiệm vụ:** Chạy các lệnh kiểm thử thực tế trên hệ thống (chạy PHPUnit test `php artisan test`, test Livewire/Filament, build Vite `npm run build`).
+   * **Đầu ra:** Báo cáo mã thoát (Exit code), số lượng test Passed / Failed / Assertions thực tế. Tuyệt đối **CẤM báo PASS nếu lệnh chưa thực sự chạy thành công**.
+
+5. **📊 BÁO CÁO TỔNG KẾT (TRẢ KẾT QUẢ CHO NGƯỜI DÙNG):**
+   * Mỗi phản hồi hoàn thành task phải có đầy đủ:
+     * Tóm tắt phân tích của **Architect**.
+     * Các file được thay đổi bởi **Developer**.
+     * Nhận xét an toàn của **Reviewer**.
+     * Bằng chứng chạy test của **QA**.
+     * Hướng dẫn lệnh cập nhật / kiểm tra thực tế cho người dùng.
+
+
 
