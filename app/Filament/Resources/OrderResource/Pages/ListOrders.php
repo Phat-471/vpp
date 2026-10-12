@@ -24,6 +24,14 @@ class ListOrders extends ListRecords
 
     public function getTabs(): array
     {
+        $businessNow = now('Asia/Ho_Chi_Minh');
+        $todayStart = $businessNow->copy()->startOfDay()->utc();
+        $tomorrowStart = $todayStart->copy()->addDay();
+        $monthStartLocal = $businessNow->copy()->startOfMonth();
+        $nextMonthStartLocal = $monthStartLocal->copy()->addMonth();
+        $monthStart = $monthStartLocal->copy()->utc();
+        $nextMonthStart = $nextMonthStartLocal->utc();
+
         return [
             'all' => Tab::make('Tất cả đơn')
                 ->badge(Order::count()),
@@ -45,6 +53,30 @@ class ListOrders extends ListRecords
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('payment_status', 'unpaid'))
                 ->badge(Order::where('payment_status', 'unpaid')->count())
                 ->badgeColor('danger'),
+
+            'paid_today' => Tab::make('Đã thanh toán hôm nay')
+                ->modifyQueryUsing(fn (Builder $query) => $query
+                    ->where('payment_status', 'paid')
+                    ->where('created_at', '>=', $todayStart)
+                    ->where('created_at', '<', $tomorrowStart))
+                ->badge(Order::query()
+                    ->where('payment_status', 'paid')
+                    ->where('created_at', '>=', $todayStart)
+                    ->where('created_at', '<', $tomorrowStart)
+                    ->count())
+                ->badgeColor('success'),
+
+            'paid_this_month' => Tab::make('Đã thanh toán tháng này')
+                ->modifyQueryUsing(fn (Builder $query) => $query
+                    ->where('payment_status', 'paid')
+                    ->where('created_at', '>=', $monthStart)
+                    ->where('created_at', '<', $nextMonthStart))
+                ->badge(Order::query()
+                    ->where('payment_status', 'paid')
+                    ->where('created_at', '>=', $monthStart)
+                    ->where('created_at', '<', $nextMonthStart)
+                    ->count())
+                ->badgeColor('primary'),
 
             'vat' => Tab::make('Hóa đơn VAT')
                 ->icon('heroicon-m-document-text')

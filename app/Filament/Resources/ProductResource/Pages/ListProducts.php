@@ -34,8 +34,8 @@ class ListProducts extends ListRecords
 
             'low_stock' => Tab::make('Sắp hết hàng')
                 ->icon('heroicon-m-exclamation-triangle')
-                ->modifyQueryUsing(fn (Builder $query) => $query->whereColumn('stock_quantity', '<=', 'low_stock_threshold'))
-                ->badge(Product::whereColumn('stock_quantity', '<=', 'low_stock_threshold')->count())
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('is_active', true)->whereColumn('stock_quantity', '<=', 'low_stock_threshold'))
+                ->badge(Product::where('is_active', true)->whereColumn('stock_quantity', '<=', 'low_stock_threshold')->count())
                 ->badgeColor('danger'),
 
             'missing_image' => Tab::make('Chưa có ảnh')

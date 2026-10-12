@@ -284,7 +284,7 @@
                                     <p class="msg-text">{{ $msg->message }}</p>
                                 @endif
                                 <div class="msg-meta">
-                                    <span>{{ $msg->created_at->format('H:i, d/m/Y') }}</span>
+                                    <span>{{ $msg->created_at?->copy()->timezone('Asia/Ho_Chi_Minh')->format('H:i, d/m/Y') }}</span>
                                     @if($isAdmin)
                                         <span class="msg-read-status">{{ $msg->is_read ? '· ✓✓ Đã đọc' : '· ✓ Đã gửi' }}</span>
                                     @endif

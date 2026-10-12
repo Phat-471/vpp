@@ -321,7 +321,8 @@ class RepairInventorySyncTest extends TestCase
         $this->assertEmpty($check['shortages']);
 
         // Tăng số lượng lên 10 vượt quá tồn kho (hiện còn 3)
-        $item->update(['quantity' => 10]);
+        $item->quantity = 10;
+        $item->saveQuietly();
         $checkShortage = $service->checkTicketStockAvailability($ticket);
         $this->assertFalse($checkShortage['is_available']);
         $this->assertCount(1, $checkShortage['shortages']);

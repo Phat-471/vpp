@@ -327,6 +327,41 @@ class StorefrontController extends Controller
         ));
     }
 
+    public function searchSuggestions(Request $request)
+    {
+        $validated = $request->validate([
+            'q' => ['required', 'string', 'min:2', 'max:80'],
+        ]);
+
+        $keyword = trim($validated['q']);
+        if (mb_strlen($keyword) < 2) {
+            return response()->json(['data' => []]);
+        }
+
+        $products = Product::query()
+            ->with('category')
+            ->where('is_active', true)
+            ->where(function ($query) use ($keyword) {
+                $query->where('name', 'LIKE', "%{$keyword}%")
+                    ->orWhere('sku', 'LIKE', "%{$keyword}%")
+                    ->orWhere('barcode', 'LIKE', "%{$keyword}%");
+            })
+            ->orderByDesc('is_best_seller')
+            ->orderByDesc('stock_quantity')
+            ->limit(7)
+            ->get();
+
+        return response()->json([
+            'data' => $products->map(fn (Product $product) => [
+                'name' => $product->name,
+                'sku' => $product->sku,
+                'price' => $product->flash_sale_price ?: $product->retail_price,
+                'image' => $product->image_url,
+                'url' => route('storefront.product-detail', ['slug' => $product->slug]),
+            ]),
+        ]);
+    }
+
     public function productDetail($slug)
     {
         $product = Product::with(['category', 'units', 'compatiblePrinters'])
@@ -392,6 +427,58 @@ class StorefrontController extends Controller
 
         DB::beginTransaction();
         try {
+            $cartItems = $request->validated('items');
+            $productIds = collect($cartItems)->pluck('product_id')->unique()->sort()->values();
+            $products = Product::query()
+                ->whereKey($productIds)
+                ->orderBy('id')
+                ->lockForUpdate()
+                ->get()
+                ->keyBy('id');
+            $unitIds = collect($cartItems)->pluck('unit_id')->filter()->unique()->sort()->values();
+            $units = ProductUnit::query()
+                ->whereIn('id', $unitIds)
+                ->orderBy('id')
+                ->lockForUpdate()
+                ->get()
+                ->keyBy('id');
+
+            $requiredStock = [];
+            foreach ($cartItems as $cartItem) {
+                $product = $products->get($cartItem['product_id']);
+                if (!$product || !$product->is_active) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'items' => 'Một sản phẩm trong giỏ không còn được bán. Vui lòng tải lại giỏ hàng.',
+                    ]);
+                }
+
+                $unitId = $cartItem['unit_id'] ?? null;
+                $unit = $unitId ? $units->get($unitId) : null;
+                if ($unitId && (!$unit || (int) $unit->product_id !== (int) $product->id)) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'items' => 'Đơn vị bán không thuộc sản phẩm đã chọn. Vui lòng tải lại giỏ hàng.',
+                    ]);
+                }
+
+                $rate = $unit ? (int) $unit->conversion_rate : 1;
+                $quantity = (int) $cartItem['quantity'];
+                if ($rate < 1 || $quantity > intdiv(PHP_INT_MAX, $rate)) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'items' => 'Số lượng sản phẩm không hợp lệ.',
+                    ]);
+                }
+
+                $requiredStock[$product->id] = ($requiredStock[$product->id] ?? 0) + ($quantity * $rate);
+            }
+
+            foreach ($requiredStock as $productId => $quantity) {
+                if ($quantity > (int) $products->get($productId)->stock_quantity) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'items' => 'Không đủ tồn kho cho sản phẩm ' . $products->get($productId)->name . '.',
+                    ]);
+                }
+            }
+
             if (auth('customer')->check()) {
                 $customer = auth('customer')->user();
                 $customer->update([
@@ -444,11 +531,8 @@ class StorefrontController extends Controller
             ]);
 
             $total = 0;
-            foreach ($request->items as $cartItem) {
-                $product = Product::find($cartItem['product_id']);
-                if (!$product) {
-                    continue;
-                }
+            foreach ($cartItems as $cartItem) {
+                $product = $products->get($cartItem['product_id']);
 
                 $unitName = $product->base_unit;
                 $unitPrice = (float) $product->retail_price;
@@ -456,14 +540,10 @@ class StorefrontController extends Controller
                 $unitId = $cartItem['unit_id'] ?? null;
 
                 if ($unitId) {
-                    $unit = ProductUnit::where('product_id', $product->id)->find($unitId);
-                    if ($unit) {
-                        $unitName = $unit->unit_name;
-                        $unitPrice = (float) $unit->price;
-                        $conversionRate = (int) $unit->conversion_rate;
-                    } else {
-                        $unitId = null;
-                    }
+                    $unit = $units->get($unitId);
+                    $unitName = $unit->unit_name;
+                    $unitPrice = (float) $unit->price;
+                    $conversionRate = (int) $unit->conversion_rate;
                 }
 
                 if (!$unitId) {

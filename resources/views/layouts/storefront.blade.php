@@ -141,12 +141,13 @@
 </head>
 <body class="bg-[#f8fafc] text-slate-900 min-h-screen flex flex-col justify-between antialiased selection:bg-emerald-600 selection:text-white pb-20 md:pb-0">
 
-    <!-- 1. TOP ANNOUNCEMENT BAR (Gọn gàng: Giờ mở cửa bên trái, Tra cứu phiếu bên phải) -->
-    @if(($storefrontSettings['notice_bar_enabled'] ?? '1') !== '0' && trim((string) ($storefrontSettings['notice_bar_text'] ?? '')) !== '')
-        <div class="bg-emerald-50 text-emerald-900 text-xs text-center px-4 py-2 border-b border-emerald-100">
+    @if(!empty($storefrontSettings['notice_bar_text']))
+        <div class="bg-emerald-50 text-emerald-900 text-xs text-center px-4 py-2 border-b border-emerald-100 font-medium">
             {{ $storefrontSettings['notice_bar_text'] }}
         </div>
     @endif
+
+    <!-- 1. TOP ANNOUNCEMENT BAR (Gọn gàng: Giờ mở cửa bên trái, Tra cứu phiếu bên phải) -->
     <div class="bg-slate-950 text-slate-300 text-xs py-2 border-b border-slate-800 hidden sm:block">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center text-[11px]">
             <div class="flex items-center space-x-2 text-slate-300">
@@ -186,13 +187,14 @@
 
                 <!-- Desktop Smart Search Bar (Rộng rãi, viền tinh tế, nút Navy) -->
                 <div class="hidden md:flex flex-1 max-w-2xl lg:max-w-3xl mx-2 lg:mx-4">
-                    <form action="{{ route('storefront.products') }}" method="GET" class="relative flex items-center w-full">
-                        <input type="text" name="q" value="{{ request('q') }}"
+                    <form action="{{ route('storefront.products') }}" method="GET" class="relative flex items-center w-full" data-live-search data-suggestions-url="{{ route('storefront.search-suggestions') }}">
+                        <input type="search" name="q" value="{{ request('q') }}" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="desktop-search-suggestions"
                             placeholder="Tìm sản phẩm..."
                             class="w-full text-xs sm:text-sm pl-4 pr-12 py-2.5 rounded-2xl border border-slate-300 bg-slate-50/70 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 focus:bg-white shadow-2xs transition" />
                         <button type="submit" aria-label="Tìm kiếm" class="absolute right-1 px-4 py-2 bg-[#1e3a8a] hover:bg-blue-900 active:bg-blue-950 text-white rounded-xl transition flex items-center justify-center font-bold text-xs shadow-xs">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </button>
+                        <div id="desktop-search-suggestions" class="hidden rounded-2xl border border-slate-200 bg-white shadow-xl" style="position: absolute; top: calc(100% + 0.5rem); left: 0; right: 0; z-index: 60; max-height: 20rem; overflow-y: auto;" role="listbox"></div>
                     </form>
                 </div>
 
@@ -234,13 +236,14 @@
 
             <!-- Mobile Search Bar (Gọn gàng trên điện thoại) -->
             <div class="pb-3 md:hidden">
-                <form action="{{ route('storefront.products') }}" method="GET" class="relative flex items-center">
-                    <input type="text" name="q" value="{{ request('q') }}"
+                <form action="{{ route('storefront.products') }}" method="GET" class="relative flex items-center" data-live-search data-suggestions-url="{{ route('storefront.search-suggestions') }}">
+                    <input type="search" name="q" value="{{ request('q') }}" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="mobile-search-suggestions"
                         placeholder="Tìm sản phẩm..."
                         class="w-full text-xs pl-3.5 pr-10 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:bg-white" />
                     <button type="submit" aria-label="Tìm kiếm" class="absolute right-1 px-3 py-1.5 bg-[#1e3a8a] text-white rounded-lg text-xs font-bold">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </button>
+                    <div id="mobile-search-suggestions" class="hidden rounded-2xl border border-slate-200 bg-white shadow-xl" style="position: absolute; top: calc(100% + 0.5rem); left: 0; right: 0; z-index: 60; max-height: 20rem; overflow-y: auto;" role="listbox"></div>
                 </form>
             </div>
 
@@ -847,6 +850,82 @@
 
     <script src="{{ asset('js/invoice-form.js') }}?v={{ filemtime(public_path('js/invoice-form.js')) }}" defer></script>
     <script src="{{ asset('js/checkout-validation.js') }}?v={{ filemtime(public_path('js/checkout-validation.js')) }}" defer></script>
+    <script>
+        document.querySelectorAll('[data-live-search]').forEach((form) => {
+            const input = form.querySelector('input[name="q"]');
+            const panel = form.querySelector('[role="listbox"]');
+            let timer;
+            let controller;
+            const closePanel = () => {
+                panel.classList.add('hidden');
+                input.setAttribute('aria-expanded', 'false');
+            };
+
+            input.addEventListener('input', () => {
+                clearTimeout(timer);
+                controller?.abort();
+                const keyword = input.value.trim();
+                if (keyword.length < 2) {
+                    panel.replaceChildren();
+                    closePanel();
+                    return;
+                }
+                timer = setTimeout(async () => {
+                    controller = new AbortController();
+                    const url = new URL(form.dataset.suggestionsUrl, window.location.origin);
+                    url.searchParams.set('q', keyword);
+                    try {
+                        const response = await fetch(url, { headers: { Accept: 'application/json' }, signal: controller.signal });
+                        if (!response.ok) throw new Error('Search request failed');
+                        const { data } = await response.json();
+                        panel.replaceChildren();
+                        if (!data.length) {
+                            const empty = document.createElement('p');
+                            empty.className = 'px-4 py-3 text-sm text-slate-500';
+                            empty.textContent = 'Không tìm thấy sản phẩm phù hợp.';
+                            panel.append(empty);
+                        } else {
+                            data.forEach((product) => {
+                                const link = document.createElement('a');
+                                link.href = product.url;
+                                link.className = 'flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 border-b last:border-b-0 border-slate-100';
+                                link.setAttribute('role', 'option');
+                                const image = document.createElement('img');
+                                image.src = product.image;
+                                image.alt = '';
+                                image.loading = 'lazy';
+                                image.className = 'w-10 h-10 rounded-lg object-cover bg-slate-100';
+                                const details = document.createElement('span');
+                                details.className = 'min-w-0 flex-1';
+                                const name = document.createElement('span');
+                                name.className = 'block truncate text-sm font-semibold text-slate-800';
+                                name.textContent = product.name;
+                                const meta = document.createElement('span');
+                                meta.className = 'block text-xs text-slate-500';
+                                meta.textContent = `${product.sku ? `${product.sku} \u00b7 ` : ''}${Number(product.price).toLocaleString('vi-VN')}\u20ab`;
+                                details.append(name, meta);
+                                link.append(image, details);
+                                panel.append(link);
+                            });
+                        }
+                        panel.classList.remove('hidden');
+                        input.setAttribute('aria-expanded', 'true');
+                    } catch (error) {
+                        if (error.name !== 'AbortError') closePanel();
+                    }
+                }, 250);
+            });
+            input.addEventListener('focus', () => {
+                if (panel.childElementCount) {
+                    panel.classList.remove('hidden');
+                    input.setAttribute('aria-expanded', 'true');
+                }
+            });
+            document.addEventListener('click', (event) => {
+                if (!form.contains(event.target)) closePanel();
+            });
+        });
+    </script>
     @stack('scripts')
 </body>
 </html>

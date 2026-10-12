@@ -88,42 +88,12 @@
         </div>
     </div>
 
-    <!-- 3. QUICK CATEGORY CHIPS (DẢI PHÂN LOẠI NHANH 1 CHẠM) -->
-    <div class="bg-white rounded-2xl p-2.5 sm:p-3.5 border border-slate-200/90 shadow-2xs">
-        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-0.5">
-            <a href="{{ route('storefront.products', array_merge(request()->except(['category', 'page']))) }}" 
-               class="shrink-0 px-4 py-2.5 rounded-xl text-xs font-black transition flex items-center space-x-1.5 {{ !request('category') ? 'bg-[#1e3a8a] text-white shadow-xs' : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200/80' }}">
-                <span>Tất cả danh mục</span>
-            </a>
-            @foreach($categories as $cat)
-            <a href="{{ route('storefront.products', array_merge(request()->except(['category', 'page']), ['category' => $cat->slug])) }}" 
-               class="shrink-0 px-3.5 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 {{ request('category') == $cat->slug ? 'bg-[#1e3a8a] text-white shadow-xs' : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200/80' }}">
-                <span>{{ $cat->name }}</span>
-                <span class="text-[10px] {{ request('category') == $cat->slug ? 'text-amber-300' : 'text-slate-500' }} font-mono font-semibold">({{ $cat->products_count }})</span>
-            </a>
-            @endforeach
-        </div>
-    </div>
-
     <!-- 4. THANH ĐIỀU KHIỂN & CÔNG CỤ BỘ LỌC (SEARCH + SORT + VIEW MODE + NÚT MỞ DRAWER MOBILE) -->
     <div class="bg-white rounded-2xl p-3.5 sm:p-4 border border-slate-200/90 shadow-2xs space-y-3">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             
             <!-- Left: Tìm kiếm nhanh & Bộ lọc nhanh Mobile -->
             <div class="flex items-center gap-2 w-full sm:w-auto flex-1 max-w-lg">
-                <!-- Search Box -->
-                <form action="{{ route('storefront.products') }}" method="GET" class="relative flex-1">
-                    @foreach(request()->except(['q', 'page']) as $k => $v)
-                        <input type="hidden" name="{{ $k }}" value="{{ $v }}">
-                    @endforeach
-                    <input type="text" name="q" value="{{ request('q') }}" 
-                           placeholder="Tìm tên hoặc mã sản phẩm..."
-                           class="w-full text-xs pl-9 pr-8 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1e3a8a] focus:border-transparent bg-slate-50/70" />
-                    <svg class="absolute left-3 top-3 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                    @if(request('q'))
-                    <a href="{{ route('storefront.products', request()->except(['q', 'page'])) }}" class="absolute right-3 top-2.5 text-slate-400 hover:text-rose-500 text-xs font-bold">✕</a>
-                    @endif
-                </form>
 
                 <!-- Nút Mở Bộ Lọc Mobile (Drawer Toggle) -->
                 <button type="button" onclick="toggleMobileFilter(true)" 
@@ -178,16 +148,6 @@
 
         </div>
 
-        <!-- Từ khóa gợi ý phổ biến -->
-        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1 text-[11px] text-slate-500">
-            <span class="font-bold text-slate-700 shrink-0">Gợi ý tìm kiếm:</span>
-            <a href="{{ route('storefront.products', ['q' => 'Double A']) }}" class="px-2 py-0.5 rounded-md bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 shrink-0">Giấy Double A</a>
-            <a href="{{ route('storefront.products', ['q' => 'PaperOne']) }}" class="px-2 py-0.5 rounded-md bg-slate-100 hover:bg-emerald-50 hover:text-emerald-800 shrink-0">Giấy PaperOne</a>
-            <a href="{{ route('storefront.products', ['q' => 'Canon 2900']) }}" class="px-2 py-0.5 rounded-md bg-slate-100 hover:bg-blue-50 hover:text-blue-800 shrink-0">Mực Canon 2900</a>
-            <a href="{{ route('storefront.products', ['q' => 'Thiên Long']) }}" class="px-2 py-0.5 rounded-md bg-slate-100 hover:bg-amber-50 hover:text-amber-900 shrink-0">Bút Thiên Long</a>
-            <a href="{{ route('storefront.products', ['q' => 'Bìa còng']) }}" class="px-2 py-0.5 rounded-md bg-slate-100 hover:bg-purple-50 hover:text-purple-900 shrink-0">Bìa Còng Kokuyo</a>
-            <a href="{{ route('storefront.products', ['q' => 'Brother']) }}" class="px-2 py-0.5 rounded-md bg-slate-100 hover:bg-sky-50 hover:text-sky-900 shrink-0">Mực Brother TN-2385</a>
-        </div>
     </div>
 
     <!-- 5. MAIN CONTENT LAYOUT: SIDEBAR BỘ LỌC ĐA CHIỀU (3 COLS) + DANH SÁCH SẢN PHẨM (9 COLS) -->

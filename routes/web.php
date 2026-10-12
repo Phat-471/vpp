@@ -28,6 +28,9 @@ Route::middleware(['auth:web', 'can:use-pos'])->prefix('pos')->name('pos.')->gro
 // 1. Storefront & Sản phẩm & Thanh toán
 Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
 Route::get('/', [StorefrontController::class, 'index'])->name('storefront.index');
+Route::get('/san-pham/goi-y-tim-kiem', [StorefrontController::class, 'searchSuggestions'])
+    ->middleware('throttle:30,1')
+    ->name('storefront.search-suggestions');
 Route::get('/san-pham', [StorefrontController::class, 'products'])->name('storefront.products');
 Route::get('/san-pham/{slug}', [StorefrontController::class, 'productDetail'])->name('storefront.product-detail');
 Route::get('/gio-hang', [StorefrontController::class, 'checkoutPage'])->name('storefront.cart');

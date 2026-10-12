@@ -98,11 +98,19 @@ class InventoryService
      */
     public function updateOrderStatus(Order $order, string $newStatus, array $extraAttributes = []): Order
     {
-        return DB::transaction(function () use ($order, $newStatus, $extraAttributes) {
-            $updateData = array_merge($extraAttributes, ['status' => $newStatus]);
-            $order->update($updateData);
+        return DB::transaction(function () use ($order, $newStatus, $extraAttributes): Order {
+            $lockedOrder = Order::query()->lockForUpdate()->findOrFail($order->getKey());
+            $this->assertStatusTransition(
+                $lockedOrder->status,
+                $newStatus,
+                ['pending', 'processing', 'shipping', 'delivered', 'completed', 'cancelled'],
+                'đơn hàng'
+            );
 
-            return $order->fresh();
+            $updateData = array_merge($extraAttributes, ['status' => $newStatus]);
+            $lockedOrder->update($updateData);
+
+            return $lockedOrder->fresh();
         });
     }
 
@@ -185,12 +193,36 @@ class InventoryService
      */
     public function updateTicketStatus(RepairTicket $ticket, string $newStatus, array $extraAttributes = []): RepairTicket
     {
-        return DB::transaction(function () use ($ticket, $newStatus, $extraAttributes) {
-            $updateData = array_merge($extraAttributes, ['status' => $newStatus]);
-            $ticket->update($updateData);
+        return DB::transaction(function () use ($ticket, $newStatus, $extraAttributes): RepairTicket {
+            $lockedTicket = RepairTicket::query()->lockForUpdate()->findOrFail($ticket->getKey());
+            $this->assertStatusTransition(
+                $lockedTicket->status,
+                $newStatus,
+                ['received', 'diagnosing', 'waiting_approval', 'in_progress', 'completed', 'delivered', 'cancelled'],
+                'phiếu sửa chữa'
+            );
 
-            return $ticket->fresh();
+            $updateData = array_merge($extraAttributes, ['status' => $newStatus]);
+            $lockedTicket->update($updateData);
+
+            return $lockedTicket->fresh();
         });
+    }
+
+    /** @param list<string> $allowedStatuses */
+    private function assertStatusTransition(string $current, string $next, array $allowedStatuses, string $recordLabel): void
+    {
+        if (! in_array($next, $allowedStatuses, true)) {
+            throw ValidationException::withMessages([
+                'status' => "Trạng thái mới của {$recordLabel} không hợp lệ.",
+            ]);
+        }
+
+        if ($current === 'cancelled' && $next !== 'cancelled') {
+            throw ValidationException::withMessages([
+                'status' => "{$recordLabel} đã hủy không thể mở lại; hãy tạo hồ sơ mới để giữ đúng lịch sử tồn kho.",
+            ]);
+        }
     }
 
     /**

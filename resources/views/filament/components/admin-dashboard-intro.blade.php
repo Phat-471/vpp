@@ -1,5 +1,6 @@
 @php
-    $hour = now()->hour;
+    $businessNow = now('Asia/Ho_Chi_Minh');
+    $hour = $businessNow->hour;
     $greeting = match(true) {
         $hour >= 5 && $hour < 12 => 'Buổi sáng tốt lành',
         $hour >= 12 && $hour < 18 => 'Buổi chiều năng suất',
@@ -24,7 +25,7 @@
                 </svg>
             </span>
             <span>QUẢN LÝ CỬA HÀNG</span>
-            <span class="admin-dashboard-intro__date">{{ now()->locale('vi')->translatedFormat('l, d/m/Y') }}</span>
+            <span class="admin-dashboard-intro__date">{{ $businessNow->locale('vi')->translatedFormat('l, d/m/Y') }}</span>
         </p>
         
         <h1 id="admin-dashboard-title">

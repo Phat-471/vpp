@@ -115,7 +115,31 @@ class Product extends Model
 
     public function deductStock(int $quantity): bool
     {
-        $this->decrement('stock_quantity', $quantity);
+        if ($quantity < 0) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'stock' => 'Số lượng xuất kho không hợp lệ.',
+            ]);
+        }
+
+        if ($quantity === 0) {
+            return true;
+        }
+
+        $updated = static::query()
+            ->whereKey($this->getKey())
+            ->where('stock_quantity', '>=', $quantity)
+            ->decrement('stock_quantity', $quantity);
+
+        if ($updated !== 1) {
+            $this->refresh();
+
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'stock' => "Không đủ tồn kho cho {$this->name} (còn {$this->stock_quantity}, cần {$quantity}).",
+            ]);
+        }
+
+        $this->refresh();
+
         return true;
     }
 

@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Order;
+use App\Models\RepairTicket;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Carbon;
 
@@ -12,7 +13,7 @@ class RevenueChartWidget extends ChartWidget
 
     protected static ?int $sort = 2;
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     public ?string $filter = '7';
 
@@ -33,28 +34,37 @@ class RevenueChartWidget extends ChartWidget
             default => 7,
         };
 
-        $days = collect(range($numDays - 1, 0))->map(fn ($d) => Carbon::today()->subDays($d));
+        $businessToday = Carbon::now('Asia/Ho_Chi_Minh')->startOfDay();
+        $firstDay = $businessToday->copy()->subDays($numDays - 1);
+        $startUtc = $firstDay->copy()->utc();
+        $endUtc = $businessToday->copy()->addDay()->utc();
+
+        $ordersByDay = Order::query()
+            ->where('payment_status', 'paid')
+            ->where('created_at', '>=', $startUtc)
+            ->where('created_at', '<', $endUtc)
+            ->get(['grand_total', 'created_at'])
+            ->groupBy(fn (Order $order) => $order->created_at->timezone('Asia/Ho_Chi_Minh')->toDateString())
+            ->map(fn ($orders) => (float) $orders->sum('grand_total'));
+
+        $repairsByDay = RepairTicket::query()
+            ->where('payment_status', 'paid')
+            ->where('created_at', '>=', $startUtc)
+            ->where('created_at', '<', $endUtc)
+            ->get(['grand_total', 'created_at'])
+            ->groupBy(fn (RepairTicket $ticket) => $ticket->created_at->timezone('Asia/Ho_Chi_Minh')->toDateString())
+            ->map(fn ($tickets) => (float) $tickets->sum('grand_total'));
 
         $labels = [];
         $retailData = [];
         $repairData = [];
 
-        foreach ($days as $day) {
-            $dateString = $day->format('Y-m-d');
+        foreach (range($numDays - 1, 0) as $daysAgo) {
+            $day = $businessToday->copy()->subDays($daysAgo);
+            $date = $day->toDateString();
             $labels[] = $day->format('d/m');
-
-            // 1. Doanh thu bán hàng VPP / bán lẻ
-            $retailRevenue = (float) Order::whereDate('created_at', $dateString)
-                ->where('payment_status', 'paid')
-                ->sum('grand_total');
-
-            // 2. Doanh thu dịch vụ sửa chữa máy in
-            $repairRevenue = (float) \App\Models\RepairTicket::whereDate('created_at', $dateString)
-                ->where('payment_status', 'paid')
-                ->sum('grand_total');
-
-            $retailData[] = $retailRevenue;
-            $repairData[] = $repairRevenue;
+            $retailData[] = $ordersByDay->get($date, 0);
+            $repairData[] = $repairsByDay->get($date, 0);
         }
 
         return [
