@@ -19,6 +19,53 @@ export function requestError(status, data = {}) {
     return 'Chưa thể kết nối. Hãy thử lại hoặc liên hệ qua hotline/Zalo.';
 }
 
+export async function compressImage(file, maxWidth = 1600, maxHeight = 1600, quality = 0.82) {
+    if (typeof Image === 'undefined' || typeof document === 'undefined') return file;
+    if (!file || !file.type || !file.type.startsWith('image/')) return file;
+    if (file.type === 'image/svg+xml' || file.type === 'image/gif') return file;
+
+    return new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = e => {
+            const img = new Image();
+            img.onload = () => {
+                let { width, height } = img;
+                if (width <= maxWidth && height <= maxHeight && file.size <= 800 * 1024) {
+                    resolve(file);
+                    return;
+                }
+                if (width > maxWidth || height > maxHeight) {
+                    if (width / height > maxWidth / maxHeight) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    } else {
+                        width = Math.round((width * maxHeight) / height);
+                        height = maxHeight;
+                    }
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                canvas.toBlob(blob => {
+                    if (!blob || blob.size >= file.size) {
+                        resolve(file);
+                    } else {
+                        const newName = (file.name || 'photo.jpg').replace(/\.[^/.]+$/, '.jpg');
+                        const compressed = new File([blob], newName, { type: 'image/jpeg' });
+                        resolve(compressed);
+                    }
+                }, 'image/jpeg', quality);
+            };
+            img.onerror = () => resolve(file);
+            img.src = e.target.result;
+        };
+        reader.onerror = () => resolve(file);
+        reader.readAsDataURL(file);
+    });
+}
+
 export function mountLiveChat(root) {
     const find = id => root.querySelector(`#${id}`);
     const box = find('live-chat-box');
@@ -58,27 +105,37 @@ export function mountLiveChat(root) {
         if (previewFilename) previewFilename.textContent = '';
     }
 
-    function setSelectedFile(file) {
+    async function setSelectedFile(file) {
         if (!file) return;
         const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
         if (!validTypes.includes(file.type)) {
             showError('Định dạng tệp không được hỗ trợ. Hãy chọn ảnh JPG, PNG hoặc WEBP.');
             return;
         }
-        if (file.size > 5 * 1024 * 1024) {
-            showError('Dung lượng ảnh vượt quá 5MB. Hãy chụp lại hoặc giảm kích thước ảnh.');
+        if (file.size > 20 * 1024 * 1024) {
+            showError('Dung lượng ảnh vượt quá 20MB. Hãy chọn ảnh nhỏ hơn.');
             return;
         }
         showError('');
-        selectedFile = file;
+
+        if (previewFilename) previewFilename.textContent = 'Đang xử lý ảnh…';
+        if (previewBar) previewBar.hidden = false;
+
+        let processed = file;
+        try {
+            processed = await compressImage(file);
+        } catch { /* fallback */ }
+
+        selectedFile = processed;
         if (previewObjectUrl) {
             try { URL.revokeObjectURL(previewObjectUrl); } catch { /* ignore */ }
         }
         try {
-            previewObjectUrl = URL.createObjectURL(file);
+            previewObjectUrl = URL.createObjectURL(processed);
             if (previewImg) previewImg.src = previewObjectUrl;
         } catch { /* object url fallback */ }
-        if (previewFilename) previewFilename.textContent = file.name || 'Ảnh đã chọn';
+        const sizeKb = Math.round(processed.size / 1024);
+        if (previewFilename) previewFilename.textContent = `${processed.name || 'Ảnh đã chọn'} (${sizeKb} KB)`;
         if (previewBar) previewBar.hidden = false;
         input.focus();
     }
@@ -268,8 +325,25 @@ export function mountLiveChat(root) {
             meta.textContent = `${messageTime(message.created_at)}${message.request_id ? (message.failed ? ' · Chưa xác nhận gửi' : ' · Đang gửi…') : message.sender_type === 'customer' ? ' · Đã gửi' : ''}`;
             row.append(meta);
             if (message.failed) {
+                const cancel = document.createElement('button');
+                cancel.type = 'button';
+                cancel.className = 'lc-cancel-btn';
+                cancel.textContent = '✕ Hủy';
+                cancel.disabled = busySend;
+                cancel.addEventListener('click', () => {
+                    if (pending?.image_url) {
+                        try { URL.revokeObjectURL(pending.image_url); } catch { /* ignore */ }
+                    }
+                    pending = null;
+                    showError('');
+                    render(true);
+                    input.focus();
+                });
+                row.append(cancel);
+
                 const again = document.createElement('button');
                 again.type = 'button';
+                again.className = 'lc-retry-btn';
                 again.textContent = 'Thử lại';
                 again.disabled = busySend;
                 again.addEventListener('click', () => submitPending());

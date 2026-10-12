@@ -129,6 +129,18 @@ class LiveChatPage extends Page
         $this->dispatch('chat-reply-sent');
     }
 
+    public function updatedAttachment(): void
+    {
+        $this->validateOnly('attachment', [
+            'attachment' => ['nullable', 'image', 'mimes:jpeg,png,webp,jpg', 'max:10240'],
+        ], [
+            'attachment.image' => 'Tệp tải lên phải là hình ảnh hợp lệ.',
+            'attachment.mimes' => 'Hình ảnh phải có định dạng JPG, PNG hoặc WEBP.',
+            'attachment.max' => 'Dung lượng ảnh tối đa là 10MB.',
+            'attachment.uploaded' => 'Tệp đính kèm tải lên không thành công (dung lượng vượt quá giới hạn máy chủ hoặc kết nối gián đoạn). Hãy thử lại hoặc chọn ảnh nhỏ hơn.',
+        ]);
+    }
+
     public function removeAttachment(): void
     {
         $this->attachment = null;

@@ -61,7 +61,7 @@ class LatestRepairTicketsWidget extends BaseWidget
                         default => 'gray',
                     }),
 
-                Tables\Columns\TextColumn::make('total_amount')
+                Tables\Columns\TextColumn::make('grand_total')
                     ->label('Tổng chi phí')
                     ->formatStateUsing(fn ($state) => AppHelper::formatMoney((float) $state))
                     ->fontFamily('mono')
@@ -70,7 +70,9 @@ class LatestRepairTicketsWidget extends BaseWidget
                 Tables\Columns\TextColumn::make('promised_at')
                     ->label('Hẹn trả')
                     ->dateTime('d/m/Y H:i')
-                    ->placeholder('Chưa hẹn'),
+                    ->placeholder('Chưa hẹn')
+                    ->description(fn (RepairTicket $record) => ($record->promised_at && $record->promised_at->isPast() && !in_array($record->status, ['delivered', 'cancelled'])) ? 'Quá hạn hẹn trả' : null)
+                    ->color(fn (RepairTicket $record) => ($record->promised_at && $record->promised_at->isPast() && !in_array($record->status, ['delivered', 'cancelled'])) ? 'danger' : null),
             ])
             ->actions([
                 Tables\Actions\Action::make('view')
@@ -83,6 +85,13 @@ class LatestRepairTicketsWidget extends BaseWidget
                     ->icon('heroicon-m-printer')
                     ->color('gray')
                     ->url(fn (RepairTicket $record): string => route('print.repair-ticket', ['id' => $record->id]))
+                    ->openUrlInNewTab(),
+
+                Tables\Actions\Action::make('print_sticker')
+                    ->label('In tem dán')
+                    ->icon('heroicon-m-tag')
+                    ->color('info')
+                    ->url(fn (RepairTicket $record): string => route('print.repair-ticket-sticker', ['id' => $record->id]))
                     ->openUrlInNewTab(),
             ])
             ->paginated(false);

@@ -369,6 +369,27 @@
     min-height: 24px !important;
 }
 
+.lc-message .lc-cancel-btn {
+    color: #64748b;
+    margin-right: 12px;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.lc-message .lc-cancel-btn:hover {
+    color: #334155;
+}
+
+.lc-message .lc-retry-btn {
+    color: #e11d48;
+    cursor: pointer;
+}
+
+.lc-message .lc-retry-btn:hover {
+    color: #be123c;
+}
+
 /* Typing Indicator Bubble */
 .lc-typing {
     display: flex;

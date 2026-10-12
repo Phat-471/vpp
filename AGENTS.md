@@ -41,6 +41,10 @@
 * **Bảo mật cơ sở dữ liệu:**
   * Không ghép chuỗi câu lệnh SQL (`raw SQL concat`). Luôn sử dụng Eloquent ORM hoặc PDO Prepared Statements để triệt tiêu SQL Injection.
   * Các route công khai (như tra cứu phiếu sửa chữa) **BẮT BUỘC CHỐNG IDOR**: Dùng UUID hoặc kết hợp `Mã phiếu + 4 số cuối SĐT`, tuyệt đối không dùng ID số tuần tự.
+* **Quy chuẩn Tải Tệp & Nén Ảnh Client-Side (Client-Side Compression Invariant):**
+  * **Tự động nén ảnh trước khi tải lên (Client-side Canvas Resize):** Đối với mọi tính năng cho phép người dùng/khách hàng đính kèm hình ảnh (Live Chat, Đặt lịch sửa máy in, Biên nhận), client-side JavaScript BẮT BUỘC phải tự động nén và thu nhỏ kích thước (tối đa chiều rộng/cao 1600px, chất lượng JPEG 80-85%) bằng HTML5 Canvas trước khi gửi lên API. Điều này đảm bảo dung lượng file luôn dưới 1MB, tải lên tức thì, triệt tiêu 100% lỗi timeout và lỗi tràn bộ nhớ Nginx/PHP.
+  * **100% Tiếng Việt cho lỗi tải tệp:** Tất cả các thông báo lỗi upload (kể cả lỗi từ Livewire như `validation.uploaded`) BẮT BUỘC phải được cấu hình tiếng Việt: *"Tệp tải lên không thành công (dung lượng vượt quá giới hạn máy chủ hoặc kết nối gián đoạn). Hãy thử lại hoặc chọn ảnh khác."*, tuyệt đối cấm để lọt câu tiếng Anh *"The attachment failed to upload."*.
+  * **Xử lý kẹt trạng thái gửi (Pending Recovery):** Khi một lượt gửi có ảnh gặp lỗi, giao diện phải cung cấp nút "Hủy tệp / Xóa tin lỗi" bên cạnh nút "Thử lại" để người dùng không bị kẹt form khi ảnh không thể gửi được.
 
 ---
 
@@ -68,6 +72,12 @@ Mọi trang giao diện (Storefront, Tra cứu, Hóa đơn in ấn, Admin POS) p
    * Phải luôn có trạng thái: Hover, Focus, Active, Disabled, Loading (Spinner / Skeleton), và Empty State (khi danh sách trống phải có icon + thông báo lịch sự + nút hành động).
 5. **In ấn Chuẩn mực:**
    * Sử dụng `@media print` căn chỉnh chính xác cho máy in văn phòng (khổ A4 dọc, A5). Có đường nét đứt (cut line) rõ ràng cho các phiếu cần chia đôi.
+6. **Quy chuẩn Phân hệ Quản trị Admin Dashboard & Widgets (Filament v3):**
+   * **100% SVG Vector - Tuyệt đối không dùng Emoji:** Toàn bộ component Blade quản trị, tiêu đề widget và nút thao tác phải dùng icon SVG vector tinh gọn (Heroicons hoặc SVG đồng bộ phong cách). Tuyệt đối cấm dùng emoji hệ điều hành (như ⚡, 🔧, 📦, ⚠️, 🖨️).
+   * **Huy hiệu Cảnh báo Thời gian thực trên Banner:** Banner giới thiệu (`admin-dashboard-intro`) phải tích hợp badge đếm tin nhắn Live Chat chưa đọc (hiệu ứng pulse) và số lượng máy in quá hạn hẹn trả khách (hiệu ứng ping màu đỏ) để chủ cửa hàng điều phối tức thì.
+   * **Thẻ Thống kê có Liên kết Điều hướng (Stat Drill-down Linking):** Mọi thẻ Stat trong `StatsOverviewWidget` bắt buộc có `->url(...)` dẫn trực tiếp đến trang tài nguyên tương ứng kèm filter (VD: Bấm vào "Máy in đang sửa" mở ngay danh sách phiếu sửa chữa đang xử lý; bấm vào "Cảnh báo tồn kho" mở ngay danh mục sản phẩm lọc tồn kho thấp).
+   * **Phân tách Đa luồng Doanh thu (Revenue Chart):** Biểu đồ doanh thu phải tách biệt 2 luồng: Doanh thu Bán lẻ VPP (Indigo `#4f46e5`) và Doanh thu Dịch vụ Máy in (Emerald `#10b981`), hỗ trợ bộ lọc khoảng thời gian (7 ngày, 14 ngày, 30 ngày).
+   * **Thao tác Nhanh tại chỗ (In-place Modal Actions & DB Transaction):** Các widget cảnh báo (như LowStockAlertWidget) phải cung cấp nút thao tác trực tiếp dạng Modal (như "Nhập kho nhanh") để xử lý ngay trên Dashboard mà không cần chuyển trang. Mọi thay đổi tồn kho/tiền bạc trong Action này BẮT BUỘC bọc trong `DB::transaction`.
 
 ---
 
@@ -103,11 +113,17 @@ resources/views/
   * Thư mục `/public/build` (chứa `manifest.json`, CSS, JS và font đã bundle) **BẮT BUỘC PHẢI ĐƯỢC THEO DÕI TRONG GIT** (không được đưa vào `.gitignore`), trừ khi server đã thiết lập CI/CD runner riêng.
   * Trước khi tạo commit và push lên remote repo, nếu có thay đổi CSS/JS/Giao diện, AI **BẮT BUỘC chạy `npm run build`** để đảm bảo file `public/build/manifest.json` luôn mới nhất, triệt tiêu lỗi `ViteManifestNotFoundException` trên môi trường Production.
 * **Lệnh cập nhật chuẩn trên VPS (aaPanel / Terminal):**
-  * Mỗi khi deploy phiên bản mới lên VPS, quy trình chuẩn gồm 3 bước:
+  * Mỗi khi deploy phiên bản mới lên VPS, quy trình chuẩn gồm các bước:
     ```bash
     cd /www/wwwroot/vpp
     git pull origin master
     php artisan migrate --force
+    php artisan storage:link
+    chown -R www:www storage bootstrap/cache
+    chmod -R 775 storage bootstrap/cache
     php artisan optimize:clear
     ```
+* **Cấu hình Upload & Phân Quyền Thư Mục Storage trên VPS (aaPanel / Nginx / PHP-FPM):**
+  * **Cấu hình Nginx:** Bổ sung `client_max_body_size 20M;` trong block `server` của Virtual Host trên aaPanel để không bị chặn lỗi 413.
+  * **Cấu hình PHP (`php.ini`):** Thiết lập `upload_max_filesize = 20M` và `post_max_size = 20M` để máy chủ tiếp nhận ảnh từ điện thoại.
 

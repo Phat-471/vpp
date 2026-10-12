@@ -20,6 +20,7 @@ class LowStockAlertWidget extends BaseWidget
         return $table
             ->query(
                 Product::query()
+                    ->with('category')
                     ->whereColumn('stock_quantity', '<=', 'low_stock_threshold')
                     ->where('is_active', true)
                     ->orderBy('stock_quantity', 'asc')
@@ -36,7 +37,8 @@ class LowStockAlertWidget extends BaseWidget
                     ->limit(35),
 
                 Tables\Columns\TextColumn::make('category.name')
-                    ->label('Danh mục'),
+                    ->label('Danh mục')
+                    ->placeholder('Chưa phân loại'),
 
                 Tables\Columns\TextColumn::make('stock_quantity')
                     ->label('Tồn kho hiện tại')
@@ -56,9 +58,42 @@ class LowStockAlertWidget extends BaseWidget
                     ->color(fn (bool $state) => $state ? 'info' : 'gray'),
             ])
             ->actions([
+                Tables\Actions\Action::make('quick_restock')
+                    ->label('Nhập nhanh')
+                    ->icon('heroicon-m-plus-circle')
+                    ->color('success')
+                    ->modalHeading(fn (Product $record) => "Nhập kho nhanh: {$record->name}")
+                    ->modalSubmitActionLabel('Xác nhận nhập kho')
+                    ->form([
+                        \Filament\Forms\Components\TextInput::make('quantity')
+                            ->label('Số lượng nhập thêm')
+                            ->numeric()
+                            ->minValue(1)
+                            ->required()
+                            ->default(10)
+                            ->suffix(fn (Product $record) => $record->base_unit ?? 'cái'),
+                        \Filament\Forms\Components\TextInput::make('notes')
+                            ->label('Ghi chú')
+                            ->default('Nhập bổ sung từ Dashboard')
+                            ->maxLength(255),
+                    ])
+                    ->action(function (Product $record, array $data): void {
+                        \Illuminate\Support\Facades\DB::transaction(function () use ($record, $data) {
+                            $addQty = (int) $data['quantity'];
+                            $record->increment('stock_quantity', $addQty);
+                        });
+
+                        \Filament\Notifications\Notification::make()
+                            ->title('Nhập kho thành công')
+                            ->body("Đã bổ sung {$data['quantity']} {$record->base_unit} cho {$record->name}.")
+                            ->success()
+                            ->send();
+                    }),
+
                 Tables\Actions\Action::make('edit')
-                    ->label('Cập nhật tồn kho')
-                    ->icon('heroicon-m-arrow-path')
+                    ->label('Sửa')
+                    ->icon('heroicon-m-pencil-square')
+                    ->color('gray')
                     ->url(fn (Product $record): string => route('filament.admin.resources.products.edit', ['record' => $record])),
             ])
             ->emptyStateHeading('Kho hàng an toàn')
