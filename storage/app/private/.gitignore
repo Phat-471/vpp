@@ -1,2 +1,4 @@
 *
+!livewire-tmp/
+!livewire-tmp/**
 !.gitignore
