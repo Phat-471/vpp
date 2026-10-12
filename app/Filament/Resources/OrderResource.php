@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -47,6 +48,16 @@ class OrderResource extends Resource
     public static function canViewAny(): bool
     {
         return auth()->user()?->isCashier() ?? false;
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
     }
 
     public static function form(Form $form): Form
@@ -191,6 +202,9 @@ class OrderResource extends Resource
                                                 ->prefix('₫')
                                                 ->required()
                                                 ->live()
+                                                ->disabled(fn () => ! auth()->user()?->isAdmin())
+                                                ->dehydrated()
+                                                ->helperText(fn () => ! auth()->user()?->isAdmin() ? 'Giá bán niêm yết' : null)
                                                 ->columnSpan(2),
                                         ])
                                         ->columns(11)

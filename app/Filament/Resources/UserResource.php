@@ -51,6 +51,11 @@ class UserResource extends Resource
         return (auth()->user()?->isAdmin() ?? false) && $record->id !== auth()->id();
     }
 
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form

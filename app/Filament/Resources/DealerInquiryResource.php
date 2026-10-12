@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class DealerInquiryResource extends Resource
 {
@@ -29,6 +30,16 @@ class DealerInquiryResource extends Resource
     public static function canViewAny(): bool
     {
         return auth()->user()?->isCashier() ?? false;
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
     }
 
     public static function form(Form $form): Form

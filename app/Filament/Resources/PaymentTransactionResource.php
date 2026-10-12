@@ -10,6 +10,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class PaymentTransactionResource extends Resource
 {
@@ -28,6 +29,16 @@ class PaymentTransactionResource extends Resource
     protected static ?int $navigationSort = 1;
 
     public static function canViewAny(): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
+    public static function canDeleteAny(): bool
     {
         return auth()->user()?->isAdmin() ?? false;
     }

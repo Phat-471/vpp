@@ -16,6 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -49,6 +50,16 @@ class RepairTicketResource extends Resource
     {
         $user = auth()->user();
         return (bool) ($user && ($user->isTechnician() || $user->isCashier()));
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
     }
 
     public static function form(Form $form): Form
@@ -395,6 +406,9 @@ class RepairTicketResource extends Resource
                                                 ->prefix('₫')
                                                 ->required()
                                                 ->live()
+                                                ->disabled(fn () => auth()->user()?->role === 'technician')
+                                                ->dehydrated()
+                                                ->helperText(fn () => auth()->user()?->role === 'technician' ? 'Giá theo danh mục' : null)
                                                 ->columnSpan(2),
                                         ])
                                         ->columns(9)
@@ -449,6 +463,7 @@ class RepairTicketResource extends Resource
 
                             Forms\Components\Section::make('4. Chi phí & Thu ngân')
                                 ->icon('heroicon-o-banknotes')
+                                ->description(fn () => auth()->user()?->role === 'technician' ? 'Kỹ thuật viên chỉ xem số liệu tài chính; thu tiền và chiết khấu do Thu ngân/Quản trị viên thực hiện.' : 'Quản lý tiền công, linh kiện, chiết khấu và trạng thái thu tiền.')
                                 ->schema([
                                     Forms\Components\TextInput::make('labor_fee')
                                         ->label('Tiền công kỹ thuật')
@@ -477,6 +492,8 @@ class RepairTicketResource extends Resource
                                         ->prefix('₫')
                                         ->default(0)
                                         ->live()
+                                        ->disabled(fn () => auth()->user()?->role === 'technician')
+                                        ->dehydrated()
                                         ->afterStateUpdated(function (callable $get, callable $set) {
                                             $labor = (float) ($get('labor_fee') ?? 0);
                                             $parts = (float) ($get('parts_total') ?? 0);
@@ -497,7 +514,9 @@ class RepairTicketResource extends Resource
                                         ->numeric()
                                         ->prefix('₫')
                                         ->default(0)
-                                        ->live(),
+                                        ->live()
+                                        ->disabled(fn () => auth()->user()?->role === 'technician')
+                                        ->dehydrated(),
 
                                     Forms\Components\Placeholder::make('remaining_due')
                                         ->label('Còn lại phải thu')
@@ -516,16 +535,22 @@ class RepairTicketResource extends Resource
                                             'partially_paid' => 'Đã đặt cọc / Trả một phần',
                                             'paid' => 'Đã thanh toán đủ',
                                         ])
-                                        ->default('unpaid'),
+                                        ->default('unpaid')
+                                        ->disabled(fn () => auth()->user()?->role === 'technician')
+                                        ->dehydrated(),
 
                                     Forms\Components\Select::make('payment_method')
                                         ->label('Phương thức thanh toán')
                                         ->options([
                                             'cash' => 'Tiền mặt',
                                             'vietqr' => 'Chuyển khoản VietQR',
+                                            'bank' => 'Chuyển khoản ngân hàng',
                                             'transfer' => 'Chuyển khoản thường',
+                                            'debt' => 'Ghi nợ công nợ',
                                         ])
-                                        ->default('cash'),
+                                        ->default('cash')
+                                        ->disabled(fn () => auth()->user()?->role === 'technician')
+                                        ->dehydrated(),
 
                                     Forms\Components\Textarea::make('internal_notes')
                                         ->label('Ghi chú nội bộ')
@@ -658,7 +683,8 @@ class RepairTicketResource extends Resource
                                 'unpaid' => 'Chưa thanh toán',
                                 'partially_paid' => 'Đã đặt cọc / Trả một phần',
                                 'paid' => 'Đã thanh toán đủ',
-                            ]),
+                            ])
+                            ->visible(fn () => auth()->user()?->isAdmin() || auth()->user()?->isCashier()),
                         Forms\Components\Textarea::make('technician_diagnosis')
                             ->label('Ghi chú tình trạng / Bệnh lý')
                             ->rows(2),
@@ -669,13 +695,17 @@ class RepairTicketResource extends Resource
                         'technician_diagnosis' => $record->technician_diagnosis,
                     ])
                     ->action(function (RepairTicket $record, array $data): void {
+                        $updateData = [
+                            'technician_diagnosis' => $data['technician_diagnosis'] ?? $record->technician_diagnosis,
+                        ];
+                        if (auth()->user()?->isAdmin() || auth()->user()?->isCashier()) {
+                            $updateData['payment_status'] = $data['payment_status'] ?? $record->payment_status;
+                        }
+
                         app(\App\Services\InventoryService::class)->updateTicketStatus(
                             $record,
                             $data['status'],
-                            [
-                                'payment_status' => $data['payment_status'] ?? $record->payment_status,
-                                'technician_diagnosis' => $data['technician_diagnosis'] ?? $record->technician_diagnosis,
-                            ]
+                            $updateData
                         );
 
                         Notification::make()

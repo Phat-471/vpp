@@ -49,6 +49,11 @@ class ProductResource extends Resource
         return auth()->user()?->isAdmin() ?? false;
     }
 
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -132,14 +137,20 @@ class ProductResource extends Resource
                                                 ->numeric()
                                                 ->prefix('₫')
                                                 ->default(0)
-                                                ->required(),
+                                                ->required()
+                                                ->visible(fn () => auth()->user()?->isAdmin())
+                                                ->disabled(fn () => ! auth()->user()?->isAdmin())
+                                                ->dehydrated(),
 
                                             Forms\Components\TextInput::make('retail_price')
                                                 ->label('Giá bán lẻ')
                                                 ->numeric()
                                                 ->prefix('₫')
                                                 ->default(0)
-                                                ->required(),
+                                                ->required()
+                                                ->disabled(fn () => ! auth()->user()?->isAdmin())
+                                                ->dehydrated()
+                                                ->helperText(fn () => ! auth()->user()?->isAdmin() ? 'Chỉ quản trị viên mới được đổi giá niêm yết' : null),
 
                                             Forms\Components\TextInput::make('base_unit')
                                                 ->label('Đơn vị cơ bản')
@@ -325,7 +336,7 @@ class ProductResource extends Resource
                     ->weight('bold')
                     ->color('primary')
                     ->sortable()
-                    ->description(fn (Product $record) => $record->cost_price > 0 ? 'Vốn: ' . number_format($record->cost_price, 0, ',', '.') . '₫' : null),
+                    ->description(fn (Product $record) => auth()->user()?->isAdmin() && $record->cost_price > 0 ? 'Vốn: ' . number_format($record->cost_price, 0, ',', '.') . '₫' : null),
 
                 Tables\Columns\TextColumn::make('stock_quantity')
                     ->label('Tồn kho')
@@ -337,18 +348,22 @@ class ProductResource extends Resource
 
                 Tables\Columns\ToggleColumn::make('is_active')
                     ->label('Đang bán')
+                    ->disabled(fn () => ! auth()->user()?->isAdmin())
                     ->sortable(),
 
                 Tables\Columns\ToggleColumn::make('is_flash_sale')
                     ->label('⚡ Flash Sale')
+                    ->disabled(fn () => ! auth()->user()?->isAdmin())
                     ->sortable(),
 
                 Tables\Columns\ToggleColumn::make('is_best_seller')
                     ->label('🏆 Bán chạy')
+                    ->disabled(fn () => ! auth()->user()?->isAdmin())
                     ->sortable(),
 
                 Tables\Columns\ToggleColumn::make('is_featured')
                     ->label('⭐ Nổi bật')
+                    ->disabled(fn () => ! auth()->user()?->isAdmin())
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
@@ -504,6 +519,7 @@ class ProductResource extends Resource
                         ->deselectRecordsAfterCompletion(),
 
                     Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn () => auth()->user()?->isAdmin())
                         ->modalHeading('Xóa các sản phẩm đã chọn')
                         ->modalDescription('Bạn có chắc chắn muốn xóa tất cả các sản phẩm đã chọn?')
                         ->modalSubmitActionLabel('Xóa tất cả')

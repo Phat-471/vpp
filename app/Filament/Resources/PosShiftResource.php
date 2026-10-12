@@ -10,6 +10,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class PosShiftResource extends Resource
 {
@@ -35,6 +37,31 @@ class PosShiftResource extends Resource
     public static function getNavigationBadgeColor(): ?string
     {
         return 'warning';
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->isCashier() ?? false;
+    }
+
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return auth()->user()?->isAdmin() ?? false;
     }
 
     public static function form(Form $form): Form
@@ -219,6 +246,16 @@ class PosShiftResource extends Resource
     public static function getRelations(): array
     {
         return [];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery()->with('cashier');
+        $user = auth()->user();
+        if ($user && ! $user->isAdmin()) {
+            $query->where('cashier_id', $user->id);
+        }
+        return $query;
     }
 
     public static function getPages(): array
