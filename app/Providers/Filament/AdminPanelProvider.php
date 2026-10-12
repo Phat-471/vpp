@@ -27,6 +27,12 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->profile(\App\Filament\Pages\Auth\EditProfile::class)
+            ->userMenuItems([
+                'profile' => \Filament\Navigation\MenuItem::make()
+                    ->label('Hồ sơ quản trị')
+                    ->icon('heroicon-m-user-circle'),
+            ])
             ->brandLogo(fn () => view('filament.components.brand-logo'))
             ->brandLogoHeight('2.75rem')
             ->colors([
