@@ -127,3 +127,17 @@ resources/views/
   * **Cấu hình Nginx:** Bổ sung `client_max_body_size 20M;` trong block `server` của Virtual Host trên aaPanel để không bị chặn lỗi 413.
   * **Cấu hình PHP (`php.ini`):** Thiết lập `upload_max_filesize = 20M` và `post_max_size = 20M` để máy chủ tiếp nhận ảnh từ điện thoại.
 
+---
+
+## 9. QUY CHUẨN TÀI KHOẢN QUẢN TRỊ & HỒ SƠ ADMIN (ADMIN PROFILE & AUTH INVARIANT)
+* **Điều hướng kép trực quan (Dual-Entry Navigation):**
+  * Trang hồ sơ admin (`EditProfile`) BẮT BUỘC phải truy cập được từ 2 vị trí:
+    1. **User Dropdown góc phải**: MenuItem `profile` phải gắn `->url(fn () => EditProfile::getUrl())` tường minh kèm icon vector `heroicon-m-user-circle` và nhãn *"Đổi thông tin & Mật khẩu"*.
+    2. **Sidebar Menu bên trái**: Đăng ký `NavigationItem` trong nhóm `'Cấu hình'` với nhãn *"Tài khoản quản trị"* để người dùng thao tác trực tiếp mà không cần bấm qua menu avatar.
+* **100% Tiếng Việt & Đầy đủ trường cơ bản:**
+  * Form hồ sơ admin phải hỗ trợ đầy đủ: Họ và tên (`name`), Email đăng nhập (`email`), Số điện thoại (`phone`), Mật khẩu mới (`password`) kèm Xác nhận mật khẩu (`passwordConfirmation`) và nhãn hiển thị vai trò hệ thống.
+  * Thông báo lưu thành công phải là tiếng Việt: *"Cập nhật thông tin tài khoản thành công!"*.
+* **Hỗ trợ quản trị CLI khẩn cấp:**
+  * Hệ thống luôn duy trì lệnh `php artisan admin:update` để đổi mật khẩu/email trực tiếp từ SSH/terminal VPS khi quên mật khẩu hoặc không vào được web.
+
+

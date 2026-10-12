@@ -30,8 +30,16 @@ class AdminPanelProvider extends PanelProvider
             ->profile(\App\Filament\Pages\Auth\EditProfile::class)
             ->userMenuItems([
                 'profile' => \Filament\Navigation\MenuItem::make()
-                    ->label('Hồ sơ quản trị')
+                    ->label('Đổi thông tin & Mật khẩu')
+                    ->url(fn (): string => \App\Filament\Pages\Auth\EditProfile::getUrl())
                     ->icon('heroicon-m-user-circle'),
+            ])
+            ->navigationItems([
+                \Filament\Navigation\NavigationItem::make('Tài khoản quản trị')
+                    ->url(fn (): string => \App\Filament\Pages\Auth\EditProfile::getUrl())
+                    ->icon('heroicon-m-user-circle')
+                    ->group('Cấu hình')
+                    ->sort(10),
             ])
             ->brandLogo(fn () => view('filament.components.brand-logo'))
             ->brandLogoHeight('2.75rem')
