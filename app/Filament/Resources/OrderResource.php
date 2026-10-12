@@ -109,7 +109,7 @@ class OrderResource extends Resource
 
                                     Forms\Components\Actions::make([
                                         Forms\Components\Actions\Action::make('set_retail')
-                                            ->label('👤 Khách lẻ vãng lai tại quầy')
+                                            ->label('Khách lẻ vãng lai tại quầy')
                                             ->icon('heroicon-m-user')
                                             ->size('xs')
                                             ->color('gray')
@@ -127,8 +127,8 @@ class OrderResource extends Resource
                                             Forms\Components\Select::make('channel')
                                                 ->label('Kênh bán hàng')
                                                 ->options([
-                                                    'pos' => '⚡ Bán trực tiếp tại quầy POS',
-                                                    'online' => '🌐 Đặt qua Website Storefront',
+                                                    'pos' => 'Bán trực tiếp tại quầy POS',
+                                                    'online' => 'Đặt qua Website Storefront',
                                                 ])
                                                 ->default('pos')
                                                 ->required(),
@@ -136,10 +136,10 @@ class OrderResource extends Resource
                                             Forms\Components\Select::make('status')
                                                 ->label('Trạng thái đơn')
                                                 ->options([
-                                                    'completed' => '✅ Đã hoàn tất & xuất kho',
-                                                    'shipping' => '🚚 Đang giao hàng',
-                                                    'pending' => '⏳ Chờ xử lý / Đóng gói',
-                                                    'cancelled' => '❌ Đã hủy đơn',
+                                                    'completed' => 'Đã hoàn tất & xuất kho',
+                                                    'shipping' => 'Đang giao hàng',
+                                                    'pending' => 'Chờ xử lý / Đóng gói',
+                                                    'cancelled' => 'Đã hủy đơn',
                                                 ])
                                                 ->default('completed')
                                                 ->required(),
@@ -157,59 +157,68 @@ class OrderResource extends Resource
                                         ->label('Mặt hàng trong đơn')
                                         ->relationship('orderItems')
                                         ->schema([
-                                            Forms\Components\Select::make('product_id')
-                                                ->label('Chọn sản phẩm từ kho')
-                                                ->options(fn () => Product::where('is_active', true)->pluck('name', 'id'))
-                                                ->searchable()
-                                                ->required()
-                                                ->live()
-                                                ->afterStateUpdated(function ($state, callable $set) {
-                                                    if ($state) {
-                                                        $p = Product::find($state);
-                                                        if ($p) {
-                                                            $set('product_name', $p->name);
-                                                            $set('unit_name', $p->base_unit);
-                                                            $set('unit_price', $p->retail_price);
-                                                            $set('cost_price', $p->cost_price);
-                                                            $set('conversion_rate', 1);
-                                                        }
-                                                    }
-                                                })
-                                                ->columnSpan(4),
+                                            Forms\Components\Grid::make(12)
+                                                ->schema([
+                                                    Forms\Components\Select::make('product_id')
+                                                        ->label('Chọn sản phẩm từ kho *')
+                                                        ->options(fn () => Product::where('is_active', true)->pluck('name', 'id'))
+                                                        ->searchable()
+                                                        ->preload()
+                                                        ->required()
+                                                        ->live()
+                                                        ->afterStateUpdated(function ($state, callable $set) {
+                                                            if ($state) {
+                                                                $p = Product::find($state);
+                                                                if ($p) {
+                                                                    $set('product_name', $p->name);
+                                                                    $set('unit_name', $p->base_unit ?: 'Cái');
+                                                                    $set('unit_price', $p->retail_price);
+                                                                    $set('cost_price', $p->cost_price);
+                                                                    $set('conversion_rate', 1);
+                                                                }
+                                                            }
+                                                        })
+                                                        ->columnSpan(['default' => 12, 'md' => 7]),
 
-                                            Forms\Components\TextInput::make('product_name')
-                                                ->label('Tên in hóa đơn')
-                                                ->required()
-                                                ->columnSpan(3),
+                                                    Forms\Components\TextInput::make('product_name')
+                                                        ->label('Tên in hóa đơn *')
+                                                        ->required()
+                                                        ->columnSpan(['default' => 12, 'md' => 5]),
 
-                                            Forms\Components\TextInput::make('quantity')
-                                                ->label('Số lượng')
-                                                ->numeric()
-                                                ->default(1)
-                                                ->required()
-                                                ->live()
-                                                ->columnSpan(1),
+                                                    Forms\Components\TextInput::make('unit_name')
+                                                        ->label('Đơn vị tính')
+                                                        ->default('Cái')
+                                                        ->required()
+                                                        ->columnSpan(['default' => 12, 'md' => 3]),
 
-                                            Forms\Components\TextInput::make('unit_name')
-                                                ->label('ĐVT')
-                                                ->default('Cái')
-                                                ->required()
-                                                ->columnSpan(1),
+                                                    Forms\Components\TextInput::make('quantity')
+                                                        ->label('Số lượng bán *')
+                                                        ->numeric()
+                                                        ->default(1)
+                                                        ->minValue(1)
+                                                        ->required()
+                                                        ->live()
+                                                        ->columnSpan(['default' => 12, 'md' => 4]),
 
-                                            Forms\Components\TextInput::make('unit_price')
-                                                ->label('Đơn giá (₫)')
-                                                ->numeric()
-                                                ->prefix('₫')
-                                                ->required()
-                                                ->live()
-                                                ->disabled(fn () => ! auth()->user()?->isAdmin())
-                                                ->dehydrated()
-                                                ->helperText(fn () => ! auth()->user()?->isAdmin() ? 'Giá bán niêm yết' : null)
-                                                ->columnSpan(2),
+                                                    Forms\Components\TextInput::make('unit_price')
+                                                        ->label('Đơn giá bán (₫) *')
+                                                        ->numeric()
+                                                        ->prefix('₫')
+                                                        ->required()
+                                                        ->live()
+                                                        ->disabled(fn () => ! auth()->user()?->isAdmin())
+                                                        ->dehydrated()
+                                                        ->helperText(fn () => ! auth()->user()?->isAdmin() ? 'Giá bán niêm yết' : null)
+                                                        ->columnSpan(['default' => 12, 'md' => 5]),
+                                                ]),
                                         ])
-                                        ->columns(11)
                                         ->defaultItems(1)
                                         ->addActionLabel('+ Thêm sản phẩm vào đơn')
+                                        ->itemLabel(fn (array $state): ?string => !empty($state['product_name'])
+                                            ? "{$state['product_name']} (x" . ($state['quantity'] ?? 1) . ' ' . ($state['unit_name'] ?? '') . ' - ' . number_format((float)($state['unit_price'] ?? 0) * (float)($state['quantity'] ?? 1), 0, ',', '.') . '₫)'
+                                            : null
+                                        )
+                                        ->collapsible()
                                         ->live()
                                         ->afterStateUpdated(function (callable $get, callable $set) {
                                             $items = $get('orderItems') ?? [];
@@ -409,11 +418,11 @@ class OrderResource extends Resource
                                             if ($paid >= $grand && $grand > 0) {
                                                 $excess = $paid - $grand;
                                                 return $excess > 0
-                                                    ? '💵 Tiền thừa trả khách: ' . number_format($excess, 0, ',', '.') . ' ₫'
-                                                    : '✅ Đã thanh toán đủ (0 ₫)';
+                                                    ? 'Tiền thừa trả khách: ' . number_format($excess, 0, ',', '.') . ' ₫'
+                                                    : 'Đã thanh toán đủ (0 ₫)';
                                             }
                                             $rem = max(0, $grand - $paid);
-                                            return '🔴 Còn nợ cần thu: ' . number_format($rem, 0, ',', '.') . ' ₫';
+                                            return 'Còn nợ cần thu: ' . number_format($rem, 0, ',', '.') . ' ₫';
                                         })
                                         ->extraAttributes(fn (callable $get) => [
                                             'class' => ((float)($get('paid_amount') ?? 0) >= (float)($get('grand_total') ?? 0) && (float)($get('grand_total') ?? 0) > 0)
@@ -424,9 +433,9 @@ class OrderResource extends Resource
                                     Forms\Components\Select::make('payment_status')
                                         ->label('Trạng thái thanh toán')
                                         ->options([
-                                            'paid' => '✅ Đã thanh toán đủ',
-                                            'partially_paid' => '⏳ Trả một phần / Đặt cọc',
-                                            'unpaid' => '❌ Chưa thanh toán / Ghi nợ',
+                                            'paid' => 'Đã thanh toán đủ',
+                                            'partially_paid' => 'Trả một phần / Đặt cọc',
+                                            'unpaid' => 'Chưa thanh toán / Ghi nợ',
                                         ])
                                         ->default('paid')
                                         ->required(),
@@ -434,9 +443,9 @@ class OrderResource extends Resource
                                     Forms\Components\Select::make('payment_method')
                                         ->label('Hình thức thanh toán')
                                         ->options([
-                                            'cash' => '💵 Tiền mặt',
-                                            'vietqr' => '⚡ Quét mã VietQR',
-                                            'transfer' => '🏦 Chuyển khoản ngân hàng',
+                                            'cash' => 'Tiền mặt',
+                                            'vietqr' => 'Quét mã VietQR',
+                                            'transfer' => 'Chuyển khoản ngân hàng',
                                         ])
                                         ->default('cash')
                                         ->required(),
@@ -474,7 +483,7 @@ class OrderResource extends Resource
                     ->description(function (Order $r) {
                         $desc = $r->customer_phone ?: '';
                         if ($r->is_suspicious) {
-                            $spamNote = '⚠️ Cảnh báo spam: ' . ($r->suspicious_reason ?? 'Nghi vấn đặt liên tiếp');
+                            $spamNote = 'Cảnh báo spam: ' . ($r->suspicious_reason ?? 'Nghi vấn đặt liên tiếp');
                             return $desc ? "{$spamNote} • {$desc}" : $spamNote;
                         }
                         return $desc ?: null;
@@ -487,7 +496,7 @@ class OrderResource extends Resource
                     ->falseIcon('heroicon-o-shield-check')
                     ->trueColor('danger')
                     ->falseColor('gray')
-                    ->tooltip(fn (Order $r) => $r->is_suspicious ? ('⚠️ CẢNH BÁO SPAM: ' . ($r->suspicious_reason ?? 'Nghi vấn đặt liên tiếp')) : 'An toàn')
+                    ->tooltip(fn (Order $r) => $r->is_suspicious ? ('CẢNH BÁO SPAM: ' . ($r->suspicious_reason ?? 'Nghi vấn đặt liên tiếp')) : 'An toàn')
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('channel')
@@ -560,8 +569,8 @@ class OrderResource extends Resource
                 Tables\Filters\TernaryFilter::make('is_suspicious')
                     ->label('Cảnh báo spam')
                     ->placeholder('Tất cả đơn hàng')
-                    ->trueLabel('⚠️ Chỉ đơn nghi vấn spam')
-                    ->falseLabel('✅ Chỉ đơn an toàn'),
+                    ->trueLabel('Chỉ đơn nghi vấn spam')
+                    ->falseLabel('Chỉ đơn an toàn'),
 
                 Tables\Filters\SelectFilter::make('status')
                     ->label('Trạng thái đơn')
@@ -602,28 +611,28 @@ class OrderResource extends Resource
                         Forms\Components\Select::make('status')
                             ->label('Trạng thái đơn *')
                             ->options([
-                                'pending' => '⏳ Chờ xác nhận',
-                                'processing' => '📦 Đang chuẩn bị / Đóng gói',
-                                'shipping' => '🚚 Đang giao hàng',
-                                'delivered' => '📫 Đã giao thành công',
-                                'completed' => '✅ Đã hoàn tất & xuất kho',
-                                'cancelled' => '❌ Hủy đơn & Hoàn trả kho',
+                                'pending' => 'Chờ xác nhận',
+                                'processing' => 'Đang chuẩn bị / Đóng gói',
+                                'shipping' => 'Đang giao hàng',
+                                'delivered' => 'Đã giao thành công',
+                                'completed' => 'Đã hoàn tất & xuất kho',
+                                'cancelled' => 'Hủy đơn & Hoàn trả kho',
                             ])
                             ->required(),
                         Forms\Components\Select::make('payment_status')
                             ->label('Trạng thái thanh toán *')
                             ->options([
-                                'paid' => '✅ Đã thanh toán đủ',
-                                'partially_paid' => '⏳ Trả một phần / Đặt cọc',
-                                'unpaid' => '❌ Chưa thanh toán / Ghi nợ',
+                                'paid' => 'Đã thanh toán đủ',
+                                'partially_paid' => 'Trả một phần / Đặt cọc',
+                                'unpaid' => 'Chưa thanh toán / Ghi nợ',
                             ])
                             ->required(),
                         Forms\Components\Select::make('payment_method')
                             ->label('Hình thức thanh toán')
                             ->options([
-                                'cash' => '💵 Tiền mặt',
-                                'vietqr' => '⚡ Quét mã VietQR',
-                                'transfer' => '🏦 Chuyển khoản ngân hàng',
+                                'cash' => 'Tiền mặt',
+                                'vietqr' => 'Quét mã VietQR',
+                                'transfer' => 'Chuyển khoản ngân hàng',
                             ]),
                         Forms\Components\Textarea::make('notes')
                             ->label('Ghi chú')

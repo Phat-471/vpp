@@ -28,22 +28,26 @@ class ListOrders extends ListRecords
             'all' => Tab::make('Tất cả đơn')
                 ->badge(Order::count()),
 
-            'pos' => Tab::make('⚡ Bán tại quầy (POS)')
+            'pos' => Tab::make('Bán tại quầy (POS)')
+                ->icon('heroicon-m-computer-desktop')
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('channel', 'pos'))
                 ->badge(Order::where('channel', 'pos')->count())
                 ->badgeColor('primary'),
 
-            'online' => Tab::make('🌐 Đơn Online')
+            'online' => Tab::make('Đơn Online')
+                ->icon('heroicon-m-globe-alt')
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('channel', 'online'))
                 ->badge(Order::where('channel', 'online')->count())
                 ->badgeColor('info'),
 
-            'unpaid' => Tab::make('💳 Chưa thanh toán')
+            'unpaid' => Tab::make('Chưa thanh toán')
+                ->icon('heroicon-m-banknotes')
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('payment_status', 'unpaid'))
                 ->badge(Order::where('payment_status', 'unpaid')->count())
                 ->badgeColor('danger'),
 
-            'vat' => Tab::make('📄 Hóa đơn VAT')
+            'vat' => Tab::make('Hóa đơn VAT')
+                ->icon('heroicon-m-document-text')
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('is_vat_invoice', true))
                 ->badge(Order::where('is_vat_invoice', true)->count())
                 ->badgeColor('success'),

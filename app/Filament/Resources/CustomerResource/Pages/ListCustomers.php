@@ -28,17 +28,20 @@ class ListCustomers extends ListRecords
             'all' => Tab::make('Tất cả khách hàng')
                 ->badge(Customer::count()),
 
-            'activated' => Tab::make('✅ Đã kích hoạt')
+            'activated' => Tab::make('Đã kích hoạt')
+                ->icon('heroicon-m-check-circle')
                 ->modifyQueryUsing(fn (Builder $query) => $query->whereNotNull('phone_verified_at'))
                 ->badge(Customer::whereNotNull('phone_verified_at')->count())
                 ->badgeColor('success'),
 
-            'unactivated' => Tab::make('⏳ Chưa kích hoạt')
+            'unactivated' => Tab::make('Chưa kích hoạt')
+                ->icon('heroicon-m-clock')
                 ->modifyQueryUsing(fn (Builder $query) => $query->whereNull('phone_verified_at'))
                 ->badge(Customer::whereNull('phone_verified_at')->count())
                 ->badgeColor('warning'),
 
-            'has_debt' => Tab::make('💳 Đang nợ')
+            'has_debt' => Tab::make('Đang nợ tiền')
+                ->icon('heroicon-m-banknotes')
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('debt_balance', '>', 0))
                 ->badge(Customer::where('debt_balance', '>', 0)->count())
                 ->badgeColor('danger'),

@@ -118,78 +118,84 @@ class PurchaseOrderResource extends Resource
                                 ->icon('heroicon-o-cube')
                                 ->schema([
                                     Forms\Components\Repeater::make('items')
-                                        ->label('Danh sách sản phẩm nhập')
+                                        ->label('Danh sách sản phẩm nhập kho')
                                         ->relationship('items')
                                         ->schema([
-                                            Forms\Components\Select::make('product_id')
-                                                ->label('Chọn sản phẩm trong kho')
-                                                ->options(fn () => Product::pluck('name', 'id'))
-                                                ->searchable()
-                                                ->required()
-                                                ->live()
-                                                ->afterStateUpdated(function ($state, callable $set) {
-                                                    if ($state) {
-                                                        $p = Product::find($state);
-                                                        if ($p) {
-                                                            $set('product_name', $p->name);
-                                                            $set('unit_name', $p->base_unit ?: 'Cái');
-                                                            $set('cost_price', $p->cost_price ?: 0);
-                                                            $set('quantity', 1);
-                                                            $set('subtotal', $p->cost_price ?: 0);
-                                                        }
-                                                    }
-                                                })
-                                                ->columnSpan(4),
+                                            Forms\Components\Grid::make(12)
+                                                ->schema([
+                                                    Forms\Components\Select::make('product_id')
+                                                        ->label('Sản phẩm trong kho *')
+                                                        ->options(fn () => Product::pluck('name', 'id'))
+                                                        ->searchable()
+                                                        ->preload()
+                                                        ->required()
+                                                        ->live()
+                                                        ->afterStateUpdated(function ($state, callable $set) {
+                                                            if ($state) {
+                                                                $p = Product::find($state);
+                                                                if ($p) {
+                                                                    $set('product_name', $p->name);
+                                                                    $set('unit_name', $p->base_unit ?: 'Cái');
+                                                                    $set('cost_price', $p->cost_price ?: 0);
+                                                                    $set('quantity', 1);
+                                                                    $set('subtotal', $p->cost_price ?: 0);
+                                                                }
+                                                            }
+                                                        })
+                                                        ->columnSpan(['default' => 12, 'md' => 8]),
 
-                                            Forms\Components\TextInput::make('product_name')
-                                                ->label('Tên mặt hàng')
-                                                ->required()
-                                                ->columnSpan(3),
+                                                    Forms\Components\TextInput::make('unit_name')
+                                                        ->label('Đơn vị tính (ĐVT) *')
+                                                        ->default('Cái')
+                                                        ->required()
+                                                        ->columnSpan(['default' => 12, 'md' => 4]),
 
-                                            Forms\Components\TextInput::make('unit_name')
-                                                ->label('ĐVT')
-                                                ->default('Cái')
-                                                ->required()
-                                                ->columnSpan(1),
+                                                    Forms\Components\TextInput::make('product_name')
+                                                        ->hidden()
+                                                        ->dehydrated(),
 
-                                            Forms\Components\TextInput::make('quantity')
-                                                ->label('Số lượng')
-                                                ->numeric()
-                                                ->default(1)
-                                                ->required()
-                                                ->live()
-                                                ->columnSpan(1)
-                                                ->afterStateUpdated(function (callable $get, callable $set) {
-                                                    $qty = (float) ($get('quantity') ?? 0);
-                                                    $cost = (float) ($get('cost_price') ?? 0);
-                                                    $set('subtotal', $qty * $cost);
-                                                }),
+                                                    Forms\Components\TextInput::make('quantity')
+                                                        ->label('Số lượng nhập *')
+                                                        ->numeric()
+                                                        ->default(1)
+                                                        ->minValue(1)
+                                                        ->required()
+                                                        ->live()
+                                                        ->columnSpan(['default' => 12, 'md' => 4])
+                                                        ->afterStateUpdated(function (callable $get, callable $set) {
+                                                            $qty = (float) ($get('quantity') ?? 0);
+                                                            $cost = (float) ($get('cost_price') ?? 0);
+                                                            $set('subtotal', $qty * $cost);
+                                                        }),
 
-                                            Forms\Components\TextInput::make('cost_price')
-                                                ->label('Giá nhập (₫)')
-                                                ->numeric()
-                                                ->prefix('₫')
-                                                ->default(0)
-                                                ->required()
-                                                ->live()
-                                                ->columnSpan(2)
-                                                ->afterStateUpdated(function (callable $get, callable $set) {
-                                                    $qty = (float) ($get('quantity') ?? 0);
-                                                    $cost = (float) ($get('cost_price') ?? 0);
-                                                    $set('subtotal', $qty * $cost);
-                                                }),
+                                                    Forms\Components\TextInput::make('cost_price')
+                                                        ->label('Đơn giá nhập kho (₫) *')
+                                                        ->numeric()
+                                                        ->prefix('₫')
+                                                        ->default(0)
+                                                        ->required()
+                                                        ->live()
+                                                        ->columnSpan(['default' => 12, 'md' => 4])
+                                                        ->afterStateUpdated(function (callable $get, callable $set) {
+                                                            $qty = (float) ($get('quantity') ?? 0);
+                                                            $cost = (float) ($get('cost_price') ?? 0);
+                                                            $set('subtotal', $qty * $cost);
+                                                        }),
 
-                                            Forms\Components\TextInput::make('subtotal')
-                                                ->label('Thành tiền')
-                                                ->numeric()
-                                                ->prefix('₫')
-                                                ->disabled()
-                                                ->dehydrated()
-                                                ->columnSpan(2),
+                                                    Forms\Components\TextInput::make('subtotal')
+                                                        ->label('Thành tiền (₫)')
+                                                        ->numeric()
+                                                        ->prefix('₫')
+                                                        ->disabled()
+                                                        ->dehydrated()
+                                                        ->extraInputAttributes(['style' => 'font-weight: 700; color: #4f46e5;'])
+                                                        ->columnSpan(['default' => 12, 'md' => 4]),
+                                                ]),
                                         ])
-                                        ->columns(13)
                                         ->defaultItems(1)
                                         ->addActionLabel('+ Thêm sản phẩm vào phiếu nhập')
+                                        ->itemLabel(fn (array $state): ?string => !empty($state['product_name']) ? "{$state['product_name']} (x" . ($state['quantity'] ?? 1) . ' ' . ($state['unit_name'] ?? '') . ')' : null)
+                                        ->collapsible()
                                         ->live()
                                         ->afterStateUpdated(function (callable $get, callable $set) {
                                             $items = $get('items') ?? [];

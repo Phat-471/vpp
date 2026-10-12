@@ -145,7 +145,7 @@ class PaymentTransactionResource extends Resource
             ])
             ->headerActions([
                 Tables\Actions\Action::make('simulate_webhook')
-                    ->label('⚡ Thử nghiệm tiền vào')
+                    ->label('Thử nghiệm tiền vào')
                     ->icon('heroicon-o-bolt')
                     ->color('warning')
                     ->form([

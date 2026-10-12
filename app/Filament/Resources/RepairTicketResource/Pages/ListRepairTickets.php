@@ -28,22 +28,26 @@ class ListRepairTickets extends ListRecords
             'all' => Tab::make('Tất cả phiếu')
                 ->badge(RepairTicket::count()),
 
-            'processing' => Tab::make('🛠️ Đang xử lý')
+            'processing' => Tab::make('Đang xử lý')
+                ->icon('heroicon-m-wrench')
                 ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('status', ['received', 'diagnosing', 'waiting_approval', 'in_progress']))
                 ->badge(RepairTicket::whereIn('status', ['received', 'diagnosing', 'waiting_approval', 'in_progress'])->count())
                 ->badgeColor('warning'),
 
-            'waiting_approval' => Tab::make('⏳ Chờ duyệt giá')
+            'waiting_approval' => Tab::make('Chờ duyệt giá')
+                ->icon('heroicon-m-clock')
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'waiting_approval'))
                 ->badge(RepairTicket::where('status', 'waiting_approval')->count())
                 ->badgeColor('info'),
 
-            'completed' => Tab::make('✅ Đã sửa xong')
+            'completed' => Tab::make('Đã sửa xong')
+                ->icon('heroicon-m-check-circle')
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'completed'))
                 ->badge(RepairTicket::where('status', 'completed')->count())
                 ->badgeColor('success'),
 
-            'unpaid' => Tab::make('💳 Chưa trả tiền')
+            'unpaid' => Tab::make('Chưa trả tiền')
+                ->icon('heroicon-m-credit-card')
                 ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('payment_status', ['unpaid', 'partially_paid']))
                 ->badge(RepairTicket::whereIn('payment_status', ['unpaid', 'partially_paid'])->count())
                 ->badgeColor('danger'),

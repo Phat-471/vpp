@@ -32,17 +32,20 @@ class ListProducts extends ListRecords
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('is_active', true))
                 ->badge(Product::where('is_active', true)->count()),
 
-            'low_stock' => Tab::make('⚠️ Sắp hết hàng')
+            'low_stock' => Tab::make('Sắp hết hàng')
+                ->icon('heroicon-m-exclamation-triangle')
                 ->modifyQueryUsing(fn (Builder $query) => $query->whereColumn('stock_quantity', '<=', 'low_stock_threshold'))
                 ->badge(Product::whereColumn('stock_quantity', '<=', 'low_stock_threshold')->count())
                 ->badgeColor('danger'),
 
-            'missing_image' => Tab::make('📷 Chưa có ảnh')
+            'missing_image' => Tab::make('Chưa có ảnh')
+                ->icon('heroicon-m-photo')
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('has_custom_image', false))
                 ->badge(Product::where('has_custom_image', false)->count())
                 ->badgeColor('warning'),
 
-            'service' => Tab::make('🔧 Linh kiện máy in')
+            'service' => Tab::make('Linh kiện máy in')
+                ->icon('heroicon-m-wrench-screwdriver')
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('is_service_part', true)),
         ];
     }

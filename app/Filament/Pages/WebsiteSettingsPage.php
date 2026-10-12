@@ -407,10 +407,10 @@ class WebsiteSettingsPage extends Page implements HasForms
                                                 Select::make('otp_provider')
                                                     ->label('Kênh phát hành mã OTP chính')
                                                     ->options([
-                                                        'auto' => '⚡ Tự động (Ưu tiên Zalo ZNS, dự phòng SMS)',
-                                                        'zns' => '💬 Zalo Notification Service (ZNS)',
-                                                        'sms' => '📩 SMS Brandname (SpeedSMS / eSMS)',
-                                                        'mock' => '🧪 Chế độ thử nghiệm (Ghi log & hiện mã test)',
+                                                        'auto' => 'Tự động (Ưu tiên Zalo ZNS, dự phòng SMS)',
+                                                        'zns' => 'Zalo Notification Service (ZNS)',
+                                                        'sms' => 'SMS Brandname (SpeedSMS / eSMS)',
+                                                        'mock' => 'Chế độ thử nghiệm (Ghi log & hiện mã test)',
                                                     ])
                                                     ->default('auto')
                                                     ->helperText('Nếu chưa có hợp đồng ZNS/SMS với nhà mạng, chọn Chế độ thử nghiệm để kiểm thử hệ thống.'),

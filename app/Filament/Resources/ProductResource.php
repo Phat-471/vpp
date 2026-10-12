@@ -269,7 +269,7 @@ class ProductResource extends Resource
                                 ->description('Cấu hình xuất hiện ưu tiên trong các khối khuyến mãi và trang chủ')
                                 ->schema([
                                     Forms\Components\Toggle::make('is_flash_sale')
-                                        ->label('⚡ Tham gia Flash Sale')
+                                        ->label('Tham gia Flash Sale')
                                         ->helperText('Hiển thị trên Slider Flash Sale 16 sản phẩm')
                                         ->live(),
 
@@ -281,11 +281,11 @@ class ProductResource extends Resource
                                         ->visible(fn ($get) => (bool) $get('is_flash_sale')),
 
                                     Forms\Components\Toggle::make('is_best_seller')
-                                        ->label('🏆 Sản phẩm Bán chạy')
+                                        ->label('Sản phẩm Bán chạy')
                                         ->helperText('Ưu tiên xuất hiện trong mục Top Bán Chạy Nhất Tại Kho'),
 
                                     Forms\Components\Toggle::make('is_featured')
-                                        ->label('⭐ Sản phẩm Nổi bật')
+                                        ->label('Sản phẩm Nổi bật')
                                         ->helperText('Gắn huy hiệu Nổi bật và ưu tiên giới thiệu khách hàng'),
                                 ]),
 
@@ -352,17 +352,17 @@ class ProductResource extends Resource
                     ->sortable(),
 
                 Tables\Columns\ToggleColumn::make('is_flash_sale')
-                    ->label('⚡ Flash Sale')
+                    ->label('Flash Sale')
                     ->disabled(fn () => ! auth()->user()?->isAdmin())
                     ->sortable(),
 
                 Tables\Columns\ToggleColumn::make('is_best_seller')
-                    ->label('🏆 Bán chạy')
+                    ->label('Bán chạy')
                     ->disabled(fn () => ! auth()->user()?->isAdmin())
                     ->sortable(),
 
                 Tables\Columns\ToggleColumn::make('is_featured')
-                    ->label('⭐ Nổi bật')
+                    ->label('Nổi bật')
                     ->disabled(fn () => ! auth()->user()?->isAdmin())
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -377,27 +377,27 @@ class ProductResource extends Resource
             ])
             ->filters([
                 Tables\Filters\Filter::make('is_flash_sale')
-                    ->label('⚡ Đang Flash Sale')
+                    ->label('Đang Flash Sale')
                     ->query(fn (Builder $query) => $query->where('is_flash_sale', true)),
 
                 Tables\Filters\Filter::make('is_best_seller')
-                    ->label('🏆 Sản phẩm Bán chạy')
+                    ->label('Sản phẩm Bán chạy')
                     ->query(fn (Builder $query) => $query->where('is_best_seller', true)),
 
                 Tables\Filters\Filter::make('is_featured')
-                    ->label('⭐ Sản phẩm Nổi bật')
+                    ->label('Sản phẩm Nổi bật')
                     ->query(fn (Builder $query) => $query->where('is_featured', true)),
 
                 Tables\Filters\Filter::make('missing_image')
-                    ->label('📷 Chưa có ảnh sản phẩm')
+                    ->label('Chưa có ảnh sản phẩm')
                     ->query(fn (Builder $query) => $query->where('has_custom_image', false)),
 
                 Tables\Filters\Filter::make('low_stock')
-                    ->label('⚠️ Sắp hết hàng')
+                    ->label('Sắp hết hàng')
                     ->query(fn (Builder $query) => $query->whereColumn('stock_quantity', '<=', 'low_stock_threshold')),
 
                 Tables\Filters\Filter::make('is_service_part')
-                    ->label('🔧 Linh kiện và mực máy in')
+                    ->label('Linh kiện và mực máy in')
                     ->query(fn (Builder $query) => $query->where('is_service_part', true)),
 
                 Tables\Filters\SelectFilter::make('category_id')
@@ -464,7 +464,7 @@ class ProductResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\BulkAction::make('set_flash_sale')
-                        ->label('⚡ Bật Flash Sale đã chọn')
+                        ->label('Bật Flash Sale đã chọn')
                         ->icon('heroicon-o-bolt')
                         ->color('danger')
                         ->requiresConfirmation()

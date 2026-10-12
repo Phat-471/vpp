@@ -113,88 +113,94 @@ class StockCheckResource extends Resource
                                         ->label('Danh sách mặt hàng kiểm đếm')
                                         ->relationship('items')
                                         ->schema([
-                                            Forms\Components\Select::make('product_id')
-                                                ->label('Chọn sản phẩm')
-                                                ->options(fn () => Product::pluck('name', 'id'))
-                                                ->searchable()
-                                                ->required()
-                                                ->live()
-                                                ->afterStateUpdated(function ($state, callable $set) {
-                                                    if ($state) {
-                                                        $p = Product::find($state);
-                                                        if ($p) {
-                                                            $set('product_name', $p->name);
-                                                            $set('unit_name', $p->base_unit ?: 'Cái');
-                                                            $set('system_quantity', (int) $p->stock_quantity);
-                                                            $set('actual_quantity', (int) $p->stock_quantity);
-                                                            $set('cost_price', (float) $p->cost_price);
-                                                            $set('difference', 0);
-                                                            $set('difference_value', 0);
-                                                        }
-                                                    }
-                                                })
-                                                ->columnSpan(4),
+                                            Forms\Components\Grid::make(12)
+                                                ->schema([
+                                                    Forms\Components\Select::make('product_id')
+                                                        ->label('Chọn sản phẩm kiểm đếm *')
+                                                        ->options(fn () => Product::pluck('name', 'id'))
+                                                        ->searchable()
+                                                        ->preload()
+                                                        ->required()
+                                                        ->live()
+                                                        ->afterStateUpdated(function ($state, callable $set) {
+                                                            if ($state) {
+                                                                $p = Product::find($state);
+                                                                if ($p) {
+                                                                    $set('product_name', $p->name);
+                                                                    $set('unit_name', $p->base_unit ?: 'Cái');
+                                                                    $set('system_quantity', (int) $p->stock_quantity);
+                                                                    $set('actual_quantity', (int) $p->stock_quantity);
+                                                                    $set('cost_price', (float) $p->cost_price);
+                                                                    $set('difference', 0);
+                                                                    $set('difference_value', 0);
+                                                                }
+                                                            }
+                                                        })
+                                                        ->columnSpan(['default' => 12, 'md' => 8]),
 
-                                            Forms\Components\TextInput::make('product_name')
-                                                ->label('Tên sản phẩm')
-                                                ->disabled()
-                                                ->dehydrated()
-                                                ->columnSpan(3),
+                                                    Forms\Components\TextInput::make('unit_name')
+                                                        ->label('Đơn vị tính (ĐVT)')
+                                                        ->disabled()
+                                                        ->dehydrated()
+                                                        ->columnSpan(['default' => 12, 'md' => 4]),
 
-                                            Forms\Components\TextInput::make('unit_name')
-                                                ->label('ĐVT')
-                                                ->disabled()
-                                                ->dehydrated()
-                                                ->columnSpan(1),
+                                                    Forms\Components\TextInput::make('product_name')
+                                                        ->hidden()
+                                                        ->dehydrated(),
 
-                                            Forms\Components\TextInput::make('system_quantity')
-                                                ->label('Tồn máy')
-                                                ->numeric()
-                                                ->disabled()
-                                                ->dehydrated()
-                                                ->columnSpan(1),
+                                                    Forms\Components\TextInput::make('system_quantity')
+                                                        ->label('Tồn hệ thống máy')
+                                                        ->numeric()
+                                                        ->disabled()
+                                                        ->dehydrated()
+                                                        ->columnSpan(['default' => 6, 'md' => 3]),
 
-                                            Forms\Components\TextInput::make('actual_quantity')
-                                                ->label('Tồn thực tế *')
-                                                ->numeric()
-                                                ->required()
-                                                ->live()
-                                                ->columnSpan(2)
-                                                ->afterStateUpdated(function (callable $get, callable $set) {
-                                                    $sys = (int) ($get('system_quantity') ?? 0);
-                                                    $act = (int) ($get('actual_quantity') ?? 0);
-                                                    $cost = (float) ($get('cost_price') ?? 0);
-                                                    $diff = $act - $sys;
-                                                    $set('difference', $diff);
-                                                    $set('difference_value', $diff * $cost);
-                                                }),
+                                                    Forms\Components\TextInput::make('actual_quantity')
+                                                        ->label('Tồn thực tế đếm được *')
+                                                        ->numeric()
+                                                        ->required()
+                                                        ->live()
+                                                        ->columnSpan(['default' => 6, 'md' => 3])
+                                                        ->afterStateUpdated(function (callable $get, callable $set) {
+                                                            $sys = (int) ($get('system_quantity') ?? 0);
+                                                            $act = (int) ($get('actual_quantity') ?? 0);
+                                                            $cost = (float) ($get('cost_price') ?? 0);
+                                                            $diff = $act - $sys;
+                                                            $set('difference', $diff);
+                                                            $set('difference_value', $diff * $cost);
+                                                        }),
 
-                                            Forms\Components\TextInput::make('difference')
-                                                ->label('Lệch')
-                                                ->numeric()
-                                                ->disabled()
-                                                ->dehydrated()
-                                                ->extraInputAttributes(fn (callable $get) => [
-                                                    'style' => ((int) $get('difference') !== 0) ? 'color: #e11d48; font-weight: 800;' : 'color: #10b981; font-weight: 800;',
-                                                ])
-                                                ->columnSpan(1),
+                                                    Forms\Components\TextInput::make('difference')
+                                                        ->label('Chênh lệch (Lệch)')
+                                                        ->numeric()
+                                                        ->disabled()
+                                                        ->dehydrated()
+                                                        ->extraInputAttributes(fn (callable $get) => [
+                                                            'style' => ((int) $get('difference') !== 0) ? 'color: #e11d48; font-weight: 800;' : 'color: #10b981; font-weight: 800;',
+                                                        ])
+                                                        ->columnSpan(['default' => 6, 'md' => 2]),
 
-                                            Forms\Components\TextInput::make('cost_price')
-                                                ->hidden()
-                                                ->dehydrated(),
+                                                    Forms\Components\TextInput::make('reason')
+                                                        ->label('Lý do chênh lệch (nếu có)')
+                                                        ->placeholder('Thừa kiểm kê, rách hỏng bao bì...')
+                                                        ->columnSpan(['default' => 6, 'md' => 4]),
 
-                                            Forms\Components\TextInput::make('difference_value')
-                                                ->hidden()
-                                                ->dehydrated(),
+                                                    Forms\Components\TextInput::make('cost_price')
+                                                        ->hidden()
+                                                        ->dehydrated(),
 
-                                            Forms\Components\TextInput::make('reason')
-                                                ->label('Lý do chênh lệch (nếu có)')
-                                                ->placeholder('Thừa kiểm kê, rách hỏng bao bì...')
-                                                ->columnSpanFull(),
+                                                    Forms\Components\TextInput::make('difference_value')
+                                                        ->hidden()
+                                                        ->dehydrated(),
+                                                ]),
                                         ])
-                                        ->columns(12)
                                         ->defaultItems(1)
-                                        ->addActionLabel('+ Thêm sản phẩm kiểm đếm'),
+                                        ->addActionLabel('+ Thêm sản phẩm kiểm đếm')
+                                        ->itemLabel(fn (array $state): ?string => !empty($state['product_name'])
+                                            ? "{$state['product_name']} [Lệch: " . ($state['difference'] ?? 0) . ' ' . ($state['unit_name'] ?? '') . ']'
+                                            : null
+                                        )
+                                        ->collapsible(),
                                 ]),
                         ])->columnSpan(['lg' => 2]),
 

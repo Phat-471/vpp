@@ -149,7 +149,7 @@ class PrinterModelResource extends Resource
                     ->counts('products')
                     ->badge()
                     ->color(fn ($state) => $state > 0 ? 'success' : 'gray')
-                    ->prefix('📦 ')
+                    ->icon('heroicon-m-cube')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('repair_tickets_count')
@@ -157,7 +157,7 @@ class PrinterModelResource extends Resource
                     ->counts('repairTickets')
                     ->badge()
                     ->color(fn ($state) => $state > 0 ? 'warning' : 'gray')
-                    ->prefix('🔧 ')
+                    ->icon('heroicon-m-wrench')
                     ->sortable(),
             ])
             ->defaultSort('brand', 'asc')

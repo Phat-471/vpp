@@ -252,7 +252,8 @@ class RepairTicketResource extends Resource
                                                 }
                                             }),
                                         Forms\Components\Actions\Action::make('acc_none')
-                                            ->label('✕ Không phụ kiện')
+                                            ->label('Không phụ kiện')
+                                            ->icon('heroicon-m-x-circle')
                                             ->size('xs')
                                             ->color('danger')
                                             ->action(fn (callable $set) => $set('accessories', 'Không kèm phụ kiện')),
@@ -268,7 +269,8 @@ class RepairTicketResource extends Resource
 
                                     Forms\Components\Actions::make([
                                         Forms\Components\Actions\Action::make('sym_jam')
-                                            ->label('⚠️ Kẹt giấy')
+                                            ->label('Kẹt giấy')
+                                            ->icon('heroicon-m-exclamation-triangle')
                                             ->size('xs')
                                             ->color('gray')
                                             ->action(function (callable $get, callable $set) {
@@ -279,7 +281,8 @@ class RepairTicketResource extends Resource
                                                 }
                                             }),
                                         Forms\Components\Actions\Action::make('sym_fade')
-                                            ->label('📄 Bản in mờ / Sọc đen')
+                                            ->label('Bản in mờ / Sọc đen')
+                                            ->icon('heroicon-m-document-text')
                                             ->size('xs')
                                             ->color('gray')
                                             ->action(function (callable $get, callable $set) {
@@ -290,7 +293,8 @@ class RepairTicketResource extends Resource
                                                 }
                                             }),
                                         Forms\Components\Actions\Action::make('sym_roller')
-                                            ->label('🚫 Không kéo giấy')
+                                            ->label('Không kéo giấy')
+                                            ->icon('heroicon-m-arrow-path')
                                             ->size('xs')
                                             ->color('gray')
                                             ->action(function (callable $get, callable $set) {
@@ -301,7 +305,8 @@ class RepairTicketResource extends Resource
                                                 }
                                             }),
                                         Forms\Components\Actions\Action::make('sym_noise')
-                                            ->label('🔊 Kêu lạch cạch')
+                                            ->label('Kêu lạch cạch')
+                                            ->icon('heroicon-m-speaker-wave')
                                             ->size('xs')
                                             ->color('gray')
                                             ->action(function (callable $get, callable $set) {
@@ -312,7 +317,8 @@ class RepairTicketResource extends Resource
                                                 }
                                             }),
                                         Forms\Components\Actions\Action::make('sym_refill')
-                                            ->label('🧪 Nạp mực / Hết mực')
+                                            ->label('Nạp mực / Hết mực')
+                                            ->icon('heroicon-m-paint-brush')
                                             ->size('xs')
                                             ->color('gray')
                                             ->action(function (callable $get, callable $set) {
@@ -323,7 +329,8 @@ class RepairTicketResource extends Resource
                                                 }
                                             }),
                                         Forms\Components\Actions\Action::make('sym_power')
-                                            ->label('🔌 Mất nguồn')
+                                            ->label('Mất nguồn')
+                                            ->icon('heroicon-m-bolt')
                                             ->size('xs')
                                             ->color('gray')
                                             ->action(function (callable $get, callable $set) {
@@ -357,63 +364,72 @@ class RepairTicketResource extends Resource
                                         ->label('Linh kiện & Hộp mực thay thế')
                                         ->relationship('repairItems')
                                         ->schema([
-                                            Forms\Components\Select::make('product_id')
-                                                ->label('Chọn từ kho linh kiện/VPP')
-                                                ->options(fn () => Product::where('is_service_part', true)
-                                                    ->orWhere('is_active', true)
-                                                    ->get()
-                                                    ->mapWithKeys(fn (Product $p) => [
-                                                        $p->id => "{$p->name} [Kho: {$p->stock_quantity} {$p->base_unit}]"
-                                                    ])
-                                                )
-                                                ->searchable()
-                                                ->live()
-                                                ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                                                    if ($state) {
-                                                        $p = Product::find($state);
-                                                        if ($p) {
-                                                            $set('item_name', $p->name);
-                                                            $set('unit', $p->base_unit);
-                                                            $set('unit_price', $p->retail_price);
-                                                            $set('cost_price', $p->cost_price);
-                                                        }
-                                                    }
-                                                })
-                                                ->columnSpan(3),
+                                            Forms\Components\Grid::make(12)
+                                                ->schema([
+                                                    Forms\Components\Select::make('product_id')
+                                                        ->label('Chọn từ kho linh kiện / VPP')
+                                                        ->options(fn () => Product::where('is_service_part', true)
+                                                            ->orWhere('is_active', true)
+                                                            ->get()
+                                                            ->mapWithKeys(fn (Product $p) => [
+                                                                $p->id => "{$p->name} [Kho: {$p->stock_quantity} {$p->base_unit}]"
+                                                            ])
+                                                        )
+                                                        ->searchable()
+                                                        ->preload()
+                                                        ->live()
+                                                        ->afterStateUpdated(function ($state, callable $set) {
+                                                            if ($state) {
+                                                                $p = Product::find($state);
+                                                                if ($p) {
+                                                                    $set('item_name', $p->name);
+                                                                    $set('unit', $p->base_unit ?: 'Cái');
+                                                                    $set('unit_price', $p->retail_price);
+                                                                    $set('cost_price', $p->cost_price);
+                                                                }
+                                                            }
+                                                        })
+                                                        ->columnSpan(['default' => 12, 'md' => 7]),
 
-                                            Forms\Components\TextInput::make('item_name')
-                                                ->label('Tên linh kiện/dịch vụ')
-                                                ->required()
-                                                ->columnSpan(2),
+                                                    Forms\Components\TextInput::make('item_name')
+                                                        ->label('Tên linh kiện / dịch vụ *')
+                                                        ->required()
+                                                        ->columnSpan(['default' => 12, 'md' => 5]),
 
-                                            Forms\Components\TextInput::make('quantity')
-                                                ->label('Số lượng')
-                                                ->numeric()
-                                                ->default(1)
-                                                ->live()
-                                                ->required()
-                                                ->columnSpan(1),
+                                                    Forms\Components\TextInput::make('unit')
+                                                        ->label('Đơn vị tính')
+                                                        ->default('Cái')
+                                                        ->required()
+                                                        ->columnSpan(['default' => 12, 'md' => 3]),
 
-                                            Forms\Components\TextInput::make('unit')
-                                                ->label('ĐVT')
-                                                ->default('Cái')
-                                                ->required()
-                                                ->columnSpan(1),
+                                                    Forms\Components\TextInput::make('quantity')
+                                                        ->label('Số lượng *')
+                                                        ->numeric()
+                                                        ->default(1)
+                                                        ->minValue(1)
+                                                        ->live()
+                                                        ->required()
+                                                        ->columnSpan(['default' => 12, 'md' => 4]),
 
-                                            Forms\Components\TextInput::make('unit_price')
-                                                ->label('Đơn giá (₫)')
-                                                ->numeric()
-                                                ->prefix('₫')
-                                                ->required()
-                                                ->live()
-                                                ->disabled(fn () => auth()->user()?->role === 'technician')
-                                                ->dehydrated()
-                                                ->helperText(fn () => auth()->user()?->role === 'technician' ? 'Giá theo danh mục' : null)
-                                                ->columnSpan(2),
+                                                    Forms\Components\TextInput::make('unit_price')
+                                                        ->label('Đơn giá (₫) *')
+                                                        ->numeric()
+                                                        ->prefix('₫')
+                                                        ->required()
+                                                        ->live()
+                                                        ->disabled(fn () => auth()->user()?->role === 'technician')
+                                                        ->dehydrated()
+                                                        ->helperText(fn () => auth()->user()?->role === 'technician' ? 'Giá theo danh mục' : null)
+                                                        ->columnSpan(['default' => 12, 'md' => 5]),
+                                                ]),
                                         ])
-                                        ->columns(9)
                                         ->defaultItems(0)
                                         ->addActionLabel('+ Thêm linh kiện / vật tư')
+                                        ->itemLabel(fn (array $state): ?string => !empty($state['item_name'])
+                                            ? "{$state['item_name']} (x" . ($state['quantity'] ?? 1) . ' ' . ($state['unit'] ?? 'Cái') . ' - ' . number_format((float)($state['unit_price'] ?? 0) * (float)($state['quantity'] ?? 1), 0, ',', '.') . '₫)'
+                                            : null
+                                        )
+                                        ->collapsible()
                                         ->live()
                                         ->afterStateUpdated(function (callable $get, callable $set) {
                                             $items = $get('repairItems') ?? [];
@@ -441,13 +457,13 @@ class RepairTicketResource extends Resource
                                     Forms\Components\Select::make('status')
                                         ->label('Trạng thái phiếu *')
                                         ->options([
-                                            'received' => '1. 📥 Đã tiếp nhận máy',
-                                            'diagnosing' => '2. 🔍 Đang kiểm tra / tháo máy',
-                                            'waiting_approval' => '3. ⏳ Chờ khách duyệt giá',
-                                            'in_progress' => '4. ⚙️ Đang sửa chữa',
-                                            'completed' => '5. ✅ Đã sửa xong',
-                                            'delivered' => '6. 📦 Đã bàn giao cho khách',
-                                            'cancelled' => '7. ❌ Đã hủy & Hoàn trả linh kiện',
+                                            'received' => '1. Đã tiếp nhận máy',
+                                            'diagnosing' => '2. Đang kiểm tra / tháo máy',
+                                            'waiting_approval' => '3. Chờ khách duyệt giá',
+                                            'in_progress' => '4. Đang sửa chữa',
+                                            'completed' => '5. Đã sửa xong',
+                                            'delivered' => '6. Đã bàn giao cho khách',
+                                            'cancelled' => '7. Đã hủy & Hoàn trả linh kiện',
                                         ])
                                         ->required()
                                         ->default('received'),
@@ -668,13 +684,13 @@ class RepairTicketResource extends Resource
                         Forms\Components\Select::make('status')
                             ->label('Trạng thái mới *')
                             ->options([
-                                'received' => '1. 📥 Đã tiếp nhận máy',
-                                'diagnosing' => '2. 🔍 Đang kiểm tra / tháo máy',
-                                'waiting_approval' => '3. ⏳ Chờ khách duyệt giá',
-                                'in_progress' => '4. ⚙️ Đang sửa chữa',
-                                'completed' => '5. ✅ Đã sửa xong',
-                                'delivered' => '6. 📦 Đã bàn giao cho khách',
-                                'cancelled' => '7. ❌ Đã hủy & Hoàn trả linh kiện',
+                                'received' => '1. Đã tiếp nhận máy',
+                                'diagnosing' => '2. Đang kiểm tra / tháo máy',
+                                'waiting_approval' => '3. Chờ khách duyệt giá',
+                                'in_progress' => '4. Đang sửa chữa',
+                                'completed' => '5. Đã sửa xong',
+                                'delivered' => '6. Đã bàn giao cho khách',
+                                'cancelled' => '7. Đã hủy & Hoàn trả linh kiện',
                             ])
                             ->required(),
                         Forms\Components\Select::make('payment_status')
