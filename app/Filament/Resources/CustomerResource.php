@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\CustomerResource\Pages;
 use App\Models\Customer;
+use App\Services\CashbookService;
 use App\Services\CustomerManagement;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -61,14 +62,27 @@ class CustomerResource extends Resource
                             Forms\Components\Section::make('Thông tin liên hệ & Định danh')
                                 ->icon('heroicon-o-user')
                                 ->schema([
-                                    Forms\Components\TextInput::make('name')
-                                        ->label('Họ tên khách hàng hoặc Đơn vị *')
-                                        ->placeholder('VD: Anh Nguyễn Văn Hùng, Công ty TNHH Nam Á...')
-                                        ->required()
-                                        ->maxLength(100)
-                                        ->columnSpanFull(),
+                                    Forms\Components\Grid::make(3)
+                                        ->schema([
+                                            Forms\Components\TextInput::make('name')
+                                                ->label('Họ tên khách hàng hoặc Đơn vị *')
+                                                ->placeholder('VD: Anh Nguyễn Văn Hùng, Công ty TNHH Nam Á...')
+                                                ->required()
+                                                ->maxLength(100)
+                                                ->columnSpan(2),
 
-                                    Forms\Components\Grid::make(2)
+                                            Forms\Components\Select::make('type')
+                                                ->label('Phân loại khách *')
+                                                ->options([
+                                                    'retail' => 'Khách lẻ',
+                                                    'wholesale' => 'Khách sỉ / Doanh nghiệp',
+                                                    'vip' => 'Khách VIP',
+                                                ])
+                                                ->default('retail')
+                                                ->required(),
+                                        ]),
+
+                                    Forms\Components\Grid::make(3)
                                         ->schema([
                                             Forms\Components\TextInput::make('phone')
                                                 ->label('Số điện thoại di động *')
@@ -76,13 +90,18 @@ class CustomerResource extends Resource
                                                 ->tel()
                                                 ->required()
                                                 ->maxLength(20)
-                                                ->helperText('Dùng để tra cứu đơn hàng, nhận thông báo tiến độ sửa máy & Zalo.'),
+                                                ->helperText('Dùng tra cứu đơn hàng & nhận thông báo Zalo.'),
 
                                             Forms\Components\TextInput::make('email')
                                                 ->label('Địa chỉ Email')
                                                 ->placeholder('khachhang@congty.com')
                                                 ->email()
                                                 ->maxLength(150),
+
+                                            Forms\Components\TextInput::make('tax_id')
+                                                ->label('Mã số thuế (nếu có)')
+                                                ->placeholder('MST Doanh nghiệp')
+                                                ->maxLength(50),
                                         ]),
 
                                     Forms\Components\Textarea::make('address')
@@ -119,7 +138,15 @@ class CustomerResource extends Resource
                                         ->default(0)
                                         ->disabled()
                                         ->dehydrated()
-                                        ->helperText('Tự động cập nhật khi bán hàng ghi nợ hoặc thanh toán phiếu sửa.'),
+                                        ->extraInputAttributes(['style' => 'font-weight: 800; color: #e11d48;'])
+                                        ->helperText('Tự động cập nhật khi mua hàng nợ hoặc thu nợ.'),
+
+                                    Forms\Components\TextInput::make('credit_limit')
+                                        ->label('Hạn mức nợ tối đa (₫)')
+                                        ->numeric()
+                                        ->prefix('₫')
+                                        ->default(0)
+                                        ->helperText('0 = Không cho phép nợ vượt định mức.'),
                                 ]),
 
                             Forms\Components\Section::make('Trạng thái tài khoản & Zalo')
@@ -128,8 +155,8 @@ class CustomerResource extends Resource
                                     Forms\Components\Placeholder::make('activation_display')
                                         ->label('Trạng thái kích hoạt SĐT')
                                         ->content(fn (?Customer $record) => $record && $record->isActivated()
-                                            ? '✅ Đã kích hoạt xác thực (' . $record->phone_verified_at->format('d/m/Y H:i') . ')'
-                                            : '⏳ Chưa kích hoạt qua Zalo / SMS'
+                                            ? 'Đã kích hoạt xác thực (' . $record->phone_verified_at->format('d/m/Y H:i') . ')'
+                                            : 'Chưa kích hoạt qua Zalo / SMS'
                                         ),
 
                                     Forms\Components\TextInput::make('zalo_name')
@@ -183,6 +210,20 @@ class CustomerResource extends Resource
                     ->limit(28)
                     ->tooltip(fn (Customer $c) => $c->address),
 
+                Tables\Columns\TextColumn::make('type')
+                    ->label('Nhóm khách')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => match ($state) {
+                        'wholesale' => 'Khách sỉ',
+                        'vip' => 'VIP',
+                        default => 'Khách lẻ',
+                    })
+                    ->color(fn ($state) => match ($state) {
+                        'wholesale' => 'info',
+                        'vip' => 'warning',
+                        default => 'gray',
+                    }),
+
                 Tables\Columns\TextColumn::make('orders_count')
                     ->label('Đơn hàng')
                     ->counts('orders')
@@ -208,6 +249,14 @@ class CustomerResource extends Resource
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
+                Tables\Filters\SelectFilter::make('type')
+                    ->label('Phân loại khách')
+                    ->options([
+                        'retail' => 'Khách lẻ',
+                        'wholesale' => 'Khách sỉ / Doanh nghiệp',
+                        'vip' => 'Khách VIP',
+                    ]),
+
                 Tables\Filters\Filter::make('activated')
                     ->label('Đã kích hoạt tài khoản')
                     ->query(fn (Builder $query) => $query->whereNotNull('phone_verified_at')),
@@ -221,6 +270,62 @@ class CustomerResource extends Resource
                     ->query(fn (Builder $query) => $query->where('debt_balance', '>', 0)),
             ])
             ->actions([
+                Tables\Actions\Action::make('collect_debt')
+                    ->label('Thu nợ')
+                    ->icon('heroicon-m-banknotes')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading(fn (Customer $record) => "Thu nợ khách hàng: {$record->name}")
+                    ->modalDescription(fn (Customer $record) => "Số dư công nợ hiện tại: " . number_format($record->debt_balance, 0, ',', '.') . "₫. Khoản thu sẽ được tự động ghi nhận vào Sổ quỹ.")
+                    ->form([
+                        Forms\Components\TextInput::make('amount')
+                            ->label('Số tiền thu (₫) *')
+                            ->numeric()
+                            ->prefix('₫')
+                            ->default(fn (Customer $record) => $record->debt_balance)
+                            ->required(),
+
+                        Forms\Components\Select::make('payment_method')
+                            ->label('Hình thức tiền *')
+                            ->options([
+                                'cash' => 'Tiền mặt',
+                                'bank_transfer' => 'Chuyển khoản ngân hàng',
+                            ])
+                            ->default('cash')
+                            ->required(),
+
+                        Forms\Components\Textarea::make('notes')
+                            ->label('Ghi chú')
+                            ->placeholder('Khách thanh toán công nợ...')
+                            ->rows(2),
+                    ])
+                    ->visible(fn (Customer $record) => $record->debt_balance > 0)
+                    ->action(function (Customer $record, array $data) {
+                        try {
+                            app(CashbookService::class)->createReceipt([
+                                'category' => 'customer_debt',
+                                'amount' => $data['amount'],
+                                'customer_id' => $record->id,
+                                'payment_method' => $data['payment_method'],
+                                'notes' => $data['notes'] ?? "Thu nợ khách hàng {$record->name}",
+                            ]);
+
+                            $record->refresh();
+
+                            Notification::make()
+                                ->title('Đã thu nợ thành công!')
+                                ->body("Đã thu " . number_format($data['amount'], 0, ',', '.') . "₫ từ {$record->name}. Công nợ còn lại: " . number_format($record->debt_balance, 0, ',', '.') . "₫.")
+                                ->success()
+                                ->send();
+                        } catch (\Throwable $e) {
+                            Notification::make()
+                                ->title('Lỗi khi thu nợ')
+                                ->body($e->getMessage())
+                                ->danger()
+                                ->send();
+                        }
+                    }),
+
                 Tables\Actions\EditAction::make()
                     ->label('Sửa')
                     ->icon('heroicon-m-pencil-square'),

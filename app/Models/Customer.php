@@ -13,12 +13,15 @@ class Customer extends Authenticatable
 
     protected $fillable = [
         'name',
+        'type',
         'phone',
         'phone_last4',
         'email',
         'password',
         'address',
+        'tax_id',
         'debt_balance',
+        'credit_limit',
         'notes',
         'zalo_id',
         'zalo_name',
@@ -36,6 +39,7 @@ class Customer extends Authenticatable
         return [
             'password' => 'hashed',
             'debt_balance' => 'decimal:2',
+            'credit_limit' => 'decimal:2',
             'phone_verified_at' => 'datetime',
         ];
     }
@@ -63,6 +67,11 @@ class Customer extends Authenticatable
     public function zaloVerifications(): HasMany
     {
         return $this->hasMany(ZaloVerification::class);
+    }
+
+    public function cashTransactions(): HasMany
+    {
+        return $this->hasMany(CashTransaction::class);
     }
 
     public function isPhoneVerified(): bool

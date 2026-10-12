@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\CashTransaction;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\RepairItem;
@@ -35,7 +36,7 @@ class FinancialReportPage extends Page
     public string $period = 'this_month'; // today, yesterday, last_7_days, this_month, last_month, this_quarter, this_year, all, custom
     public ?string $startDate = null;
     public ?string $endDate = null;
-    public string $activeTab = 'overview'; // overview, breakdown, vat_table
+    public string $activeTab = 'overview'; // overview, breakdown, vat_table, products_profit
     public string $vatSearch = '';
     public string $vatFilterType = 'all'; // all, vat_only, non_vat
 
@@ -318,12 +319,39 @@ class FinancialReportPage extends Page
 
         // 6. CƠ CẤU THANH TOÁN HỢP NHẤT
         $pmMap = [
-            'cash' => ['label' => 'Tiền mặt tại quầy', 'total' => 0, 'count' => 0, 'icon' => '💵'],
-            'vietqr' => ['label' => 'Chuyển khoản VietQR', 'total' => 0, 'count' => 0, 'icon' => '⚡'],
-            'transfer' => ['label' => 'Chuyển khoản ngân hàng', 'total' => 0, 'count' => 0, 'icon' => '🏦'],
-            'cod' => ['label' => 'Giao hàng thu tiền (COD)', 'total' => 0, 'count' => 0, 'icon' => '📦'],
-            'other' => ['label' => 'Khác / Chưa ghi nhận', 'total' => 0, 'count' => 0, 'icon' => '💳'],
+            'cash' => ['label' => 'Tiền mặt tại quầy', 'total' => 0, 'count' => 0, 'icon' => 'heroicon-m-banknotes'],
+            'vietqr' => ['label' => 'Chuyển khoản VietQR', 'total' => 0, 'count' => 0, 'icon' => 'heroicon-m-qr-code'],
+            'transfer' => ['label' => 'Chuyển khoản ngân hàng', 'total' => 0, 'count' => 0, 'icon' => 'heroicon-m-building-library'],
+            'cod' => ['label' => 'Giao hàng thu tiền (COD)', 'total' => 0, 'count' => 0, 'icon' => 'heroicon-m-truck'],
+            'other' => ['label' => 'Khác / Chưa ghi nhận', 'total' => 0, 'count' => 0, 'icon' => 'heroicon-m-credit-card'],
         ];
+
+        // 6.1. CHI PHÍ VẬN HÀNH & LỢI NHUẬN THUẦN (TỪ SỔ QUỸ)
+        $operatingExpenses = (float) CashTransaction::where('type', 'payment')
+            ->where('status', 'completed')
+            ->where('category', '!=', 'supplier_debt')
+            ->whereBetween('performed_at', [$start, $end])
+            ->sum('amount');
+        $netProfit = $grossProfit - $operatingExpenses;
+        $netMargin = $totalRevenue > 0 ? round(($netProfit / $totalRevenue) * 100, 1) : 0;
+
+        // 6.2. TOP 10 SẢN PHẨM SINH LỜI CAO NHẤT
+        $topProducts = [];
+        if ($orderIds->isNotEmpty()) {
+            $topProducts = OrderItem::whereIn('order_id', $orderIds)
+                ->select(
+                    'product_name',
+                    DB::raw('SUM(quantity) as total_sold_qty'),
+                    DB::raw('SUM(subtotal) as total_sales'),
+                    DB::raw('SUM(quantity * COALESCE(cost_price, 0)) as total_cost'),
+                    DB::raw('SUM(subtotal - (quantity * COALESCE(cost_price, 0))) as gross_profit')
+                )
+                ->groupBy('product_name')
+                ->orderByDesc('gross_profit')
+                ->limit(10)
+                ->get()
+                ->toArray();
+        }
 
         $orderPayments = (clone $ordersQuery)
             ->select('payment_method', DB::raw('SUM(grand_total) as total'), DB::raw('COUNT(*) as count'))
@@ -430,6 +458,12 @@ class FinancialReportPage extends Page
 
             // Bảng kê thuế
             'vat_orders' => $vatOrders,
+
+            // Sổ quỹ & Lợi nhuận thuần & Top sản phẩm
+            'operating_expenses' => $operatingExpenses,
+            'net_profit' => $netProfit,
+            'net_margin' => $netMargin,
+            'top_products' => $topProducts,
         ];
     }
 

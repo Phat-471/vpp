@@ -264,4 +264,73 @@ class InventoryService
             return $order->fresh();
         });
     }
+
+    /**
+     * Hoàn tất phiếu kiểm kê kho và tự động cân bằng tồn kho theo số lượng thực tế.
+     */
+    public function completeStockCheck(\App\Models\StockCheck $check): \App\Models\StockCheck
+    {
+        return DB::transaction(function () use ($check) {
+            if ($check->isCompleted()) {
+                throw new \RuntimeException("Phiếu kiểm kê {$check->code} đã hoàn tất cân bằng trước đó.");
+            }
+
+            $check->load('items.product');
+
+            foreach ($check->items as $item) {
+                if ($item->product) {
+                    $item->product->update([
+                        'stock_quantity' => (int) $item->actual_quantity,
+                    ]);
+                }
+            }
+
+            $check->recalculateTotals();
+            $check->update([
+                'status' => 'completed',
+                'completed_at' => now(),
+            ]);
+
+            return $check->fresh();
+        });
+    }
+
+    /**
+     * Hủy phiếu kiểm kê kho (nếu đã cân bằng thì hoàn tác số lượng tồn kho về trước khi kiểm).
+     */
+    public function cancelStockCheck(\App\Models\StockCheck $check, ?string $reason = null): \App\Models\StockCheck
+    {
+        return DB::transaction(function () use ($check, $reason) {
+            if ($check->isCancelled()) {
+                return $check;
+            }
+
+            if ($check->isCompleted()) {
+                $check->load('items.product');
+
+                foreach ($check->items as $item) {
+                    if ($item->product) {
+                        // Hoàn tác tồn kho: trừ đi phần chênh lệch đã điều chỉnh
+                        $newStock = (int) $item->product->stock_quantity - (int) $item->difference;
+                        $item->product->update([
+                            'stock_quantity' => max(0, $newStock),
+                        ]);
+                    }
+                }
+            }
+
+            $notes = $check->notes;
+            if ($reason) {
+                $notes = $notes ? "{$notes}\n[Lý do hủy: {$reason}]" : "[Lý do hủy: {$reason}]";
+            }
+
+            $check->update([
+                'status' => 'cancelled',
+                'notes' => $notes,
+            ]);
+
+            return $check->fresh();
+        });
+    }
 }
+

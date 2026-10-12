@@ -215,7 +215,7 @@
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Tổng Doanh Thu Hợp Nhất</span>
                         <div class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold">
-                            💰
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                     </div>
                     <div class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
@@ -242,11 +242,11 @@
                 {{-- Breakdown nhỏ: VPP vs Sửa chữa --}}
                 <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] space-y-1 text-slate-500 dark:text-slate-400">
                     <div class="flex items-center justify-between">
-                        <span>📦 Bán hàng VPP ({{ $data['order_count'] }} đơn):</span>
+                        <span>Bán hàng VPP ({{ $data['order_count'] }} đơn):</span>
                         <strong class="text-slate-800 dark:text-slate-200">{{ number_format($data['order_revenue'], 0, ',', '.') }} ₫</strong>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span>🔧 Sửa máy in ({{ $data['repair_count'] }} phiếu):</span>
+                        <span>Sửa máy in ({{ $data['repair_count'] }} phiếu):</span>
                         <strong class="text-slate-800 dark:text-slate-200">{{ number_format($data['repair_revenue'], 0, ',', '.') }} ₫</strong>
                     </div>
                 </div>
@@ -258,7 +258,7 @@
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Tiền Đã Thực Thu</span>
                         <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
-                            🏦
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                         </div>
                     </div>
                     <div class="text-2xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight">
@@ -273,7 +273,7 @@
                 {{-- Công nợ cảnh báo --}}
                 <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px]">
                     <div class="flex items-center justify-between">
-                        <span class="text-slate-500">⏳ Còn nợ chưa thu:</span>
+                        <span class="text-slate-500">Còn nợ chưa thu:</span>
                         @if($data['total_receivables'] > 0)
                             <strong class="text-rose-600 font-bold bg-rose-50 dark:bg-rose-950/40 px-2 py-0.5 rounded-md">
                                 {{ number_format($data['total_receivables'], 0, ',', '.') }} ₫
@@ -291,7 +291,7 @@
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Thuế GTGT (VAT) Đầu Ra</span>
                         <div class="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold">
-                            🧾
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         </div>
                     </div>
                     <div class="text-2xl font-black text-rose-600 dark:text-rose-400 tracking-tight">
@@ -322,7 +322,7 @@
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Lợi Nhuận Gộp Ước Tính</span>
                         <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
-                            📈
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                         </div>
                     </div>
                     <div class="text-2xl font-black {{ $data['gross_profit'] >= 0 ? 'text-slate-900 dark:text-white' : 'text-rose-600' }} tracking-tight">
@@ -351,13 +351,16 @@
         {{-- 3. TAB NAVIGATION --}}
         <div class="report-tab-nav no-print">
             <button type="button" wire:click="setActiveTab('overview')" class="report-tab-item {{ $activeTab === 'overview' ? 'active' : '' }}">
-                📈 Biểu đồ Doanh thu & Dòng tiền
+                Biểu đồ Doanh thu & Dòng tiền
             </button>
             <button type="button" wire:click="setActiveTab('vat_table')" class="report-tab-item {{ $activeTab === 'vat_table' ? 'active' : '' }}">
-                📑 Bảng kê Thuế GTGT & Hóa đơn ({{ count($data['vat_orders']) }})
+                Bảng kê Thuế GTGT & Hóa đơn ({{ count($data['vat_orders']) }})
             </button>
             <button type="button" wire:click="setActiveTab('breakdown')" class="report-tab-item {{ $activeTab === 'breakdown' ? 'active' : '' }}">
-                ⚖️ Phân tích Bán hàng vs Sửa chữa
+                Phân tích Bán hàng vs Sửa chữa
+            </button>
+            <button type="button" wire:click="setActiveTab('products_profit')" class="report-tab-item {{ $activeTab === 'products_profit' ? 'active' : '' }}">
+                Top 10 Sản phẩm & Sổ quỹ
             </button>
         </div>
 
@@ -724,9 +727,84 @@
             </div>
         @endif
 
+        {{-- TAB 4: TOP 10 SẢN PHẨM SINH LỜI & SỔ QUỸ CHI PHÍ VẬN HÀNH --}}
+        @if($activeTab === 'products_profit')
+            <div class="space-y-6">
+                {{-- KHỐI 1: TỔNG QUAN LỢI NHUẬN RÒNG & CHI PHÍ VẬN HÀNH SỔ QUỸ --}}
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+                        <span class="text-xs font-bold text-slate-500 uppercase">Lợi Nhuận Gộp (Gross Profit)</span>
+                        <div class="text-2xl font-black text-indigo-600 dark:text-indigo-400 mt-1">
+                            {{ number_format($data['gross_profit'], 0, ',', '.') }} ₫
+                        </div>
+                        <span class="text-xs text-slate-400">Doanh thu trừ giá vốn xuất kho</span>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+                        <span class="text-xs font-bold text-slate-500 uppercase">Chi Phí Vận Hành (Sổ Quỹ OpEx)</span>
+                        <div class="text-2xl font-black text-rose-600 dark:text-rose-400 mt-1">
+                            {{ number_format($data['operating_expenses'], 0, ',', '.') }} ₫
+                        </div>
+                        <span class="text-xs text-slate-400">Tiền mặt bằng, điện nước, lương, vật tư</span>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+                        <span class="text-xs font-bold text-slate-500 uppercase">Lợi Nhuận Ròng (Net Profit)</span>
+                        <div class="text-2xl font-black {{ $data['net_profit'] >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600' }} mt-1">
+                            {{ number_format($data['net_profit'], 0, ',', '.') }} ₫
+                        </div>
+                        <span class="text-xs text-slate-400">Biên lợi nhuận ròng: {{ $data['net_margin'] }}%</span>
+                    </div>
+                </div>
+
+                {{-- KHỐI 2: BẢNG TOP 10 SẢN PHẨM SINH LỜI CAO NHẤT --}}
+                <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-base text-slate-800 dark:text-slate-100">Top 10 Sản Phẩm Đem Lại Lợi Nhuận Gộp Cao Nhất</h3>
+                        <span class="text-xs text-slate-500">Tính trên các đơn hàng hoàn tất trong kỳ</span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 font-bold uppercase border-b border-slate-100 dark:border-slate-800">
+                                <tr>
+                                    <th class="p-3">#</th>
+                                    <th class="p-3">Tên sản phẩm</th>
+                                    <th class="p-3 text-right">Số lượng bán</th>
+                                    <th class="p-3 text-right">Doanh thu</th>
+                                    <th class="p-3 text-right">Giá vốn</th>
+                                    <th class="p-3 text-right">Lợi nhuận gộp</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                                @forelse($data['top_products'] as $idx => $prod)
+                                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition">
+                                        <td class="p-3 font-bold text-slate-400">{{ $idx + 1 }}</td>
+                                        <td class="p-3 font-semibold text-slate-800 dark:text-slate-200">{{ $prod['product_name'] }}</td>
+                                        <td class="p-3 text-right font-bold text-indigo-600">{{ number_format($prod['total_sold_qty']) }}</td>
+                                        <td class="p-3 text-right font-semibold text-slate-700 dark:text-slate-300">{{ number_format($prod['total_sales'], 0, ',', '.') }} ₫</td>
+                                        <td class="p-3 text-right text-slate-500">{{ number_format($prod['total_cost'], 0, ',', '.') }} ₫</td>
+                                        <td class="p-3 text-right font-black text-emerald-600 dark:text-emerald-400">+{{ number_format($prod['gross_profit'], 0, ',', '.') }} ₫</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="p-8 text-center text-slate-400">Chưa có dữ liệu bán hàng trong kỳ này</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         {{-- 4. GHI CHÚ CHÍNH SÁCH THUẾ GTGT --}}
         <div class="bg-gradient-to-r from-indigo-50/80 to-slate-50 dark:from-slate-800/80 dark:to-slate-900 p-5 rounded-2xl border border-indigo-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300 flex items-start space-x-3 no-print">
-            <span class="text-xl">ℹ️</span>
+            <div class="w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                </svg>
+            </div>
             <div class="space-y-1">
                 <h4 class="font-bold text-slate-800 dark:text-slate-100">Lưu Ý Nghiệp Vụ Kế Toán & Thuế GTGT 2026:</h4>
                 <p>• Dữ liệu xuất file Excel / CSV đã được mã hóa UTF-8 chuẩn xác, có thể mở trực tiếp bằng Microsoft Excel mà không bị lỗi font chữ tiếng Việt.</p>
